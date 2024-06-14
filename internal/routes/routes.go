@@ -19,6 +19,8 @@ func Run() {
 		http.ServeFile(w, r, "web/templates/connexion.html")
 	})
 
+	http.HandleFunc("/auth/github", handler.HandleGitHubLogin)
+	http.HandleFunc("/github/callback", handler.HandleGitHubCallback)
 	http.HandleFunc("/auth/google", handler.HandleGoogleLogin)
 	http.HandleFunc("/callback", handler.HandleGoogleCallback)
 

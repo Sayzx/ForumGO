@@ -14,6 +14,11 @@ func HandleGoogleLogin(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
+func HandleGitHubLogin(w http.ResponseWriter, r *http.Request) {
+	url := config.GitHubOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
+	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+}
+
 func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	code := r.FormValue("code")
@@ -42,4 +47,35 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintf(w, "Bonjour %s", userInfo.Email)
+}
+
+func HandleGitHubCallback(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	code := r.FormValue("code")
+	if code == "" {
+		http.Error(w, "Code not found", http.StatusBadRequest)
+		return
+	}
+	token, err := config.GitHubOauthConfig.Exchange(ctx, code)
+	if err != nil {
+		http.Error(w, "Failed to exchange token: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	client := config.GitHubOauthConfig.Client(ctx, token)
+	user, err := client.Get("https://api.github.com/user")
+	if err != nil {
+		http.Error(w, "Failed to get user info: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer user.Body.Close()
+
+	userInfo := struct {
+		Login string `json:"login"` // GitHub username
+	}{}
+	if err := json.NewDecoder(user.Body).Decode(&userInfo); err != nil {
+		http.Error(w, "Failed to decode user info: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprintf(w, "Bonjour %s", userInfo.Login)
 }
