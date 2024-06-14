@@ -2,6 +2,7 @@ package config
 
 import (
 	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/facebook"
 	"golang.org/x/oauth2/github"
 	"golang.org/x/oauth2/google"
 )
@@ -20,4 +21,12 @@ var GitHubOauthConfig = &oauth2.Config{
 	RedirectURL:  "http://localhost:8080/github/callback",
 	Scopes:       []string{"user:email"},
 	Endpoint:     github.Endpoint,
+}
+
+var FacebookOauthConfig = &oauth2.Config{
+	ClientID:     "831950561657982",
+	ClientSecret: "1b9b3a848efa8d2fc69844e3b587b0a2",
+	RedirectURL:  "http://localhost:8080/facebook/callback",
+	Scopes:       []string{"email"},
+	Endpoint:     facebook.Endpoint,
 }

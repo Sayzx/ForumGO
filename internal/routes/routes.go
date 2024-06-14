@@ -23,6 +23,8 @@ func Run() {
 	http.HandleFunc("/github/callback", handler.HandleGitHubCallback)
 	http.HandleFunc("/auth/google", handler.HandleGoogleLogin)
 	http.HandleFunc("/callback", handler.HandleGoogleCallback)
+	http.HandleFunc("/auth/facebook", handler.HandleFacebookLogin)
+	http.HandleFunc("/facebook/callback", handler.HandleFacebookCallback)
 
 	fmt.Println("Server started at http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
