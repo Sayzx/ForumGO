@@ -15,7 +15,12 @@ func Run() {
 		http.ServeFile(w, r, "web/templates/index.html")
 	})
 
-	http.HandleFunc("/login", handler.LoginHandler)
+	http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/templates/connexion.html")
+	})
+
+	http.HandleFunc("/auth/google", handler.HandleGoogleLogin)
+	http.HandleFunc("/callback", handler.HandleGoogleCallback)
 
 	fmt.Println("Server started at http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
