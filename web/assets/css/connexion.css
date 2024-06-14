@@ -70,3 +70,23 @@ button .fa-brands {
 .social-login button:nth-child(3) {
     background-color: #5c67f2; /* Facebook button */
 }
+
+/* if ton ecran est plus petit les boutton sont moins large */
+
+@media (max-width: 1778px) {
+    button {
+        font-family: 'Satoshi-Bold';
+        font-size: 20px;
+        width: 95%;
+        height: 40px;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        margin: 10px;
+        background-color: #5c67f2;
+        color: white;
+        cursor: pointer;
+    }
+    /* reduce social  */
+    
+}
