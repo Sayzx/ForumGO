@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bettermode</title>
+    <title>BetterForum</title>
+    <link rel="icon" href="/assets/img/logo.png" type="image/png">
     <link rel="stylesheet" href="../assets/css/home.css">
 </head>
 <body>
@@ -14,8 +15,11 @@
                 <img src="/assets/img/logo.png" alt="Bettermode">
                 </a>
             </div>
+            <div class="group">
+                <svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><g><path d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"></path></g></svg>
+                <input placeholder="Search" type="search" class="input">
+              </div>
             <div class="search-login">
-                <input type="text" placeholder="Search...">
                 <a href="/login">
                 <button>Log in</button>
                 </a>
@@ -46,7 +50,7 @@
             </nav>
             <main>
                 <section class="whats-new">
-                    <h2>What's New</h2>
+                    <h2>L'actualités</h2>
                     <div class="cards">
                         <div class="card">
                             <img src="./assets/img/patern.png" alt="Jira integration">
@@ -67,35 +71,32 @@
                 </section>
                 <section class="discussions">
                     <h2>Discussions</h2>
-                    <div class="tabs">
+                    <!-- <div class="tabs">
                         <button class="tab-button">Popular</button>
                         <button class="tab-button">Recently active</button>
+                    </div> -->
+                    <div id="discussion-cards" class="discussion-cards">
+                        {{range .Topics}}
+                        <div class="discussion-card">
+                            <h3>{{.Title}}</h3>
+                            <p>{{.Content}}</p>
+                            {{if .Avatar}}
+                            <img class="avatar" src="{{.Avatar}}" alt="Avatar">
+                            {{else}}
+                            <img class="avatar" src="https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=667352e1&is=66720161&hm=e9706a01d813bf4d2ec8b92a71961800e1f6ee4f3ab8a148f0cf2b08abd40134&=&format=webp&quality=lossless" alt="Default Avatar">
+                            {{end}}
+                            <span>{{.Owner}}</span>
+                        </div>
+                        {{end}}
                     </div>
-                    <div class="discussion-cards">
-                        <div class="discussion-card">
-                            <h3>Scheduling Posts</h3>
-                            <p>Is it possible to schedule posts to publish at a specific date/time in the future?</p>
-                            <span>Felicia Cunningham</span>
-                        </div>
-                        <div class="discussion-card">
-                            <h3>How to change the default language of your Bettermode community?</h3>
-                            <p>I want the interface of our Bettermode community to be in a different language...</p>
-                            <span>Marcia Oliver</span>
-                        </div>
-                        <div class="discussion-card">
-                            <h3>Disable "Add Tag"</h3>
-                            <p>Is there a way to disable the "Add Tag" feature for specific users?</p>
-                            <span>Bahne Carsten</span>
-                        </div>
-                    </div>
+                    
                 </section>
             </main>
         </div>
         <footer>
-            <p>&copy; 2023 Bettermode</p>
+            <p>&copy; 2023 Better <span color="red">Forum</span></p>
             <p><a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Cookies</a></p>
         </footer>
     </div>
-    <script src="/static/js/script.js"></script>
 </body>
 </html>

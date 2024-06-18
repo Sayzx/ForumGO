@@ -11,9 +11,7 @@ func Run() {
 	fs := http.FileServer(http.Dir("web/assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", fs))
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/templates/index.html")
-	})
+	http.HandleFunc("/", handler.HomeHandler)
 
 	http.HandleFunc("/login", handler.LoginHandler)
 	http.HandleFunc("/signup", handler.SignupHandler)
