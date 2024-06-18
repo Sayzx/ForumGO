@@ -1,16 +1,27 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 	"main/internal/sql"
 	"net/http"
+
+	"golang.org/x/crypto/bcrypt"
 )
+
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(bytes), err
+}
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	// Récupérer les valeurs du formulaire POST
 	username := r.FormValue("username")
 	email := r.FormValue("email")
 	password := r.FormValue("password")
+	fmt.Println("Votre password est : ", password)
+	cryptpassword, err := HashPassword(password)
+	fmt.Println("Votre password crypté est : ", cryptpassword)
 
 	// Ouvrir la connexion à la base de données
 	db, err := sql.ConnectDB()
