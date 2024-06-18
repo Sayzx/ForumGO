@@ -6,8 +6,9 @@ import (
 	"log"
 	"net/http"
 
-	"golang.org/x/crypto/bcrypt"
 	"main/internal/sql"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func HashPassword(password string) (string, error) {
@@ -19,8 +20,6 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	email := r.FormValue("email")
 	password := r.FormValue("password")
-
-	fmt.Println("Votre password est : ", password)
 	cryptPassword, err1 := HashPassword(password)
 	if err1 != nil {
 		http.Error(w, "Error hashing password", http.StatusInternalServerError)
