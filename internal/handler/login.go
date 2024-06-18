@@ -44,14 +44,16 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	defer resp.Body.Close()
 
 	userInfo := struct {
-		Email string `json:"email"`
+		Email   string `json:"email"`
+		Picture string `json:"picture"`
 	}{}
+
 	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
 		http.Error(w, "Failed to decode user info: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	fmt.Fprintf(w, "Bonjour %s", userInfo.Email)
+	fmt.Fprintf(w, "Bonjour %s <img src=\"%s\" alt=\"Profile Picture\" />", userInfo.Email, userInfo.Picture)
 }
 
 func HandleGitHubCallback(w http.ResponseWriter, r *http.Request) {
@@ -75,14 +77,16 @@ func HandleGitHubCallback(w http.ResponseWriter, r *http.Request) {
 	defer user.Body.Close()
 
 	userInfo := struct {
-		Login string `json:"login"` // GitHub username
+		Login     string `json:"login"`
+		AvatarURL string `json:"avatar_url"`
 	}{}
+
 	if err := json.NewDecoder(user.Body).Decode(&userInfo); err != nil {
 		http.Error(w, "Failed to decode user info: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	fmt.Fprintf(w, "Bonjour %s", userInfo.Login)
+	fmt.Fprintf(w, "Bonjour %s <img src=\"%s\" alt=\"Profile Picture\" />", userInfo.Login, userInfo.AvatarURL)
 }
 
 func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
@@ -107,15 +111,21 @@ func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
 	defer user.Body.Close()
 
 	userInfo := struct {
-		Name  string `json:"name"`
-		Email string `json:"email"`
+		Name    string `json:"name"`
+		Email   string `json:"email"`
+		Picture struct {
+			Data struct {
+				URL string `json:"url"`
+			} `json:"data"`
+		} `json:"picture"`
 	}{}
+
 	if err := json.NewDecoder(user.Body).Decode(&userInfo); err != nil {
 		http.Error(w, "Failed to decode user info: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	fmt.Fprintf(w, "Bonjour %s", userInfo.Name)
+	fmt.Fprintf(w, "Bonjour %s <img src=\"%s\" alt=\"Profile Picture\" />", userInfo.Name, userInfo.Picture.Data.URL)
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
