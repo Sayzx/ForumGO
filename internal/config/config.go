@@ -27,6 +27,6 @@ var FacebookOauthConfig = &oauth2.Config{
 	ClientID:     "831950561657982",
 	ClientSecret: "1b9b3a848efa8d2fc69844e3b587b0a2",
 	RedirectURL:  "http://localhost:8080/facebook/callback",
-	Scopes:       []string{"email"},
+	Scopes:       []string{"public_profile"},
 	Endpoint:     facebook.Endpoint,
 }
