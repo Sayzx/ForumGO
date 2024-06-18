@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription au Forum</title>
+    <link rel="stylesheet" href="../assets/css/connexion.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+        function validateForm() {
+            var password = document.getElementById("password").value;
+            var repeatPassword = document.getElementById("repeatpassword").value;
+
+            if (password !== repeatPassword) {
+                document.getElementById("error-message").innerText = "Les mots de passe ne correspondent pas.";
+                return false;
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="login-container">
+        <h2>S'inscrire sur le Forum</h2>
+        <form action="/signup" method="POST" onsubmit="return validateForm()">
+            <input type="email" id="email" name="email" placeholder="Email" required>
+            <input type="text" id="username" name="username" placeholder="Nom d'utilisateur" required>
+            <input type="password" id="password" name="password" placeholder="Mot de passe" required>
+            <input type="password" id="repeatpassword" name="repeatpassword" placeholder="Répéter le mot de passe" required>
+            <br>
+            <span id="error-message"></span>
+            <button type="submit">Se connecter</button>
+        </form>
+    </div>
+</body>
+
+</html>

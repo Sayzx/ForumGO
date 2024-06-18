@@ -27,7 +27,7 @@ body {
     text-align: center;
 }
 
-input[type="email"], input[type="password"] {
+input[type="email"], input[type="password"], input[type="text"] {
     font-family: 'Satoshi-Bold';
     width: 90%;
     padding: 10px;
