@@ -27,7 +27,16 @@ body {
     text-align: center;
 }
 
-input[type="email"], input[type="password"], input[type="text"] {
+input[type="email"], input[type="password"], input[type="text"], input[type="submit"], input[type="username"] {
+    font-family: 'Satoshi-Bold';
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+input {
     font-family: 'Satoshi-Bold';
     width: 90%;
     padding: 10px;
@@ -69,6 +78,10 @@ button .fa-brands {
 
 .social-login button:nth-child(3) {
     background-color: #3b5998 ; /* Facebook button */
+}
+
+.social-login button:nth-child(4) {
+    background-color: #7289da ; /* Discord button */
 }
 
 /* if ton ecran est plus petit les boutton sont moins large */

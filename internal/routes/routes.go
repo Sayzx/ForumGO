@@ -11,19 +11,26 @@ func Run() {
 	fs := http.FileServer(http.Dir("web/assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", fs))
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/templates/index.html")
-	})
+	http.HandleFunc("/", handler.HomeHandler)
 
 	http.HandleFunc("/login", handler.LoginHandler)
 	http.HandleFunc("/signup", handler.SignupHandler)
 	http.HandleFunc("/register", handler.RegisterHandler)
+
 	http.HandleFunc("/auth/github", handler.HandleGitHubLogin)
 	http.HandleFunc("/github/callback", handler.HandleGitHubCallback)
+
+	// Google Authentication
 	http.HandleFunc("/auth/google", handler.HandleGoogleLogin)
-	http.HandleFunc("/callback", handler.HandleGoogleCallback)
+	http.HandleFunc("/google/callback", handler.HandleGoogleCallback)
+
+	// Facebook Authentication
 	http.HandleFunc("/auth/facebook", handler.HandleFacebookLogin)
 	http.HandleFunc("/facebook/callback", handler.HandleFacebookCallback)
+
+	// Discord Authentication
+	http.HandleFunc("/auth/discord", handler.HandleDiscordLogin)
+	http.HandleFunc("/discord/callback", handler.HandleDiscordCallback)
 
 	fmt.Println("Server started at http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
