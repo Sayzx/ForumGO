@@ -32,6 +32,7 @@ func Run() {
 	// Discord Authentication
 	http.HandleFunc("/auth/discord", handler.HandleDiscordLogin)
 	http.HandleFunc("/discord/callback", handler.HandleDiscordCallback)
+	http.HandleFunc("/showtopics", handler.ShowTopicsHandler)
 
 	// Logout
 	http.HandleFunc("/logout", handler.LogoutHandler)
