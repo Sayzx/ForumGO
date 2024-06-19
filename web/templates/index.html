@@ -21,11 +21,18 @@
               </div>
               <div class="search-login">
                 {{if .LoggedIn}}
-                    <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img">
+                    <div class="user-info">
+                        <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img" onclick="toggleMenu()">
+                        <div id="popupMenu" class="popup-menu" style="display:none;">
+                            <a href="/settings">Paramètres</a>
+                            <a href="/logout">Se déconnecter</a>
+                        </div>
+                    </div>
                 {{else}}
                     <a href="/login"><button>Log in</button></a>
                 {{end}}
             </div>
+            
         </header>
         <div class="main-content">
             <nav class="sidebar">
@@ -100,5 +107,6 @@
             <p><a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Cookies</a></p>
         </footer>
     </div>
+    <script src="../assets/static/home.js"></script>
 </body>
 </html>

@@ -36,6 +36,9 @@ func Run() {
 	http.HandleFunc("/discord/callback", handler.HandleDiscordCallback)
 	http.HandleFunc("/showtopics", handler.ShowTopicsHandler)
 
+	// Logout
+	http.HandleFunc("/logout", handler.LogoutHandler)
+
 	fmt.Println("Server started at http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		fmt.Printf("Erreur lors du démarrage du serveur: %v\n", err)
