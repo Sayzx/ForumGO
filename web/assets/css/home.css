@@ -6,7 +6,7 @@
          font-weight: 700;
          font-display: swap;
          font-style: normal;
-  }
+}
 
 body {
     font-family: 'Satoshi-Bold';
@@ -15,7 +15,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    overflow: hidden;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 .container {
@@ -29,8 +29,6 @@ body {
     width: 20px;
     border-radius: 50%;
 }
-
-
 
 header {
     display: flex;
@@ -109,14 +107,40 @@ nav.sidebar ul li a {
 }
 
 .topics-scrollable {
-    overflow-y: auto;
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
     flex: 1;
+}
+
+/* Hide default scrollbar for Webkit browsers (Chrome, Safari) */
+.topics-scrollable::-webkit-scrollbar {
+    display: none;
+}
+
+/* Custom scrollbar for Firefox */
+.topics-scrollable {
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f4f4f4;
+}
+
+.topics-scrollable::-webkit-scrollbar {
+    width: 8px;
+}
+
+.topics-scrollable::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+}
+
+.topics-scrollable::-webkit-scrollbar-track {
+    background-color: #f4f4f4;
 }
 
 main {
     flex: 1;
     padding: 20px;
-    overflow-y: auto;
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 .whats-new, .discussions {
@@ -134,9 +158,6 @@ main {
     border-radius: 5px;
     flex: 1;
 }
-
-
-
 
 footer {
     text-align: center;
@@ -164,17 +185,15 @@ footer {
     text-decoration: none;
 }
 
-
-
 .group {
     display: flex;
     line-height: 28px;
     align-items: center;
     position: relative;
     max-width: 190px;
-   }
-   
-   .input {
+}
+
+.input {
     width: 100%;
     height: 40px;
     line-height: 28px;
@@ -186,29 +205,23 @@ footer {
     background-color: #f3f3f4;
     color: #0d0c22;
     transition: .3s ease;
-   }
-   
-   .input::placeholder {
+}
+
+.input::placeholder {
     color: #9e9ea7;
-   }
-   
-   .input:focus, input:hover {
+}
+
+.input:focus, input:hover {
     outline: none;
     border-color: rgba(234,76,137,0.4);
     background-color: #fff;
     box-shadow: 0 0 0 4px rgb(234 76 137 / 10%);
-   }
-   
-   .icon {
+}
+
+.icon {
     position: absolute;
     left: 1rem;
     fill: #9e9ea7;
     width: 1rem;
     height: 1rem;
-   }
-   
-   
-   
-   
-   
-   
+}

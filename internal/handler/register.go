@@ -3,10 +3,10 @@ package handler
 import (
 	sql2 "database/sql"
 	"log"
-	"main/internal/api"
-	"net/http"
 
+	"main/internal/api"
 	"main/internal/sql"
+	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
 )
