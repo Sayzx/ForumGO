@@ -2,9 +2,17 @@ package handler
 
 import (
 	"log"
+
 	"main/internal/sql"
 	"net/http"
+
+	"golang.org/x/crypto/bcrypt"
 )
+
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(bytes), err
+}
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	// Récupérer les valeurs du formulaire POST
@@ -39,5 +47,5 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Répondre à l'utilisateur
-	w.Write([]byte("User successfully registered"))
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }

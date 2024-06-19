@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion au Forum</title>
-    <link rel="stylesheet" href="../assets/css/connexion.css">
+    <link rel="stylesheet" href="../assets/css/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
     <div class="login-container">
         <h2>Connexion au Forum</h2>
-        <form action="/login" method="POST">
+        <form action="/login-form" method="POST">
             <input type="email" id="email" name="email" placeholder="Email" required>
             <input type="password" id="password" name="password" placeholder="Mot de passe" required>
             <button type="submit">Se connecter</button>
@@ -27,7 +27,13 @@
             <button onclick="window.location='/auth/facebook';" class="icon-button">
                 <i class="fa-brands fa-facebook"></i>
             </button>
-        </div>
+            <button onclick="window.location='/auth/discord';" class="icon-button">
+                <i class="fa-brands fa-discord"></i>
+            </button>  
+            <br>
+
+            <p id="signup">Pas encore de compte ? <a href="/register">Inscrivez-vous</a></p>
+</div>
     </div>
 </body>
 
