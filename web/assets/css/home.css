@@ -30,6 +30,12 @@ body {
     border-radius: 50%;
 }
 
+.avatar-img {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+}
+
 header {
     display: flex;
     justify-content: space-between;
