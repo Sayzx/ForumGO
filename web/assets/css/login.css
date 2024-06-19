@@ -80,6 +80,10 @@ button .fa-brands {
     background-color: #3b5998 ; /* Facebook button */
 }
 
+.social-login button:nth-child(4) {
+    background-color: #7289da ; /* Discord button */
+}
+
 /* if ton ecran est plus petit les boutton sont moins large */
 
 @media (max-width: 1778px) {
