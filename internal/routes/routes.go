@@ -7,13 +7,13 @@ import (
 )
 
 func Run() {
-	fmt.Println("Initialisation du serveur...")
 	fs := http.FileServer(http.Dir("web/assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", fs))
 
 	http.HandleFunc("/", handler.HomeHandler)
 
 	http.HandleFunc("/login", handler.LoginHandler)
+	http.HandleFunc("/login-form", handler.LoginFormHandler)
 	http.HandleFunc("/signup", handler.SignupHandler)
 	http.HandleFunc("/register", handler.RegisterHandler)
 

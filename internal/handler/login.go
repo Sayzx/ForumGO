@@ -1,11 +1,15 @@
 package handler
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 	"main/internal/config"
+	dbsql "main/internal/sql"
 	"net/http"
 
+	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/oauth2"
 )
 
@@ -180,4 +184,69 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "web/templates/login.html")
+}
+
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+}
+
+func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Login form submitted")
+	if r.Method != http.MethodPost {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		return
+	}
+
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, "Failed to parse form", http.StatusBadRequest)
+		log.Println("Failed to parse form:", err)
+		return
+	}
+
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+	fmt.Println("Email:", email)
+	fmt.Println("Password:", password)
+
+	if email == "" || password == "" {
+		http.Error(w, "Missing email or password", http.StatusBadRequest)
+		return
+	}
+
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		http.Error(w, "Database connection error", http.StatusInternalServerError)
+		log.Println("Could not connect to the database:", err)
+		return
+	}
+	defer func(db *sql.DB) {
+		if err := db.Close(); err != nil {
+			log.Println("Could not close the database connection:", err)
+		}
+	}(db)
+
+	var storedEmail, storedPasswordHash string
+	err = db.QueryRow("SELECT email, password FROM users WHERE email = ?", email).Scan(&storedEmail, &storedPasswordHash)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+		} else {
+			http.Error(w, "Database query error", http.StatusInternalServerError)
+			log.Println("Could not execute query:", err)
+		}
+		return
+	}
+	fmt.Println("Stored Email:", storedEmail)
+	fmt.Println("Stored Password Hash:", storedPasswordHash)
+
+	if CheckPasswordHash(password, storedPasswordHash) {
+		// Successful login
+		// Handle your login logic here, such as setting session cookies, etc.
+		fmt.Println("Login successful!")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	} else {
+		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+	}
 }
