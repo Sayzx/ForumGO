@@ -283,3 +283,15 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 	}
 }
+
+func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	// Supprimer le cookie en le mettant à une date d'expiration passée
+	http.SetCookie(w, &http.Cookie{
+		Name:    "user",
+		Value:   "",
+		Expires: time.Unix(0, 0),
+		Path:    "/",
+	})
+	// Rediriger vers la page d'accueil
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
