@@ -32,6 +32,7 @@ func Run() {
 	// Discord Authentication
 	http.HandleFunc("/auth/discord", handler.HandleDiscordLogin)
 	http.HandleFunc("/discord/callback", handler.HandleDiscordCallback)
+	http.HandleFunc("/showtopics", handler.ShowTopicsHandler)
 
 	fmt.Println("Server started at http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
