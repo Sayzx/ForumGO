@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"main/internal/config"
 	"net/http"
+	"net/url"
+	"time"
 
 	"golang.org/x/oauth2"
 )
@@ -41,7 +43,7 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to exchange token: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	resp, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + token.AccessToken)
+	resp, err := http.Get("https://www.googleapis.com/oauth2/v3/userinfo?access_token=" + token.AccessToken)
 	if err != nil {
 		http.Error(w, "Failed to get user info: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -58,7 +60,16 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "Bonjour %s <img src=\"%s\" alt=\"Profile Picture\" />", userInfo.Email, userInfo.Picture)
+	// Set a cookie with user info
+	http.SetCookie(w, &http.Cookie{
+		Name:    "user",
+		Value:   url.QueryEscape(userInfo.Email + ";" + userInfo.Picture),
+		Expires: time.Now().Add(24 * time.Hour),
+		Path:    "/",
+	})
+
+	// Redirect to home page or send the user info as needed
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func HandleGitHubCallback(w http.ResponseWriter, r *http.Request) {
@@ -91,7 +102,14 @@ func HandleGitHubCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "Bonjour %s <img src=\"%s\" alt=\"Profile Picture\" />", userInfo.Login, userInfo.AvatarURL)
+	http.SetCookie(w, &http.Cookie{
+		Name:    "user",
+		Value:   url.QueryEscape(userInfo.Login + ";" + userInfo.AvatarURL),
+		Expires: time.Now().Add(24 * time.Hour),
+		Path:    "/",
+	})
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
@@ -106,9 +124,8 @@ func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to exchange token: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	// L'API Facebook nécessite un accès token pour l'en-tête d'authentification.
 	client := config.FacebookOauthConfig.Client(ctx, token)
-	user, err := client.Get("https://graph.facebook.com/me?fields=id,name,email")
+	user, err := client.Get("https://graph.facebook.com/me?fields=id,name,email,picture")
 	if err != nil {
 		http.Error(w, "Failed to get user info: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -117,7 +134,6 @@ func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
 
 	userInfo := struct {
 		Name    string `json:"name"`
-		Email   string `json:"email"`
 		Picture struct {
 			Data struct {
 				URL string `json:"url"`
@@ -130,7 +146,14 @@ func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "Bonjour %s <img src=\"%s\" alt=\"Profile Picture\" />", userInfo.Name, userInfo.Picture.Data.URL)
+	http.SetCookie(w, &http.Cookie{
+		Name:    "user",
+		Value:   url.QueryEscape(userInfo.Name + ";" + userInfo.Picture.Data.URL),
+		Expires: time.Now().Add(24 * time.Hour),
+		Path:    "/",
+	})
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
@@ -168,10 +191,18 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 	if userInfo.Avatar != "" {
 		avatarURL = fmt.Sprintf("https://cdn.discordapp.com/avatars/%s/%s.png", userInfo.ID, userInfo.Avatar)
 	} else {
-		avatarURL = "URL_to_a_default_avatar_if_no_avatar_is_available"
+		// Default avatar if none is available
+		avatarURL = "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png"
 	}
 
-	fmt.Fprintf(w, "Bonjour %s <img src=\"%s\" alt=\"Profile Picture\" />", userInfo.Username, avatarURL)
+	http.SetCookie(w, &http.Cookie{
+		Name:    "user",
+		Value:   url.QueryEscape(userInfo.Username + ";" + avatarURL),
+		Expires: time.Now().Add(24 * time.Hour),
+		Path:    "/",
+	})
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
