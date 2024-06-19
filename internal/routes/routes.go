@@ -16,6 +16,8 @@ func Run() {
 	http.HandleFunc("/login-form", handler.LoginFormHandler)
 	http.HandleFunc("/signup", handler.SignupHandler)
 	http.HandleFunc("/register", handler.RegisterHandler)
+	http.HandleFunc("/createtopic", handler.CreateTopicHandler)
+	http.HandleFunc("/addtopic", handler.AddTopicHandler)
 
 	// GitHub Authentication
 	http.HandleFunc("/auth/github", handler.HandleGitHubLogin)
