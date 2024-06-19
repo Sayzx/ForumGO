@@ -72,6 +72,27 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 		Path:    "/",
 	})
 
+	// add sql
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		http.Error(w, "Database connection error", http.StatusInternalServerError)
+		log.Println("Could not connect to the database:", err)
+		return
+	}
+	defer func(db *sql.DB) {
+		if err := db.Close(); err != nil {
+			log.Println("Could not close the database connection:", err)
+		}
+	}(db)
+
+	// add into loginlogs
+	_, err = db.Exec("INSERT INTO loginlogs (username, plateform, datetime) VALUES (?, ?, ?)", userInfo.Email, "Google", time.Now())
+	if err != nil {
+		http.Error(w, "Database query error", http.StatusInternalServerError)
+		log.Println("Could not execute query:", err)
+		return
+	}
+
 	// Redirect to home page or send the user info as needed
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
@@ -112,6 +133,27 @@ func HandleGitHubCallback(w http.ResponseWriter, r *http.Request) {
 		Expires: time.Now().Add(24 * time.Hour),
 		Path:    "/",
 	})
+
+	// add db
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		http.Error(w, "Database connection error", http.StatusInternalServerError)
+		log.Println("Could not connect to the database:", err)
+		return
+	}
+	defer func(db *sql.DB) {
+		if err := db.Close(); err != nil {
+			log.Println("Could not close the database connection:", err)
+		}
+	}(db)
+
+	// add into loginlogs
+	_, err = db.Exec("INSERT INTO loginlogs (username, plateform, datetime) VALUES (?, ?, ?)", userInfo.Login, "GitHub", time.Now())
+	if err != nil {
+		http.Error(w, "Database query error", http.StatusInternalServerError)
+		log.Println("Could not execute query:", err)
+		return
+	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
@@ -206,6 +248,27 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		Path:    "/",
 	})
 
+	// add db
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		http.Error(w, "Database connection error", http.StatusInternalServerError)
+		log.Println("Could not connect to the database:", err)
+		return
+	}
+	defer func(db *sql.DB) {
+		if err := db.Close(); err != nil {
+			log.Println("Could not close the database connection:", err)
+		}
+	}(db)
+
+	// add into loginlogs
+	_, err = db.Exec("INSERT INTO loginlogs (username, plateform, datetime) VALUES (?, ?, ?)", userInfo.Username, "Discord", time.Now())
+	if err != nil {
+		http.Error(w, "Database query error", http.StatusInternalServerError)
+		log.Println("Could not execute query:", err)
+		return
+	}
+
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -279,6 +342,13 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 			Path:    "/",
 		})
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+		// add db
+		_, err = db.Exec("INSERT INTO loginlogs (username, plateform, datetime) VALUES (?, ?, ?)", email, "Local", time.Now())
+		if err != nil {
+			http.Error(w, "Database query error", http.StatusInternalServerError)
+			log.Println("Could not execute query:", err)
+			return
+		}
 	} else {
 		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 	}
