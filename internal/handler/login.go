@@ -196,7 +196,7 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		avatarURL = fmt.Sprintf("https://cdn.discordapp.com/avatars/%s/%s.png", userInfo.ID, userInfo.Avatar)
 	} else {
 		// Default avatar if none is available
-		avatarURL = "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png"
+		avatarURL = "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=6673fba1&is=6672aa21&hm=5741edc76eb55c2e3e4ac8924a89c2d610df57a88caf4880636b97a92b3fc153&format=webp&quality=lossless&width=640&height=640&"
 	}
 
 	http.SetCookie(w, &http.Cookie{
@@ -252,11 +252,7 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Could not connect to the database:", err)
 		return
 	}
-	defer func(db *sql.DB) {
-		if err := db.Close(); err != nil {
-			log.Println("Could not close the database connection:", err)
-		}
-	}(db)
+	defer db.Close()
 
 	var storedEmail, storedPasswordHash string
 	err = db.QueryRow("SELECT email, password FROM users WHERE email = ?", email).Scan(&storedEmail, &storedPasswordHash)
@@ -274,8 +270,14 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 
 	if CheckPasswordHash(password, storedPasswordHash) {
 		// Successful login
-		// Handle your login logic here, such as setting session cookies, etc.
 		fmt.Println("Login successful!")
+		// Set a default avatar cookie here, as user does not have an avatar URL.
+		http.SetCookie(w, &http.Cookie{
+			Name:    "user",
+			Value:   url.QueryEscape(storedEmail + ";https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=6673fba1&is=6672aa21&hm=5741edc76eb55c2e3e4ac8924a89c2d610df57a88caf4880636b97a92b3fc153&format=webp&quality=lossless&width=640&height=640&"),
+			Expires: time.Now().Add(24 * time.Hour),
+			Path:    "/",
+		})
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
 		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
