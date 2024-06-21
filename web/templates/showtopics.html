@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BetterForum</title>
+    <title>BetterForum | Catégorie</title>
     <link rel="icon" href="/assets/img/logo.png" type="image/png">
-    <link rel="stylesheet" href="../assets/css/home.css">
+    <link rel="stylesheet" href="../assets/css/showtopics.css">
+    <script src="https://kit.fontawesome.com/459ca3d53b.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="container">
@@ -21,18 +22,11 @@
               </div>
               <div class="search-login">
                 {{if .LoggedIn}}
-                    <div class="user-info">
-                        <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img" onclick="toggleMenu()">
-                        <div id="popupMenu" class="popup-menu" style="display:none;">
-                            <a href="/settings">Paramètres</a>
-                            <a href="/logout">Se déconnecter</a>
-                        </div>
-                    </div>
+                    <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img">
                 {{else}}
                     <a href="/login"><button>Log in</button></a>
                 {{end}}
             </div>
-            
         </header>
         <div class="main-content">
             <nav class="sidebar">
@@ -58,48 +52,26 @@
                 </div>
             </nav>
             <main>
-                <section class="whats-new">
-                    <h2>L'actualités</h2>
-                    <div class="cards">
-                        <div class="card">
-                            <img src="./assets/img/patern.png" alt="Jira integration">
-                            <h3>Jira integration</h3>
-                            <p>Released on 17 July 2023 Jira integration makes it a hassle-free experience...</p>
+                <div class="subforum">
+                    <div class="subforum-row">
+                        <div class="subforum-icon subforum-column center">
+                            <i class="fa-solid fa-comment"></i>
                         </div>
-                        <div class="card">
-                            <img src="./assets/img/patern.png" alt="Post Bulk Actions">
-                            <h3>Post Bulk Actions</h3>
-                            <p>Released on 26 May 2023 We noticed many community admins are spending time individually...</p>
+                        <div class="subforum-description subforum-column">
+                            <h4><a href="#">Description Title</a></h4>
+                            <p>Description Content: let's try to be cool, otherwise,w at 'sthe point in libing together with people youdont' live.</p>
                         </div>
-                        <div class="card">
-                            <img src="./assets/img/patern.png" alt="Salesforce integration">
-                            <h3>Salesforce integration</h3>
-                            <p>Released on 03 May 2023 now your Bettermode community is integrated...</p>
+                        <div class="subforum-stats subforum-column center">
+                            <span>24 Like | 12 Dislike</span>
+                        </div>
+                        <div class="subforum-info subforum-column">
+                            Créer par <a href="">JustAUser</a> 
+                            <br>le <small>12 Dec 2020</small>
                         </div>
                     </div>
-                </section>
-                <section class="discussions">
-                    <h2>Discussions</h2>
-                    <!-- <div class="tabs">
-                        <button class="tab-button">Popular</button>
-                        <button class="tab-button">Recently active</button>
-                    </div> -->
-                    <div id="discussion-cards" class="discussion-cards">
-                        {{range .Topics}}
-                        <div class="discussion-card">
-                            <h3>{{.Title}}</h3>
-                            <p>{{.Content}}</p>
-                            {{if .Avatar}}
-                            <img class="avatar" src="{{.Avatar}}" alt="Avatar">
-                            {{else}}
-                            <img class="avatar" src="https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=667352e1&is=66720161&hm=e9706a01d813bf4d2ec8b92a71961800e1f6ee4f3ab8a148f0cf2b08abd40134&=&format=webp&quality=lossless" alt="Default Avatar">
-                            {{end}}
-                            <span>{{.Owner}}</span>
-                        </div>
-                        {{end}}
-                    </div>
+                </div>
                     
-                </section>
+                
             </main>
         </div>
         <footer>
@@ -107,6 +79,5 @@
             <p><a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Cookies</a></p>
         </footer>
     </div>
-    <script src="../assets/static/home.js"></script>
 </body>
 </html>
