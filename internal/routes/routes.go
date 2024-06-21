@@ -19,7 +19,6 @@ func Run() {
 	http.HandleFunc("/createtopic", handler.CreateTopicHandler)
 	http.HandleFunc("/addtopic", handler.AddTopicHandler)
 
-	// GitHub Authentication
 	http.HandleFunc("/auth/github", handler.HandleGitHubLogin)
 	http.HandleFunc("/github/callback", handler.HandleGitHubCallback)
 
