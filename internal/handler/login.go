@@ -261,7 +261,6 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		}
 	}(db)
 
-	// add into loginlogs
 	_, err = db.Exec("INSERT INTO loginlogs (username, plateform, datetime) VALUES (?, ?, ?)", userInfo.Username, "Discord", time.Now())
 	if err != nil {
 		http.Error(w, "Database query error", http.StatusInternalServerError)

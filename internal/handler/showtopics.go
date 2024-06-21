@@ -10,7 +10,11 @@ import (
 )
 
 func ShowTopicsHandler(w http.ResponseWriter, r *http.Request) {
-	// Récupérer l'id dans le lien
+	username := api.GetUsernameByCookie(r)
+	if username == "" {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
 	categoryid := r.URL.Query().Get("id")
 
 	// Récupérer les topics par catégorie
@@ -27,8 +31,10 @@ func ShowTopicsHandler(w http.ResponseWriter, r *http.Request) {
 		Topics   []api.Topic
 		Like     int
 		Dislike  int
+		Username string
 	}
 	data.Topics = topics
+	data.Username = username
 
 	// Tentative de récupération du cookie utilisateur
 	cookie, err := r.Cookie("user")
