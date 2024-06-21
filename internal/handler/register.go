@@ -20,6 +20,13 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
+	hashedPassword, err := HashPassword(password)
+	if err != nil {
+		http.Error(w, "Error hashing password", http.StatusInternalServerError)
+		log.Println("Error hashing password:", err)
+		return
+	}
+
 	// Ouvrir la connexion à la base de données
 	db, err := sql.ConnectDB()
 	if err != nil {
@@ -39,7 +46,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	defer stmt.Close()
 
 	// Exécuter la requête d'insertion
-	_, err = stmt.Exec(username, email, password)
+	_, err = stmt.Exec(username, email, hashedPassword)
 	if err != nil {
 		http.Error(w, "Database query execution error", http.StatusInternalServerError)
 		log.Println("Could not execute query:", err)
