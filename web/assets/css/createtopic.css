@@ -3,9 +3,9 @@
     src: url('../fonts/Satoshi-Bold.woff2') format('woff2'),
          url('../fonts/Satoshi-Bold.woff') format('woff'),
          url('../fonts/Satoshi-Bold.ttf') format('truetype');
-         font-weight: 700;
-         font-display: swap;
-         font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    font-style: normal;
 }
 
 body {
@@ -34,7 +34,6 @@ body {
     height: 40px;
     width: 40px;
     border-radius: 50%;
-    cursor: pointer;
 }
 
 header {
@@ -233,25 +232,65 @@ footer {
     height: 1rem;
 }
 
-.popup-menu {
-    position: absolute;
-    background-color: #f9f9f9;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    padding: 12px 16px;
-    z-index: 1;
-    right: 0;
-    top: 50px;
+/* Styles spécifiques pour le formulaire de création de topic */
+.create-topic-form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-.popup-menu a {
-    padding: 12px 16px;
-    text-decoration: none;
+.create-topic-form h2 {
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    color: #333;
+}
+
+.create-topic-form .form-group {
+    margin-bottom: 15px;
+}
+
+.create-topic-form .form-group label {
     display: block;
-    color: black;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
 }
 
-.avatar-menu {
-    cursor: pointer;
-    position: relative;
+.create-topic-form .form-group input,
+.create-topic-form .form-group select,
+.create-topic-form .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.create-topic-form .form-group textarea {
+    resize: vertical;
+}
+
+.create-topic-form .form-group input[type="file"] {
+    padding: 3px;
+}
+
+.create-topic-form button {
     display: inline-block;
+    padding: 10px 20px;
+    font-size: 1em;
+    font-weight: bold;
+    color: #fff;
+    background-color: #3653f8;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.create-topic-form button:hover {
+    background-color: #2b44c1;
 }

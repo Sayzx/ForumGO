@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BetterForum | Ajouter un Topic</title>
+    <link rel="icon" href="/assets/img/logo.png" type="image/png">
+    <link rel="stylesheet" href="../assets/css/createtopic.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <a href="/">
+                <img src="/assets/img/logo.png" alt="Bettermode">
+                </a>
+            </div>
+            <div class="group">
+                <svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><g><path d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"></path></g></svg>
+                <input placeholder="Search" type="search" class="input">
+              </div>
+              <div class="search-login">
+                {{if .LoggedIn}}
+                    <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img">
+                {{else}}
+                    <a href="/login"><button>Log in</button></a>
+                {{end}}
+            </div>
+        </header>
+        <div class="main-content">
+            <nav class="sidebar">
+                <ul>
+                    <p class="topics">Menu</p>
+                    <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="/"> Accueil</a></li>
+                    <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="#"> Actus</a></li>
+                    <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="/createtopic"> Crée un Topic</a> </li>
+                    <br>
+                    <p class="topics">Topics</p>
+                    <div class="topics-scrollable">
+                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=1"> Général</a></li>
+                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=2"> Jeux-Vidéos</a></li>
+                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=3"> Désveloppement</a></li>
+                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=4"> Informatique</a></li>
+                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=5"> Leak de jeux</a></li>
+                    </div>
+                </ul>
+                <div class="sidebar-footer">
+                    <ul>
+                        <li><a href="#">Support</a></li>
+                    </ul>
+                </div>
+            </nav>
+            <main>
+                <div class="create-topic-form">
+                    <h2>Créer un nouveau topic</h2>
+                    <form action="/addtopic" method="POST" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="category">Catégorie:</label>
+                            <select id="category" name="category">
+                                <option value="1">Jeux-Vidéos</option>
+                                <option value="2">Développement</option>
+                                <option value="3">Informatique</option>
+                                <option value="4">Leak de jeux</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tags">Tags (sélectionnez plusieurs):</label>
+                            <select id="tags" name="tags" multiple>
+                                <option value="general" style="color: blue;">Général</option>
+                                <option value="info" style="color: green;">Informatique</option>
+                                <option value="news" style="color: red;">Actus</option>
+                                <option value="feature" style="color: purple;">Features</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="title">Titre:</label>
+                            <input type="text" id="title" name="title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="content">Contenu:</label>
+                            <textarea id="content" name="content" rows="10" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="images">Ajouter des images (max 250MB):</label>
+                            <input type="file" id="images" name="images[]" multiple>
+                        </div>
+                        <button type="submit">Créer le topic</button>
+                    </form>
+                </div>
+            </main>
+        </div>
+        <footer>
+            <p>&copy; 2023 Better <span style="color:red;">Forum</span></p>
+            <p><a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Cookies</a></p>
+        </footer>
+    </div>
+</body>
+</html>

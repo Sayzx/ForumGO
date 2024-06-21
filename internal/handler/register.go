@@ -1,10 +1,8 @@
 package handler
 
 import (
-	sql2 "database/sql"
 	"log"
 
-	"main/internal/api"
 	"main/internal/sql"
 	"net/http"
 
@@ -17,52 +15,44 @@ func HashPassword(password string) (string, error) {
 }
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
-	err7 := r.ParseForm()
+	// Récupérer les valeurs du formulaire POST
 	username := r.FormValue("username")
 	email := r.FormValue("email")
 	password := r.FormValue("password")
-	cryptPassword, err1 := HashPassword(password)
-	if cryptPassword == "" || err1 != nil {
+
+	hashedPassword, err := HashPassword(password)
+	if err != nil {
 		http.Error(w, "Error hashing password", http.StatusInternalServerError)
-		log.Println("Could not hash password:", err1)
+		log.Println("Error hashing password:", err)
 		return
 	}
-	if username == "" || email == "" || password == "" {
-		http.Error(w, "Missing username, email or password", http.StatusBadRequest)
-		return
-	}
-	if err1 != nil {
-		http.Error(w, "Error hashing password", http.StatusInternalServerError)
-		log.Println("Could not hash password:", err1)
-		return
-	}
-	db, err2 := sql.ConnectDB()
-	if err2 != nil {
+
+	// Ouvrir la connexion à la base de données
+	db, err := sql.ConnectDB()
+	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err2)
+		log.Println("Could not connect to the database:", err)
 		return
 	}
-	defer func(db *sql2.DB) {
-		err3 := db.Close()
-		if err3 != nil {
-			log.Println("Could not close the database connection:", err3)
-		}
-	}(db)
+	defer db.Close()
 
-	// Préparer la requête d'insertion pour la table users
-	_, err4 := db.Prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)")
-	if err4 != nil {
+	// Préparer la requête d'insertion
+	stmt, err := db.Prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)")
+	if err != nil {
 		http.Error(w, "Database query preparation error", http.StatusInternalServerError)
-		log.Println("Could not prepare query:", err4)
+		log.Println("Could not prepare query:", err)
 		return
 	}
-	_, err7 = w.Write([]byte("User successfully registered"))
-	if err7 != nil {
-		http.Error(w, "Failed to write response", http.StatusInternalServerError)
-		log.Println("Could not write response:", err7)
-		return
-	}
-	http.Redirect(w, r, "/", http.StatusSeeOther)
-	api.GetAllTopics()
+	defer stmt.Close()
 
+	// Exécuter la requête d'insertion
+	_, err = stmt.Exec(username, email, hashedPassword)
+	if err != nil {
+		http.Error(w, "Database query execution error", http.StatusInternalServerError)
+		log.Println("Could not execute query:", err)
+		return
+	}
+
+	// Répondre à l'utilisateur
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
