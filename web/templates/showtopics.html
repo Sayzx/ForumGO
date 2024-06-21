@@ -52,22 +52,25 @@
                 </div>
             </nav>
             <main>
+                <!--  -->
                 <div class="subforum">
                     <div class="subforum-row">
                         <div class="subforum-icon subforum-column center">
                             <i class="fa-solid fa-comment"></i>
                         </div>
+                        {{range .Topics}}
                         <div class="subforum-description subforum-column">
-                            <h4><a href="#">Description Title</a></h4>
-                            <p>Description Content: let's try to be cool, otherwise,w at 'sthe point in libing together with people youdont' live.</p>
+                            <h4><a href="#"> {{.Title}}</a></h4>
+                            <p>Brève Description {{.ContentShort}}</p>
                         </div>
                         <div class="subforum-stats subforum-column center">
-                            <span>24 Like | 12 Dislike</span>
+                            <span>{{.Like}} Like | {{.Dislike}} Dislike</span>
                         </div>
                         <div class="subforum-info subforum-column">
-                            Créer par <a href="">JustAUser</a> 
-                            <br>le <small>12 Dec 2020</small>
+                            Créer par <a href=""> {{.Owner}}</a>
+                            <br>le <small>22/02/000</small>
                         </div>
+                        {{end}}
                     </div>
                 </div>
                     
