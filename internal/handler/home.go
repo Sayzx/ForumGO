@@ -18,10 +18,6 @@ type PageData struct {
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	// Chargement des topics
 	topics := api.GetAllTopics()
-	if topics == nil {
-		http.Error(w, "Could not fetch topics", http.StatusInternalServerError)
-		return
-	}
 
 	var data PageData
 	data.Topics = topics[:min(3, len(topics))]
