@@ -18,6 +18,13 @@ body {
     overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
+.owner-name {
+    font-size: 16px;
+    position: relative;
+    top: -4px;
+    margin-left: 3px;
+}
+
 .container {
     width: 100%;
     display: flex;
