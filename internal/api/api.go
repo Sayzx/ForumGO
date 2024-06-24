@@ -3,6 +3,9 @@ package api
 import (
 	"log"
 	dbsql "main/internal/sql"
+	"net/http"
+	"net/url"
+	"strings"
 )
 
 type Author struct {
@@ -11,11 +14,27 @@ type Author struct {
 }
 
 type Topic struct {
-	ID      int
-	Title   string
-	Content string
-	Owner   string
-	Avatar  string
+	ID           int
+	Title        string
+	Content      string
+	Owner        string
+	Avatar       string
+	Like         int
+	Dislike      int
+	ContentShort string
+	createat     string
+	Username     string
+}
+
+func GetUsernameByCookie(r *http.Request) string {
+	cookie, _ := r.Cookie("user")
+
+	value, _ := url.QueryUnescape(cookie.Value)
+
+	parts := strings.Split(value, ";")
+
+	username := parts[0]
+	return username
 }
 
 func GetAllTopics() []Topic {
@@ -32,7 +51,7 @@ func GetAllTopics() []Topic {
 	}()
 
 	// Prepare the query to get all topics
-	stmt, err := db.Prepare("SELECT id, title, content, owner, avatar FROM topics")
+	stmt, err := db.Prepare("SELECT id, title, content, owner, avatar, createat FROM topics")
 	if err != nil {
 		log.Println("Could not prepare query:", err)
 		return nil
@@ -59,7 +78,7 @@ func GetAllTopics() []Topic {
 	var topics []Topic
 	for rows.Next() {
 		var topic Topic
-		err := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar)
+		err := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar, &topic.createat)
 		if err != nil {
 			log.Println("Could not scan row:", err)
 			return nil
@@ -75,7 +94,7 @@ func GetAllTopics() []Topic {
 	return topics
 }
 
-func GetAllTopicsById(id int) []Topic {
+func GetAllTopicsById(id string) []Topic {
 	// Connect to the SQLite 3 database
 	db, err := dbsql.ConnectDB() // Use the renamed import
 	if err != nil {
@@ -89,7 +108,7 @@ func GetAllTopicsById(id int) []Topic {
 	}()
 
 	// Prepare the query to get all topics
-	stmt, err := db.Prepare("SELECT id, title, content, owner, avatar FROM topics where categoryid = ?")
+	stmt, err := db.Prepare("SELECT id, title, content, owner, avatar, like, dislike FROM topics where categoryid = ?")
 	if err != nil {
 		log.Println("Could not prepare query:", err)
 		return nil
@@ -116,10 +135,16 @@ func GetAllTopicsById(id int) []Topic {
 	var topics []Topic
 	for rows.Next() {
 		var topic Topic
-		err := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar)
+		err := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar, &topic.Like, &topic.Dislike)
 		if err != nil {
 			log.Println("Could not scan row:", err)
 			return nil
+		}
+		// Compute ContentShort
+		if len(topic.Content) > 50 {
+			topic.ContentShort = topic.Content[:50] + "..."
+		} else {
+			topic.ContentShort = topic.Content
 		}
 		topics = append(topics, topic)
 	}
