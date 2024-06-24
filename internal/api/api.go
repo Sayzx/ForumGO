@@ -156,3 +156,14 @@ func GetAllTopicsById(id string) []Topic {
 
 	return topics
 }
+
+func GetAvatarByCookie(r *http.Request) string {
+	cookie, _ := r.Cookie("user")
+
+	value, _ := url.QueryUnescape(cookie.Value)
+
+	parts := strings.Split(value, ";")
+
+	avatar := parts[1]
+	return avatar
+}
