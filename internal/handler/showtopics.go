@@ -18,18 +18,15 @@ func ShowTopicsHandler(w http.ResponseWriter, r *http.Request) {
 	categoryid := r.URL.Query().Get("id")
 
 	topics := api.GetAllTopicsById(categoryid)
-	if topics == nil {
-		http.Error(w, "Could not fetch topics", http.StatusInternalServerError)
-		return
-	}
 
 	var data struct {
-		LoggedIn bool
-		Avatar   string
-		Topics   []api.Topic
-		Like     int
-		Dislike  int
-		Username string
+		LoggedIn  bool
+		Avatar    string
+		Topics    []api.Topic
+		Like      int
+		Dislike   int
+		Username  string
+		Createdat string
 	}
 	data.Topics = topics
 	data.Username = username

@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/oauth2"
 )
@@ -65,9 +66,10 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Set a cookie with user info
+	userUID := uuid.New().String()
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
-		Value:   url.QueryEscape(userInfo.Email + ";" + userInfo.Picture),
+		Value:   url.QueryEscape(userInfo.Email+";"+userInfo.Picture) + ";" + userUID,
 		Expires: time.Now().Add(24 * time.Hour),
 		Path:    "/",
 	})
@@ -125,9 +127,10 @@ func HandleGitHubCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userUIID := uuid.New().String()
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
-		Value:   url.QueryEscape(userInfo.Login + ";" + userInfo.AvatarURL),
+		Value:   url.QueryEscape(userInfo.Login+";"+userInfo.AvatarURL) + ";" + userUIID,
 		Expires: time.Now().Add(24 * time.Hour),
 		Path:    "/",
 	})
@@ -190,9 +193,10 @@ func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userUIID := uuid.New().String()
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
-		Value:   url.QueryEscape(userInfo.Name + ";" + userInfo.Picture.Data.URL),
+		Value:   url.QueryEscape(userInfo.Name+";"+userInfo.Picture.Data.URL) + ";" + userUIID,
 		Expires: time.Now().Add(24 * time.Hour),
 		Path:    "/",
 	})
@@ -238,9 +242,10 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		avatarURL = "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=6673fba1&is=6672aa21&hm=5741edc76eb55c2e3e4ac8924a89c2d610df57a88caf4880636b97a92b3fc153&format=webp&quality=lossless&width=640&height=640&"
 	}
 
+	userUIID := uuid.New().String()
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
-		Value:   url.QueryEscape(userInfo.Username + ";" + avatarURL),
+		Value:   url.QueryEscape(userInfo.Username+";"+avatarURL) + ";" + userUIID,
 		Expires: time.Now().Add(24 * time.Hour),
 		Path:    "/",
 	})
@@ -326,10 +331,10 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if CheckPasswordHash(password, storedPasswordHash) {
-		fmt.Println("Login successful!")
+		userUIID := uuid.New().String()
 		http.SetCookie(w, &http.Cookie{
 			Name:    "user",
-			Value:   url.QueryEscape(storedEmail + ";https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=667a9321&is=667941a1&hm=733e73400a7e6e85dac74042fc2ce1f50eeb42c7d53d1228d0dde1e45718fc9d&=&format=webp&quality=lossless&width=640&height=640"),
+			Value:   url.QueryEscape(storedEmail+";https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=667a9321&is=667941a1&hm=733e73400a7e6e85dac74042fc2ce1f50eeb42c7d53d1228d0dde1e45718fc9d&=&format=webp&quality=lossless&width=640&height=640") + ";" + userUIID,
 			Expires: time.Now().Add(1 * time.Hour),
 			Path:    "/",
 		})
