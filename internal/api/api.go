@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 type Author struct {
@@ -161,4 +162,10 @@ func GetAvatarByCookie(r *http.Request) string {
 
 	avatar := parts[1]
 	return avatar
+}
+
+func GetDateAndTime() string {
+	// get today date and time
+	now := time.Now()
+	return now.Format("2006-01-02 15:04:05")
 }

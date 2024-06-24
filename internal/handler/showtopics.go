@@ -20,12 +20,13 @@ func ShowTopicsHandler(w http.ResponseWriter, r *http.Request) {
 	topics := api.GetAllTopicsById(categoryid)
 
 	var data struct {
-		LoggedIn bool
-		Avatar   string
-		Topics   []api.Topic
-		Like     int
-		Dislike  int
-		Username string
+		LoggedIn  bool
+		Avatar    string
+		Topics    []api.Topic
+		Like      int
+		Dislike   int
+		Username  string
+		Createdat string
 	}
 	data.Topics = topics
 	data.Username = username
