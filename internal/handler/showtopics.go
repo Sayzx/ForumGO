@@ -18,10 +18,10 @@ func ShowTopicsHandler(w http.ResponseWriter, r *http.Request) {
 	categoryid := r.URL.Query().Get("id")
 
 	topics := api.GetAllTopicsById(categoryid)
-	if topics == nil {
-		http.Error(w, "Could not fetch topics", http.StatusInternalServerError)
-		return
-	}
+	// if topics == nil {
+	// 	http.Error(w, "Could not fetch topics", http.StatusInternalServerError)
+	// 	return
+	// }
 
 	var data struct {
 		LoggedIn bool
