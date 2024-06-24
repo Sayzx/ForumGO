@@ -161,47 +161,13 @@ func GetAllTopicsById(id string) []Topic {
 	return topics
 }
 
-// func GetPostById(id string) *Topic {
-// 	// Connect to the SQLite 3 database
-// 	db, err := dbsql.ConnectDB() // Use the renamed import
-// 	if err != nil {
-// 		log.Println("Could not connect to the database:", err)
-// 		return nil
-// 	}
-// 	defer func() {
-// 		if err := db.Close(); err != nil {
-// 			log.Println("Could not close the database connection:", err)
-// 		}
-// 	}()
+func GetAvatarByCookie(r *http.Request) string {
+	cookie, _ := r.Cookie("user")
 
-// 	// Prepare the query to get the post
-// 	stmt, err := db.Prepare("SELECT id, title, content, owner, avatar, like, dislike FROM topics where id = ?")
-// 	if err != nil {
-// 		log.Println("Could not prepare query:", err)
-// 		return nil
-// 	}
-// 	defer func() {
-// 		if err := stmt.Close(); err != nil {
-// 			log.Println("Could not close the statement:", err)
-// 		}
-// 	}()
+	value, _ := url.QueryUnescape(cookie.Value)
 
-// 	// Execute the query
-// 	row := stmt.QueryRow(id)
+	parts := strings.Split(value, ";")
 
-// 	// Process the result
-// 	var post Topic
-// 	err = row.Scan(&post.ID, &post.Title, &post.Content, &post.Owner, &post.Avatar, &post.Like, &post.Dislike)
-// 	if err != nil {
-// 		log.Println("Could not scan row:", err)
-// 		return nil
-// 	}
-// 	// Compute ContentShort
-// 	if len(post.Content) > 50 {
-// 		post.ContentShort = post.Content[:50] + "..."
-// 	} else {
-// 		post.ContentShort = post.Content
-// 	}
-
-// 	return &post
-// }
+	avatar := parts[1]
+	return avatar
+}

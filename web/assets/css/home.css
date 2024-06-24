@@ -48,8 +48,7 @@ header {
 }
 
 p[id="topics"] {
-    text-decoration: underline;
-    font-family: 'Arial';
+    font-family: 'Satoshi-Bold';
 }
 
 .search-login {
