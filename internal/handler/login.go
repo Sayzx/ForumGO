@@ -92,8 +92,6 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 		log.Println("Could not execute query:", err)
 		return
 	}
-
-	// Redirect to home page or send the user info as needed
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -237,7 +235,6 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 	if userInfo.Avatar != "" {
 		avatarURL = fmt.Sprintf("https://cdn.discordapp.com/avatars/%s/%s.png", userInfo.ID, userInfo.Avatar)
 	} else {
-		// Default avatar if none is available
 		avatarURL = "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=6673fba1&is=6672aa21&hm=5741edc76eb55c2e3e4ac8924a89c2d610df57a88caf4880636b97a92b3fc153&format=webp&quality=lossless&width=640&height=640&"
 	}
 
@@ -327,21 +324,16 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	fmt.Println("Stored Email:", storedEmail)
-	fmt.Println("Stored Password Hash:", storedPasswordHash)
 
 	if CheckPasswordHash(password, storedPasswordHash) {
-		// Successful login
 		fmt.Println("Login successful!")
-		// Set a default avatar cookie here, as user does not have an avatar URL.
 		http.SetCookie(w, &http.Cookie{
 			Name:    "user",
-			Value:   url.QueryEscape(storedEmail + ";https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=6673fba1&is=6672aa21&hm=5741edc76eb55c2e3e4ac8924a89c2d610df57a88caf4880636b97a92b3fc153&format=webp&quality=lossless&width=640&height=640&"),
-			Expires: time.Now().Add(24 * time.Hour),
+			Value:   url.QueryEscape(storedEmail + ";https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=667a9321&is=667941a1&hm=733e73400a7e6e85dac74042fc2ce1f50eeb42c7d53d1228d0dde1e45718fc9d&=&format=webp&quality=lossless&width=640&height=640"),
+			Expires: time.Now().Add(1 * time.Hour),
 			Path:    "/",
 		})
 		http.Redirect(w, r, "/", http.StatusSeeOther)
-		// add db
 		_, err = db.Exec("INSERT INTO loginlogs (username, plateform, datetime) VALUES (?, ?, ?)", email, "Local", time.Now())
 		if err != nil {
 			http.Error(w, "Database query error", http.StatusInternalServerError)
@@ -354,13 +346,11 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	// Supprimer le cookie en le mettant à une date d'expiration passée
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
 		Value:   "",
 		Expires: time.Unix(0, 0),
 		Path:    "/",
 	})
-	// Rediriger vers la page d'accueil
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
