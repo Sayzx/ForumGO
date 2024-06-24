@@ -3,6 +3,9 @@ package api
 import (
 	"log"
 	dbsql "main/internal/sql"
+	"net/http"
+	"net/url"
+	"strings"
 )
 
 type Author struct {
@@ -20,6 +23,18 @@ type Topic struct {
 	Dislike      int
 	ContentShort string
 	createat     string
+	Username     string
+}
+
+func GetUsernameByCookie(r *http.Request) string {
+	cookie, _ := r.Cookie("user")
+
+	value, _ := url.QueryUnescape(cookie.Value)
+
+	parts := strings.Split(value, ";")
+
+	username := parts[0]
+	return username
 }
 
 func GetAllTopics() []Topic {

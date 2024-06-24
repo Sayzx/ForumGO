@@ -47,9 +47,8 @@ header {
     border-bottom: 1px solid #ddd;
 }
 
-p[class="topics"] {
-    text-decoration: underline;
-    font-family: 'Arial';
+p[id="topics"] {
+    font-family: 'Satoshi-Bold';
 }
 
 .search-login {
