@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"main/internal/handler"
 	"net/http"
 )
@@ -24,23 +23,14 @@ func Run() {
 	http.HandleFunc("/auth/github", handler.HandleGitHubLogin)
 	http.HandleFunc("/github/callback", handler.HandleGitHubCallback)
 
-	// Google Authentication
 	http.HandleFunc("/auth/google", handler.HandleGoogleLogin)
 	http.HandleFunc("/google/callback", handler.HandleGoogleCallback)
 
-	// Facebook Authentication
 	http.HandleFunc("/auth/facebook", handler.HandleFacebookLogin)
 	http.HandleFunc("/facebook/callback", handler.HandleFacebookCallback)
 
-	// Discord Authentication
 	http.HandleFunc("/auth/discord", handler.HandleDiscordLogin)
 	http.HandleFunc("/discord/callback", handler.HandleDiscordCallback)
 
-	// Logout
 	http.HandleFunc("/logout", handler.LogoutHandler)
-
-	fmt.Println("Server started at http://localhost:8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		fmt.Printf("Erreur lors du démarrage du serveur: %v\n", err)
-	}
 }

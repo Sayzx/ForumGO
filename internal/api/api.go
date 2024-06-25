@@ -25,76 +25,72 @@ type Topic struct {
 	CheckDislike sql.NullInt64
 	Dislike      int
 	ContentShort string
-	createat     sql.NullString
+	CreatedAt    sql.NullString
 	Username     string
 }
 
 func GetUsernameByCookie(r *http.Request) string {
-	cookie, _ := r.Cookie("user")
-
-	if cookie == nil {
+	cookie, err := r.Cookie("user")
+	if err != nil || cookie == nil {
 		return ""
 	}
 
-	value, _ := url.QueryUnescape(cookie.Value)
+	value, err1 := url.QueryUnescape(cookie.Value)
+	if err1 != nil {
+		return ""
+	}
 
 	parts := strings.Split(value, ";")
-
-	username := parts[0]
-	return username
+	return parts[0]
 }
 
 func GetAllTopics() []Topic {
-	// Connect to the SQLite 3 database
-	db, err := dbsql.ConnectDB() // Use the renamed import
+	db, err := dbsql.ConnectDB()
 	if err != nil {
 		log.Println("Could not connect to the database:", err)
 		return nil
 	}
 	defer func() {
-		if err := db.Close(); err != nil {
-			log.Println("Could not close the database connection:", err)
+		if err1 := db.Close(); err1 != nil {
+			log.Println("Could not close the database connection:", err1)
 		}
 	}()
 
-	// Prepare the query to get all topics
-	stmt, err := db.Prepare("SELECT id, title, content, owner, avatar, createat FROM topics")
-	if err != nil {
-		log.Println("Could not prepare query:", err)
+	stmt, err1 := db.Prepare("SELECT id, title, content, owner, avatar, createat FROM topics")
+	if err1 != nil {
+		log.Println("Could not prepare query:", err1)
 		return nil
 	}
 	defer func() {
-		if err := stmt.Close(); err != nil {
-			log.Println("Could not close the statement:", err)
+		if err2 := stmt.Close(); err2 != nil {
+			log.Println("Could not close the statement:", err2)
 		}
 	}()
 
-	// Execute the query
-	rows, err := stmt.Query()
-	if err != nil {
-		log.Println("Could not execute query:", err)
+	rows, err2 := stmt.Query()
+	if err2 != nil {
+		log.Println("Could not execute query:", err2)
 		return nil
 	}
 	defer func() {
-		if err := rows.Close(); err != nil {
-			log.Println("Could not close the rows:", err)
+		if err3 := rows.Close(); err3 != nil {
+			log.Println("Could not close the rows:", err3)
 		}
 	}()
 
-	// Process the result
 	var topics []Topic
 	for rows.Next() {
 		var topic Topic
-		err := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar, &topic.createat)
-		if err != nil {
-			log.Println("Could not scan row:", err)
+		err3 := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar, &topic.CreatedAt)
+		if err3 != nil {
+			log.Println("Could not scan row:", err3)
 			return nil
 		}
 		topics = append(topics, topic)
 	}
 
-	if err = rows.Err(); err != nil {
-		log.Println("Error encountered during row iteration:", err)
+	if err4 := rows.Err(); err4 != nil {
+		log.Println("Error encountered during row iteration:", err4)
 		return nil
 	}
 
@@ -102,55 +98,50 @@ func GetAllTopics() []Topic {
 }
 
 func GetAllTopicsById(id string) []Topic {
-	// Connect to the SQLite 3 database
-	db, err := dbsql.ConnectDB() // Use the renamed import
+	db, err := dbsql.ConnectDB()
 	if err != nil {
 		log.Println("Could not connect to the database:", err)
 		return nil
 	}
 	defer func() {
-		if err := db.Close(); err != nil {
-			log.Println("Could not close the database connection:", err)
+		if err1 := db.Close(); err1 != nil {
+			log.Println("Could not close the database connection:", err1)
 		}
 	}()
 
-	// Prepare the query to get all topics
-	stmt, err := db.Prepare("SELECT id, title, content, owner, avatar, like, dislike FROM topics where categoryid = ?")
-	if err != nil {
-		log.Println("Could not prepare query:", err)
+	stmt, err1 := db.Prepare("SELECT id, title, content, owner, avatar, like, dislike FROM topics WHERE categoryid = ?")
+	if err1 != nil {
+		log.Println("Could not prepare query:", err1)
 		return nil
 	}
 	defer func() {
-		if err := stmt.Close(); err != nil {
-			log.Println("Could not close the statement:", err)
+		if err2 := stmt.Close(); err2 != nil {
+			log.Println("Could not close the statement:", err2)
 		}
 	}()
 
-	// Execute the query
-	rows, err := stmt.Query(id)
-	if err != nil {
-		log.Println("Could not execute query:", err)
+	rows, err2 := stmt.Query(id)
+	if err2 != nil {
+		log.Println("Could not execute query:", err2)
 		return nil
 	}
 	defer func() {
-		if err := rows.Close(); err != nil {
-			log.Println("Could not close the rows:", err)
+		if err3 := rows.Close(); err3 != nil {
+			log.Println("Could not close the rows:", err3)
 		}
 	}()
 
-	// Process the result
 	var topics []Topic
 	for rows.Next() {
 		var topic Topic
-		err := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar, &topic.CheckLike, &topic.CheckDislike)
-		if err != nil {
-			log.Println("Could not scan row:", err)
+		err3 := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar, &topic.CheckLike, &topic.CheckDislike)
+		if err3 != nil {
+			log.Println("Could not scan row:", err3)
 			return nil
 		}
 		topic.Like = int(topic.CheckLike.Int64)
 		topic.Dislike = int(topic.CheckDislike.Int64)
 
-		// Compute ContentShort
 		if len(topic.Content) > 50 {
 			topic.ContentShort = topic.Content[:50] + "..."
 		} else {
@@ -159,55 +150,10 @@ func GetAllTopicsById(id string) []Topic {
 		topics = append(topics, topic)
 	}
 
-	if err = rows.Err(); err != nil {
-		log.Println("Error encountered during row iteration:", err)
+	if err4 := rows.Err(); err4 != nil {
+		log.Println("Error encountered during row iteration:", err4)
 		return nil
 	}
 
 	return topics
 }
-
-// func GetPostById(id string) *Topic {
-// 	// Connect to the SQLite 3 database
-// 	db, err := dbsql.ConnectDB() // Use the renamed import
-// 	if err != nil {
-// 		log.Println("Could not connect to the database:", err)
-// 		return nil
-// 	}
-// 	defer func() {
-// 		if err := db.Close(); err != nil {
-// 			log.Println("Could not close the database connection:", err)
-// 		}
-// 	}()
-
-// 	// Prepare the query to get the post
-// 	stmt, err := db.Prepare("SELECT id, title, content, owner, avatar, like, dislike FROM topics where id = ?")
-// 	if err != nil {
-// 		log.Println("Could not prepare query:", err)
-// 		return nil
-// 	}
-// 	defer func() {
-// 		if err := stmt.Close(); err != nil {
-// 			log.Println("Could not close the statement:", err)
-// 		}
-// 	}()
-
-// 	// Execute the query
-// 	row := stmt.QueryRow(id)
-
-// 	// Process the result
-// 	var post Topic
-// 	err = row.Scan(&post.ID, &post.Title, &post.Content, &post.Owner, &post.Avatar, &post.Like, &post.Dislike)
-// 	if err != nil {
-// 		log.Println("Could not scan row:", err)
-// 		return nil
-// 	}
-// 	// Compute ContentShort
-// 	if len(post.Content) > 50 {
-// 		post.ContentShort = post.Content[:50] + "..."
-// 	} else {
-// 		post.ContentShort = post.Content
-// 	}
-
-// 	return &post
-// }

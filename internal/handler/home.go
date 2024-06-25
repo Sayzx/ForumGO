@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"log"
 	"main/internal/api"
+	"math"
 	"net/http"
 	"net/url"
 	"strings"
@@ -16,21 +17,21 @@ type PageData struct {
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	// Chargement des topics
 	topics := api.GetAllTopics()
 	if topics == nil {
 		http.Error(w, "Could not fetch topics", http.StatusInternalServerError)
 		return
 	}
 
-	var data PageData
-	data.Topics = topics[:min(3, len(topics))]
+	data := PageData{
+		Topics: topics[:int(math.Min(3, float64(len(topics))))],
+	}
 
 	cookie, err := r.Cookie("user")
 	if err == nil && cookie != nil {
-		value, err := url.QueryUnescape(cookie.Value)
-		if err != nil {
-			log.Println("Error unescaping cookie value:", err)
+		value, err1 := url.QueryUnescape(cookie.Value)
+		if err1 != nil {
+			log.Println("Error unescaping cookie value:", err1)
 			http.Error(w, "Error processing cookie", http.StatusBadRequest)
 			return
 		}
@@ -46,23 +47,15 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		data.Avatar = "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=667a9321&is=667941a1&hm=733e73400a7e6e85dac74042fc2ce1f50eeb42c7d53d1228d0dde1e45718fc9d&=&format=webp&quality=lossless&width=640&height=640"
 	}
 
-	// Chargement et exécution du template
-	tmpl, err := template.ParseFiles("./web/templates/index.html")
-	if err != nil {
-		log.Println("Error parsing template:", err)
+	tmpl, err2 := template.ParseFiles("./web/templates/index.html")
+	if err2 != nil {
+		log.Println("Error parsing template:", err2)
 		http.Error(w, "Error parsing template", http.StatusInternalServerError)
 		return
 	}
 
-	if err := tmpl.Execute(w, data); err != nil {
-		log.Println("Error executing template:", err)
+	if err3 := tmpl.Execute(w, data); err3 != nil {
+		log.Println("Error executing template:", err3)
 		http.Error(w, "Error executing template", http.StatusInternalServerError)
 	}
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }

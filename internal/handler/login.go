@@ -3,7 +3,9 @@ package handler
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"log"
 	"main/internal/config"
 	dbsql "main/internal/sql"
@@ -16,23 +18,23 @@ import (
 )
 
 func HandleGoogleLogin(w http.ResponseWriter, r *http.Request) {
-	url := config.GoogleOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
-	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+	authUrl := config.GoogleOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
+	http.Redirect(w, r, authUrl, http.StatusTemporaryRedirect)
 }
 
 func HandleGitHubLogin(w http.ResponseWriter, r *http.Request) {
-	url := config.GitHubOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
-	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+	authUrl := config.GitHubOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
+	http.Redirect(w, r, authUrl, http.StatusTemporaryRedirect)
 }
 
 func HandleFacebookLogin(w http.ResponseWriter, r *http.Request) {
-	url := config.FacebookOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
-	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+	authUrl := config.FacebookOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
+	http.Redirect(w, r, authUrl, http.StatusTemporaryRedirect)
 }
 
 func HandleDiscordLogin(w http.ResponseWriter, r *http.Request) {
-	url := config.DiscordOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
-	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+	authUrl := config.DiscordOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
+	http.Redirect(w, r, authUrl, http.StatusTemporaryRedirect)
 }
 
 func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
@@ -47,24 +49,28 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to exchange token: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	resp, err := http.Get("https://www.googleapis.com/oauth2/v3/userinfo?access_token=" + token.AccessToken)
-	if err != nil {
-		http.Error(w, "Failed to get user info: "+err.Error(), http.StatusInternalServerError)
+	resp, err1 := http.Get("https://www.googleapis.com/oauth2/v3/userinfo?access_token=" + token.AccessToken)
+	if err1 != nil {
+		http.Error(w, "Failed to get user info: "+err1.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err2 := Body.Close()
+		if err2 != nil {
+
+		}
+	}(resp.Body)
 
 	userInfo := struct {
 		Email   string `json:"email"`
 		Picture string `json:"picture"`
 	}{}
 
-	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
-		http.Error(w, "Failed to decode user info: "+err.Error(), http.StatusInternalServerError)
+	if err3 := json.NewDecoder(resp.Body).Decode(&userInfo); err3 != nil {
+		http.Error(w, "Failed to decode user info: "+err3.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Set a cookie with user info
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
 		Value:   url.QueryEscape(userInfo.Email + ";" + userInfo.Picture),
@@ -72,24 +78,22 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 		Path:    "/",
 	})
 
-	// add sql
-	db, err := dbsql.ConnectDB()
-	if err != nil {
+	db, err4 := dbsql.ConnectDB()
+	if err4 != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err)
+		log.Println("Could not connect to the database:", err4)
 		return
 	}
 	defer func(db *sql.DB) {
-		if err := db.Close(); err != nil {
-			log.Println("Could not close the database connection:", err)
+		if err5 := db.Close(); err5 != nil {
+			log.Println("Could not close the database connection:", err5)
 		}
 	}(db)
 
-	// add into loginlogs
-	_, err = db.Exec("INSERT INTO loginlogs (username, plateform, datetime) VALUES (?, ?, ?)", userInfo.Email, "Google", time.Now())
-	if err != nil {
+	_, err6 := db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", userInfo.Email, "Google", time.Now())
+	if err6 != nil {
 		http.Error(w, "Database query error", http.StatusInternalServerError)
-		log.Println("Could not execute query:", err)
+		log.Println("Could not execute query:", err6)
 		return
 	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -108,20 +112,25 @@ func HandleGitHubCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	client := config.GitHubOauthConfig.Client(ctx, token)
-	user, err := client.Get("https://api.github.com/user")
-	if err != nil {
-		http.Error(w, "Failed to get user info: "+err.Error(), http.StatusInternalServerError)
+	user, err1 := client.Get("https://api.github.com/user")
+	if err1 != nil {
+		http.Error(w, "Failed to get user info: "+err1.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer user.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err2 := Body.Close()
+		if err2 != nil {
+
+		}
+	}(user.Body)
 
 	userInfo := struct {
 		Login     string `json:"login"`
 		AvatarURL string `json:"avatar_url"`
 	}{}
 
-	if err := json.NewDecoder(user.Body).Decode(&userInfo); err != nil {
-		http.Error(w, "Failed to decode user info: "+err.Error(), http.StatusInternalServerError)
+	if err3 := json.NewDecoder(user.Body).Decode(&userInfo); err3 != nil {
+		http.Error(w, "Failed to decode user info: "+err3.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -132,24 +141,22 @@ func HandleGitHubCallback(w http.ResponseWriter, r *http.Request) {
 		Path:    "/",
 	})
 
-	// add db
-	db, err := dbsql.ConnectDB()
-	if err != nil {
+	db, err4 := dbsql.ConnectDB()
+	if err4 != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err)
+		log.Println("Could not connect to the database:", err4)
 		return
 	}
 	defer func(db *sql.DB) {
-		if err := db.Close(); err != nil {
-			log.Println("Could not close the database connection:", err)
+		if err5 := db.Close(); err5 != nil {
+			log.Println("Could not close the database connection:", err5)
 		}
 	}(db)
 
-	// add into loginlogs
-	_, err = db.Exec("INSERT INTO loginlogs (username, plateform, datetime) VALUES (?, ?, ?)", userInfo.Login, "GitHub", time.Now())
-	if err != nil {
+	_, err6 := db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", userInfo.Login, "GitHub", time.Now())
+	if err6 != nil {
 		http.Error(w, "Database query error", http.StatusInternalServerError)
-		log.Println("Could not execute query:", err)
+		log.Println("Could not execute query:", err6)
 		return
 	}
 
@@ -169,12 +176,17 @@ func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	client := config.FacebookOauthConfig.Client(ctx, token)
-	user, err := client.Get("https://graph.facebook.com/me?fields=id,name,email,picture")
-	if err != nil {
-		http.Error(w, "Failed to get user info: "+err.Error(), http.StatusInternalServerError)
+	user, err1 := client.Get("https://graph.facebook.com/me?fields=id,name,email,picture")
+	if err1 != nil {
+		http.Error(w, "Failed to get user info: "+err1.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer user.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err2 := Body.Close()
+		if err2 != nil {
+
+		}
+	}(user.Body)
 
 	userInfo := struct {
 		Name    string `json:"name"`
@@ -185,8 +197,8 @@ func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
 		} `json:"picture"`
 	}{}
 
-	if err := json.NewDecoder(user.Body).Decode(&userInfo); err != nil {
-		http.Error(w, "Failed to decode user info: "+err.Error(), http.StatusInternalServerError)
+	if err3 := json.NewDecoder(user.Body).Decode(&userInfo); err3 != nil {
+		http.Error(w, "Failed to decode user info: "+err3.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -213,12 +225,17 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	client := config.DiscordOauthConfig.Client(ctx, token)
-	user, err := client.Get("https://discord.com/api/users/@me")
-	if err != nil {
-		http.Error(w, "Failed to get user info: "+err.Error(), http.StatusInternalServerError)
+	user, err1 := client.Get("https://discord.com/api/users/@me")
+	if err1 != nil {
+		http.Error(w, "Failed to get user info: "+err1.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer user.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err2 := Body.Close()
+		if err2 != nil {
+
+		}
+	}(user.Body)
 
 	userInfo := struct {
 		Username string `json:"username"`
@@ -226,8 +243,8 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		ID       string `json:"id"`
 	}{}
 
-	if err := json.NewDecoder(user.Body).Decode(&userInfo); err != nil {
-		http.Error(w, "Failed to decode user info: "+err.Error(), http.StatusInternalServerError)
+	if err3 := json.NewDecoder(user.Body).Decode(&userInfo); err3 != nil {
+		http.Error(w, "Failed to decode user info: "+err3.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -245,23 +262,22 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		Path:    "/",
 	})
 
-	// add db
-	db, err := dbsql.ConnectDB()
-	if err != nil {
+	db, err4 := dbsql.ConnectDB()
+	if err4 != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err)
+		log.Println("Could not connect to the database:", err4)
 		return
 	}
 	defer func(db *sql.DB) {
-		if err := db.Close(); err != nil {
-			log.Println("Could not close the database connection:", err)
+		if err5 := db.Close(); err5 != nil {
+			log.Println("Could not close the database connection:", err5)
 		}
 	}(db)
 
-	_, err = db.Exec("INSERT INTO loginlogs (username, plateform, datetime) VALUES (?, ?, ?)", userInfo.Username, "Discord", time.Now())
-	if err != nil {
+	_, err6 := db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", userInfo.Username, "Discord", time.Now())
+	if err6 != nil {
 		http.Error(w, "Database query error", http.StatusInternalServerError)
-		log.Println("Could not execute query:", err)
+		log.Println("Could not execute query:", err6)
 		return
 	}
 
@@ -305,22 +321,27 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db, err := dbsql.ConnectDB()
-	if err != nil {
+	db, err1 := dbsql.ConnectDB()
+	if err1 != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err)
+		log.Println("Could not connect to the database:", err1)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		err2 := db.Close()
+		if err2 != nil {
+
+		}
+	}(db)
 
 	var storedEmail, storedPasswordHash string
-	err = db.QueryRow("SELECT email, password FROM users WHERE email = ?", email).Scan(&storedEmail, &storedPasswordHash)
-	if err != nil {
-		if err == sql.ErrNoRows {
+	err3 := db.QueryRow("SELECT email, password FROM users WHERE email = ?", email).Scan(&storedEmail, &storedPasswordHash)
+	if err3 != nil {
+		if errors.Is(err3, sql.ErrNoRows) {
 			http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 		} else {
 			http.Error(w, "Database query error", http.StatusInternalServerError)
-			log.Println("Could not execute query:", err)
+			log.Println("Could not execute query:", err3)
 		}
 		return
 	}
@@ -334,10 +355,10 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 			Path:    "/",
 		})
 		http.Redirect(w, r, "/", http.StatusSeeOther)
-		_, err = db.Exec("INSERT INTO loginlogs (username, plateform, datetime) VALUES (?, ?, ?)", email, "Local", time.Now())
-		if err != nil {
+		_, err4 := db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", email, "Local", time.Now())
+		if err4 != nil {
 			http.Error(w, "Database query error", http.StatusInternalServerError)
-			log.Println("Could not execute query:", err)
+			log.Println("Could not execute query:", err4)
 			return
 		}
 	} else {
