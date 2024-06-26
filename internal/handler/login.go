@@ -7,6 +7,7 @@ import (
 	"log"
 	"main/internal/config"
 	dbsql "main/internal/sql"
+	"main/internal/utils"
 	"net/http"
 	"net/url"
 	"time"
@@ -65,11 +66,14 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Nettoyer l'URL de l'avatar
+	cleanAvatar := utils.CleanAvatarURL(userInfo.Picture)
+
 	// Set a cookie with user info
 	userUID := uuid.New().String()
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
-		Value:   url.QueryEscape(userInfo.Email+";"+userInfo.Picture) + ";" + userUID,
+		Value:   url.QueryEscape(userInfo.Email+";"+cleanAvatar) + ";" + userUID,
 		Expires: time.Now().Add(24 * time.Hour),
 		Path:    "/",
 	})
@@ -127,10 +131,13 @@ func HandleGitHubCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Nettoyer l'URL de l'avatar
+	cleanAvatar := utils.CleanAvatarURL(userInfo.AvatarURL)
+
 	userUIID := uuid.New().String()
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
-		Value:   url.QueryEscape(userInfo.Login+";"+userInfo.AvatarURL) + ";" + userUIID,
+		Value:   url.QueryEscape(userInfo.Login+";"+cleanAvatar) + ";" + userUIID,
 		Expires: time.Now().Add(24 * time.Hour),
 		Path:    "/",
 	})
@@ -193,13 +200,32 @@ func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userUIID := uuid.New().String()
+	// Nettoyer l'URL de l'avatar
+	cleanAvatar := utils.CleanAvatarURL(userInfo.Picture.Data.URL)
+
+	userUID := uuid.New().String()
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
-		Value:   url.QueryEscape(userInfo.Name+";"+userInfo.Picture.Data.URL) + ";" + userUIID,
+		Value:   url.QueryEscape(userInfo.Name+";"+cleanAvatar) + ";" + userUID,
 		Expires: time.Now().Add(24 * time.Hour),
 		Path:    "/",
 	})
+
+	// Ajouter à la base de données
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		http.Error(w, "Database connection error", http.StatusInternalServerError)
+		log.Println("Could not connect to the database:", err)
+		return
+	}
+	defer db.Close()
+
+	_, err = db.Exec("INSERT INTO loginlogs (username, plateform, datetime) VALUES (?, ?, ?)", userInfo.Name, "Facebook", time.Now())
+	if err != nil {
+		http.Error(w, "Database query error", http.StatusInternalServerError)
+		log.Println("Could not execute query:", err)
+		return
+	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
@@ -239,29 +265,28 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 	if userInfo.Avatar != "" {
 		avatarURL = fmt.Sprintf("https://cdn.discordapp.com/avatars/%s/%s.png", userInfo.ID, userInfo.Avatar)
 	} else {
-		avatarURL = "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=6673fba1&is=6672aa21&hm=5741edc76eb55c2e3e4ac8924a89c2d610df57a88caf4880636b97a92b3fc153&format=webp&quality=lossless&width=640&height=640&"
+		avatarURL = "/web/assets/img/default-avatar.webp"
 	}
 
-	userUIID := uuid.New().String()
+	// Nettoyer l'URL de l'avatar
+	cleanAvatar := utils.CleanAvatarURL(avatarURL)
+
+	userUID := uuid.New().String()
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
-		Value:   url.QueryEscape(userInfo.Username+";"+avatarURL) + ";" + userUIID,
+		Value:   url.QueryEscape(userInfo.Username+";"+cleanAvatar) + ";" + userUID,
 		Expires: time.Now().Add(24 * time.Hour),
 		Path:    "/",
 	})
 
-	// add db
+	// Ajouter à la base de données
 	db, err := dbsql.ConnectDB()
 	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
 		log.Println("Could not connect to the database:", err)
 		return
 	}
-	defer func(db *sql.DB) {
-		if err := db.Close(); err != nil {
-			log.Println("Could not close the database connection:", err)
-		}
-	}(db)
+	defer db.Close()
 
 	_, err = db.Exec("INSERT INTO loginlogs (username, plateform, datetime) VALUES (?, ?, ?)", userInfo.Username, "Discord", time.Now())
 	if err != nil {
@@ -334,7 +359,7 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 		userUIID := uuid.New().String()
 		http.SetCookie(w, &http.Cookie{
 			Name:    "user",
-			Value:   url.QueryEscape(storedEmail+";https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=667a9321&is=667941a1&hm=733e73400a7e6e85dac74042fc2ce1f50eeb42c7d53d1228d0dde1e45718fc9d&=&format=webp&quality=lossless&width=640&height=640") + ";" + userUIID,
+			Value:   url.QueryEscape(storedEmail+";./web/assets/img/default-avatar.webp") + ";" + userUIID,
 			Expires: time.Now().Add(1 * time.Hour),
 			Path:    "/",
 		})
