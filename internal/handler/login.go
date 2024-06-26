@@ -66,19 +66,16 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Nettoyer l'URL de l'avatar
 	cleanAvatar := utils.CleanAvatarURL(userInfo.Picture)
-
-	// Set a cookie with user info
 	userUID := uuid.New().String()
+
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
-		Value:   url.QueryEscape(userInfo.Email+";"+cleanAvatar) + ";" + userUID,
+		Value:   url.QueryEscape(userInfo.Email + ";" + cleanAvatar + ";" + userUID),
 		Expires: time.Now().Add(24 * time.Hour),
 		Path:    "/",
 	})
 
-	// add sql
 	db, err := dbsql.ConnectDB()
 	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
@@ -91,13 +88,13 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 		}
 	}(db)
 
-	// add into loginlogs
-	_, err = db.Exec("INSERT INTO loginlogs (username, plateform, datetime) VALUES (?, ?, ?)", userInfo.Email, "Google", time.Now())
+	_, err = db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", userInfo.Email, "Google", time.Now())
 	if err != nil {
 		http.Error(w, "Database query error", http.StatusInternalServerError)
 		log.Println("Could not execute query:", err)
 		return
 	}
+
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -131,18 +128,16 @@ func HandleGitHubCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Nettoyer l'URL de l'avatar
 	cleanAvatar := utils.CleanAvatarURL(userInfo.AvatarURL)
+	userUID := uuid.New().String()
 
-	userUIID := uuid.New().String()
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
-		Value:   url.QueryEscape(userInfo.Login+";"+cleanAvatar) + ";" + userUIID,
+		Value:   url.QueryEscape(userInfo.Login + ";" + cleanAvatar + ";" + userUID),
 		Expires: time.Now().Add(24 * time.Hour),
 		Path:    "/",
 	})
 
-	// add db
 	db, err := dbsql.ConnectDB()
 	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
@@ -155,8 +150,7 @@ func HandleGitHubCallback(w http.ResponseWriter, r *http.Request) {
 		}
 	}(db)
 
-	// add into loginlogs
-	_, err = db.Exec("INSERT INTO loginlogs (username, plateform, datetime) VALUES (?, ?, ?)", userInfo.Login, "GitHub", time.Now())
+	_, err = db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", userInfo.Login, "GitHub", time.Now())
 	if err != nil {
 		http.Error(w, "Database query error", http.StatusInternalServerError)
 		log.Println("Could not execute query:", err)
@@ -200,18 +194,16 @@ func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Nettoyer l'URL de l'avatar
 	cleanAvatar := utils.CleanAvatarURL(userInfo.Picture.Data.URL)
-
 	userUID := uuid.New().String()
+
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
-		Value:   url.QueryEscape(userInfo.Name+";"+cleanAvatar) + ";" + userUID,
+		Value:   url.QueryEscape(userInfo.Name + ";" + cleanAvatar + ";" + userUID),
 		Expires: time.Now().Add(24 * time.Hour),
 		Path:    "/",
 	})
 
-	// Ajouter à la base de données
 	db, err := dbsql.ConnectDB()
 	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
@@ -220,7 +212,7 @@ func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	_, err = db.Exec("INSERT INTO loginlogs (username, plateform, datetime) VALUES (?, ?, ?)", userInfo.Name, "Facebook", time.Now())
+	_, err = db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", userInfo.Name, "Facebook", time.Now())
 	if err != nil {
 		http.Error(w, "Database query error", http.StatusInternalServerError)
 		log.Println("Could not execute query:", err)
@@ -268,18 +260,16 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		avatarURL = "/web/assets/img/default-avatar.webp"
 	}
 
-	// Nettoyer l'URL de l'avatar
 	cleanAvatar := utils.CleanAvatarURL(avatarURL)
-
 	userUID := uuid.New().String()
+
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
-		Value:   url.QueryEscape(userInfo.Username+";"+cleanAvatar) + ";" + userUID,
+		Value:   url.QueryEscape(userInfo.Username + ";" + cleanAvatar + ";" + userUID),
 		Expires: time.Now().Add(24 * time.Hour),
 		Path:    "/",
 	})
 
-	// Ajouter à la base de données
 	db, err := dbsql.ConnectDB()
 	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
@@ -288,7 +278,7 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	_, err = db.Exec("INSERT INTO loginlogs (username, plateform, datetime) VALUES (?, ?, ?)", userInfo.Username, "Discord", time.Now())
+	_, err = db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", userInfo.Username, "Discord", time.Now())
 	if err != nil {
 		http.Error(w, "Database query error", http.StatusInternalServerError)
 		log.Println("Could not execute query:", err)

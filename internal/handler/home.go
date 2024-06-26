@@ -10,14 +10,18 @@ import (
 	"strings"
 )
 
+type User struct {
+	Avatar string
+}
+
 type PageData struct {
 	LoggedIn bool
 	Avatar   string
 	Topics   []api.Topic
+	User     User
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	// Chargement des topics
 	topics := api.GetAllTopics()
 
 	var data PageData
@@ -32,25 +36,29 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		parts := strings.SplitN(value, ";", 2)
-		if len(parts) == 2 {
+		log.Println("Cookie value:", value)
+		parts := strings.SplitN(value, ";", 3)
+		if len(parts) == 3 {
 			data.LoggedIn = true
 			data.Avatar = utils.CleanAvatarURL(parts[1])
+			data.User = User{Avatar: data.Avatar}
+			log.Println("Avatar URL after cleaning:", data.Avatar)
 		}
+	} else {
+		log.Println("No valid user cookie found, user not logged in.")
 	}
 
 	if !data.LoggedIn {
 		data.Avatar = "./web/assets/img/default-avatar.webp"
+		data.User = User{Avatar: data.Avatar}
 	}
 
-	// Nettoyer les URLs des avatars dans les topics
 	for i := range data.Topics {
 		if data.Topics[i].Avatar.Valid {
 			data.Topics[i].Avatar.String = utils.CleanAvatarURL(data.Topics[i].Avatar.String)
 		}
 	}
 
-	// Chargement et exécution du template
 	tmpl, err := template.ParseFiles("./web/templates/index.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)

@@ -3,15 +3,23 @@ package utils
 import (
 	"log"
 	dbsql "main/internal/sql"
+	"net/url"
 	"strings"
 )
 
+type OAuthProfile struct {
+	AvatarURL string `json:"avatar_url"`
+}
+
 // CleanAvatarURL nettoie l'URL de l'avatar en retirant les parties indésirables après le premier "="
-func CleanAvatarURL(url string) string {
-	if idx := strings.Index(url, "?"); idx != -1 {
-		return url[:idx]
+func CleanAvatarURL(rawURL string) string {
+	parsedURL, err := url.Parse(rawURL)
+	if err != nil {
+		// En cas d'erreur, retourner l'URL brute
+		return rawURL
 	}
-	return url
+	cleanURL := strings.TrimSpace(parsedURL.String())
+	return cleanURL
 }
 
 // CleanDatabaseAvatars nettoie les URLs d'avatars dans la base de données
