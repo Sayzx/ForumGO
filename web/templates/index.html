@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BetterForum</title>
     <link rel="icon" href="/assets/img/logo.png" type="image/png">
-    <link rel="stylesheet" href="../assets/css/home.css">
+    <link rel="stylesheet" href="/assets/css/home.css">
 </head>
 <body>
     <div class="container">
@@ -22,7 +22,7 @@
               <div class="search-login">
                 {{if .LoggedIn}}
                     <div class="user-info">
-                        <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img" onerror="this.src='/assets/img/default-avatar.webp';" onclick="toggleMenu()">
+                        <img src="{{.User.Avatar}}" alt="Profile Picture" class="avatar-img" onerror="this.src='/assets/img/default-avatar.webp';" onclick="toggleMenu()">
                         <div id="popupMenu" class="popup-menu" style="display:none;">
                             <a href="/settings">Paramètres</a>
                             <a href="/logout">Se déconnecter</a>
@@ -39,15 +39,18 @@
                     <p id="topics">Menu</p>
                     <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="/"> Accueil</a></li>
                     <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="#"> Actus</a></li>
-                    <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="/createtopic"> Crée un Topic</a> </li>
+                    {{if .LoggedIn}}
+                    <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="/createtopic"> Crée un
+                            Topic</a> </li>
                     <br>
+                    {{end}}
                     <p id="topics">Topics</p>
                     <div class="topics-scrollable">
-                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=1"> Général</a></li>
-                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=2"> Jeux-Vidéos</a></li>
-                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=3"> Développement</a></li>
-                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=4"> Informatique</a></li>
-                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=5"> Leak de jeux</a></li>
+                        <li><img src="/assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=1"> Général</a></li>
+                        <li><img src="/assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=2"> Jeux-Vidéos</a></li>
+                        <li><img src="/assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=3"> Développement</a></li>
+                        <li><img src="/assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=4"> Informatique</a></li>
+                        <li><img src="/assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=5"> Leak de jeux</a></li>
                     </div>
                 </ul>
                 <div class="sidebar-footer">
@@ -61,17 +64,17 @@
                     <h2>L'actualités</h2>
                     <div class="cards">
                         <div class="card">
-                            <img src="./assets/img/patern.png" alt="Jira integration">
+                            <img src="/assets/img/patern.png" alt="Jira integration">
                             <h3>Jira integration</h3>
                             <p>Released on 17 July 2023 Jira integration makes it a hassle-free experience...</p>
                         </div>
                         <div class="card">
-                            <img src="./assets/img/patern.png" alt="Post Bulk Actions">
+                            <img src="/assets/img/patern.png" alt="Post Bulk Actions">
                             <h3>Post Bulk Actions</h3>
                             <p>Released on 26 May 2023 We noticed many community admins are spending time individually...</p>
                         </div>
                         <div class="card">
-                            <img src="./assets/img/patern.png" alt="Salesforce integration">
+                            <img src="/assets/img/patern.png" alt="Salesforce integration">
                             <h3>Salesforce integration</h3>
                             <p>Released on 03 May 2023 now your Bettermode community is integrated...</p>
                         </div>
@@ -101,6 +104,6 @@
             <p><a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Cookies</a></p>
         </footer>
     </div>
-    <script src="../assets/static/home.js"></script>
+    <script src="/assets/static/home.js"></script>
 </body>
 </html>

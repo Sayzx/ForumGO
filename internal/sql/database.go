@@ -3,6 +3,8 @@ package sql
 import (
 	"database/sql"
 	"fmt"
+	"log"
+
 	_ "modernc.org/sqlite"
 )
 
@@ -36,31 +38,22 @@ func ConnectDB() (*sql.DB, error) {
 		return nil, fmt.Errorf("failed to create users table: %v", err)
 	}
 
-	createMailTableQuery := `
-	CREATE TABLE IF NOT EXISTS mail (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		user_id INTEGER NOT NULL,
-		email TEXT NOT NULL,
-		FOREIGN KEY(user_id) REFERENCES users(id)
-	);`
-
-	_, err = db.Exec(createMailTableQuery)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create mail table: %v", err)
-	}
-
-	createPasswordTableQuery := `
-	CREATE TABLE IF NOT EXISTS password (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		user_id INTEGER NOT NULL,
-		password TEXT NOT NULL,
-		FOREIGN KEY(user_id) REFERENCES users(id)
-	);`
-
-	_, err = db.Exec(createPasswordTableQuery)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create password table: %v", err)
-	}
-
 	return db, nil
+}
+
+func UsernameIsExists(username string) bool {
+	db, err := ConnectDB()
+	if err != nil {
+		return false
+	}
+	defer db.Close()
+
+	var exists bool
+	query := "SELECT COUNT(*) > 0 FROM users WHERE username = ?"
+	err = db.QueryRow(query, username).Scan(&exists)
+	if err != nil {
+		log.Println("Error checking username existence:", err)
+		return false
+	}
+	return exists
 }

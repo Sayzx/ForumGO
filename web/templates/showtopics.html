@@ -66,12 +66,15 @@
                 </div>
             </nav>
             <main>
-
                 <div class="subforum">
                     <div class="subforum-row">
                         {{range .Topics}}
                         <div class="subforum-icon subforum-column center">
-                            <i class="fa-solid fa-comment"></i>
+                            {{if .Avatar.Valid}}
+                            <img class="avatar" src="{{.Avatar.String}}" alt="Avatar">
+                            {{else}}
+                            <img class="avatar" src="./web/assets/img/default-avatar.webp" alt="Default Avatar">
+                            {{end}}
                         </div>
                         <div class="subforum-description subforum-column">
                             <h4><a href="/showpost?postid={{.ID}}"> {{.Title}}</a></h4>
@@ -83,17 +86,10 @@
                         <div class="subforum-info subforum-column">
                             Créer par <a href=""> {{.Owner}}</a>
                             <br>le <small>{{.CreateAt}}</small>
-                            {{if .Avatar.Valid}}
-                            <img class="avatar" src="{{.Avatar.String}}" alt="Avatar">
-                            {{else}}
-                            <img class="avatar" src="./web/assets/img/default-avatar.webp" alt="Default Avatar">
-                            {{end}}
                         </div>
                         {{end}}
                     </div>
                 </div>
-
-
             </main>
         </div>
         <footer>
@@ -102,5 +98,4 @@
         </footer>
     </div>
 </body>
-
 </html>

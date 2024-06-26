@@ -172,3 +172,32 @@ func GetDateAndTime() string {
 	now := time.Now()
 	return now.Format("2006-01-02 15:04:05")
 }
+
+func DeletePost(id int) error {
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			log.Println("Could not close the database connection:", err)
+		}
+	}()
+
+	stmt, err := db.Prepare("DELETE FROM topics WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err := stmt.Close(); err != nil {
+			log.Println("Could not close the statement:", err)
+		}
+	}()
+
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

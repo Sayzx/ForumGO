@@ -12,10 +12,7 @@ import (
 
 func ShowTopicsHandler(w http.ResponseWriter, r *http.Request) {
 	username := api.GetUsernameByCookie(r)
-	if username == "" {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
+
 	categoryid := r.URL.Query().Get("id")
 
 	topics := api.GetAllTopicsById(categoryid)
