@@ -13,6 +13,7 @@ import (
 type ShowPostData struct {
 	LoggedIn bool
 	Avatar   string
+	Username string
 	Post     Post
 	Comments []Comment
 }
@@ -50,9 +51,10 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		parts := strings.SplitN(value, ";", 2)
-		if len(parts) == 2 {
+		parts := strings.SplitN(value, ";", 3)
+		if len(parts) == 3 {
 			data.LoggedIn = true
+			data.Username = parts[0]
 			data.Avatar = parts[1]
 		}
 	}

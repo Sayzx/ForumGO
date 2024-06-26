@@ -22,6 +22,7 @@ func Run() {
 	http.HandleFunc("/showpost", handler.ShowPostHandler)
 	http.HandleFunc("/upload", handler.UploadHandler)
 	http.HandleFunc("/addcomment", handler.AddCommentHandler)
+	http.HandleFunc("/deletepost", handler.DeletePostHandler)
 
 	http.HandleFunc("/auth/github", handler.HandleGitHubLogin)
 	http.HandleFunc("/github/callback", handler.HandleGitHubCallback)

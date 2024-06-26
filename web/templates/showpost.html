@@ -48,7 +48,6 @@
                     {{end}}
                     <p id="topics">Topics</p>
                     <div class="topics-scrollable">
-
                         <li><img src="../assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=1"> Général</a></li>
                         <li><img src="../assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=2"> Jeux-Vidéos</a></li>
                         <li><img src="../assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=3"> Développement</a></li>
@@ -65,25 +64,33 @@
             <main>
                 <div class="post">
                     <h2>Titre : {{.Post.Title}}</h2>
+                    {{if .LoggedIn}}
+                    {{if eq .Username .Post.Owner}}
+                    <form action="/deletepost?id={{.Post.ID}}" method="POST">
+                        <input type="hidden" name="postid" value="{{.Post.ID}}">
+                        <button type="submit" class="delete-button">Supprimer votre post</button>
+                    </form>
+                    {{end}}
+                    {{end}}
                     <p>Par <a href="#">{{.Post.Owner}}</a> le <small>{{.Post.CreateAt}}</small></p>
                     <p id="postcontent">{{.Post.Content}}</p>
                     {{if .Post.Images}}
                     <p>Images : </p>
                     <img src="..{{.Post.Images}}" alt="Image" class="post-img">
+                    <img src="..\uploads\dev3.png" alt="Image" class="post-img">
                     {{end}}
-                     <div class="comments">
-                    <h3>Commentaires</h3>
-                
-                    {{range .Comments}}
-                    <div class="comment">
-                        <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img">
-                        <div class="comment-content">
-                            <p>{{.Content}}</p>
-                            <p>Par <a href="#">{{.Owner}}</a> le <small>{{.CreateAt}}</small></p>
+                    <div class="comments">
+                        <h3>Commentaires</h3>
+                        {{range .Comments}}
+                        <div class="comment">
+                            <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img">
+                            <div class="comment-content">
+                                <p>{{.Content}}</p>
+                                <p>Par <a href="#">{{.Owner}}</a> le <small>{{.CreateAt}}</small></p>
+                            </div>
                         </div>
+                        {{end}}
                     </div>
-                    
-                    {{end}}
                 </div>
             </main>
         </div>
@@ -115,4 +122,3 @@
     </script>
 </body>
 </html>
-
