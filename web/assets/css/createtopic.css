@@ -16,7 +16,6 @@ body {
     flex-direction: column;
     height: 100vh;
     overflow-x: hidden;
-    /* Prevent horizontal scrolling */
 }
 
 .container {
@@ -115,18 +114,14 @@ nav.sidebar ul li a {
 
 .topics-scrollable {
     overflow-y: auto;
-    /* Enable vertical scrolling */
     overflow-x: hidden;
-    /* Prevent horizontal scrolling */
     flex: 1;
 }
 
-/* Hide default scrollbar for Webkit browsers (Chrome, Safari) */
 .topics-scrollable::-webkit-scrollbar {
     display: none;
 }
 
-/* Custom scrollbar for Firefox */
 .topics-scrollable {
     scrollbar-width: thin;
     scrollbar-color: #888 #f4f4f4;
@@ -149,9 +144,7 @@ main {
     flex: 1;
     padding: 20px;
     overflow-y: auto;
-    /* Enable vertical scrolling */
     overflow-x: hidden;
-    /* Prevent horizontal scrolling */
 }
 
 .whats-new,
@@ -307,7 +300,7 @@ input:hover {
 .popup-menu {
     position: absolute;
     background-color: #f9f9f9;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     padding: 12px 16px;
     z-index: 1;
     right: 0;

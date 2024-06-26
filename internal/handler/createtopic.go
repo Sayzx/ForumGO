@@ -7,6 +7,7 @@ import (
 	"log"
 	"main/internal/api"
 	dbsql "main/internal/sql"
+	"main/internal/utils"
 	"net/http"
 	"net/url"
 	"os"
@@ -38,13 +39,13 @@ func CreateTopicHandler(w http.ResponseWriter, r *http.Request) {
 		parts := strings.SplitN(value, ";", 2)
 		if len(parts) == 2 {
 			data.LoggedIn = true
-			data.Avatar = parts[1]
+			data.Avatar = utils.CleanAvatarURL(parts[1])
 		}
 	}
 
 	if !data.LoggedIn {
 		// Définir l'avatar par défaut si l'utilisateur n'est pas connecté
-		data.Avatar = "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png"
+		data.Avatar = "./web/assets/img/default-avatar.webp"
 	}
 
 	// Chargement et exécution du template
@@ -80,7 +81,9 @@ func AddTopicHandler(w http.ResponseWriter, r *http.Request) {
 	dislike := 0
 	createat := api.GetDateAndTime()
 	if avatar == "" {
-		avatar = "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png"
+		avatar = "./web/assets/img/default-avatar.webp"
+	} else {
+		avatar = utils.CleanAvatarURL(avatar)
 	}
 	if title == "" || category == "" || tags == "" || content == "" || owner == "" {
 		http.Error(w, "Missing required fields", http.StatusBadRequest)

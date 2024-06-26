@@ -1,70 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BetterForum</title>
     <link rel="icon" href="/assets/img/logo.png" type="image/png">
-    <link rel="stylesheet" href="../assets/css/home.css">
+    <link rel="stylesheet" href="/assets/css/home.css">
 </head>
-
 <body>
     <div class="container">
         <header>
             <div class="logo">
                 <a href="/">
-                    <img src="/assets/img/logo.png" alt="Bettermode">
+                <img src="/assets/img/logo.png" alt="Bettermode">
                 </a>
             </div>
             <div class="group">
-                <svg class="icon" aria-hidden="true" viewBox="0 0 24 24">
-                    <g>
-                        <path
-                            d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z">
-                        </path>
-                    </g>
-                </svg>
+                <svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><g><path d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"></path></g></svg>
                 <input placeholder="Search" type="search" class="input">
-            </div>
-            <div class="search-login">
+              </div>
+              <div class="search-login">
                 {{if .LoggedIn}}
-                <div class="user-info">
-                    <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img" onclick="toggleMenu()">
-                    <div id="popupMenu" class="popup-menu" style="display:none;">
-                        <a href="/settings">Paramètres</a>
-                        <a href="/logout">Se déconnecter</a>
+                    <div class="user-info">
+                        <img src="{{.User.Avatar}}" alt="Profile Picture" class="avatar-img" onerror="this.src='/assets/img/default-avatar.webp';" onclick="toggleMenu()">
+                        <div id="popupMenu" class="popup-menu" style="display:none;">
+                            <a href="/settings">Paramètres</a>
+                            <a href="/logout">Se déconnecter</a>
+                        </div>
                     </div>
-                </div>
                 {{else}}
-                <a href="/login"><button>Log in</button></a>
+                    <a href="/login"><button>Log in</button></a>
                 {{end}}
             </div>
-
         </header>
         <div class="main-content">
             <nav class="sidebar">
                 <ul>
                     <p id="topics">Menu</p>
+<<<<<<< HEAD
                     <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="/"> Accueil</a></li>
                     <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="#"> Actus</a></li>
                     {{if .LoggedIn}}
                     <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="/createtopic"> Crée un
                             Topic</a> </li>
+=======
+                    <li><img src="/assets/img/home.png" alt="Home" width="20px"><a href="/"> Accueil</a></li>
+                    <li><img src="/assets/img/home.png" alt="Home" width="20px"><a href="#"> Actus</a></li>
+                    <li><img src="/assets/img/home.png" alt="Home" width="20px"><a href="/createtopic"> Crée un Topic</a> </li>
+>>>>>>> Nico
                     <br>
                     {{end}}
                     <p id="topics">Topics</p>
                     <div class="topics-scrollable">
-                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=1">
-                                Général</a></li>
-                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=2">
-                                Jeux-Vidéos</a></li>
-                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=3">
-                                Développement</a></li>
-                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=4">
-                                Informatique</a></li>
-                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=5"> Leak
-                                de jeux</a></li>
+                        <li><img src="/assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=1"> Général</a></li>
+                        <li><img src="/assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=2"> Jeux-Vidéos</a></li>
+                        <li><img src="/assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=3"> Développement</a></li>
+                        <li><img src="/assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=4"> Informatique</a></li>
+                        <li><img src="/assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=5"> Leak de jeux</a></li>
                     </div>
                 </ul>
                 <div class="sidebar-footer">
@@ -78,18 +70,17 @@
                     <h2>L'actualités</h2>
                     <div class="cards">
                         <div class="card">
-                            <img src="./assets/img/patern.png" alt="Jira integration">
+                            <img src="/assets/img/patern.png" alt="Jira integration">
                             <h3>Jira integration</h3>
                             <p>Released on 17 July 2023 Jira integration makes it a hassle-free experience...</p>
                         </div>
                         <div class="card">
-                            <img src="./assets/img/patern.png" alt="Post Bulk Actions">
+                            <img src="/assets/img/patern.png" alt="Post Bulk Actions">
                             <h3>Post Bulk Actions</h3>
-                            <p>Released on 26 May 2023 We noticed many community admins are spending time
-                                individually...</p>
+                            <p>Released on 26 May 2023 We noticed many community admins are spending time individually...</p>
                         </div>
                         <div class="card">
-                            <img src="./assets/img/patern.png" alt="Salesforce integration">
+                            <img src="/assets/img/patern.png" alt="Salesforce integration">
                             <h3>Salesforce integration</h3>
                             <p>Released on 03 May 2023 now your Bettermode community is integrated...</p>
                         </div>
@@ -97,36 +88,28 @@
                 </section>
                 <section class="discussions">
                     <h2>Discussions</h2>
-                    <!-- <div class="tabs">
-                        <button class="tab-button">Popular</button>
-                        <button class="tab-button">Recently active</button>
-                    </div> -->
                     <div id="discussion-cards" class="discussion-cards">
                         {{range .Topics}}
                         <div class="discussion-card">
                             <h3>{{.Title}}</h3>
                             <p>{{.Content}}</p>
-                            {{if .Avatar}}
-                            <img class="avatar" src="{{.Avatar}}" alt="Avatar">
+                            {{if .Avatar.Valid}}
+                                <img class="avatar" src="{{.Avatar.String}}" alt="Avatar" onerror="this.src='/assets/img/default-avatar.webp';">
                             {{else}}
-                            <img class="avatar"
-                                src="https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=667352e1&is=66720161&hm=e9706a01d813bf4d2ec8b92a71961800e1f6ee4f3ab8a148f0cf2b08abd40134&=&format=webp&quality=lossless"
-                                alt="Default Avatar">
+                                <img class="avatar" src="/assets/img/default-avatar.webp" alt="Avatar">
                             {{end}}
-                            <span>{{.Owner}}</span>
+                            <span class="owner-name">{{.Owner}}</span>
                         </div>
                         {{end}}
                     </div>
-
                 </section>
             </main>
         </div>
         <footer>
-            <p>&copy; 2023 Better <span color="red">Forum</span></p>
+            <p>&copy; 2024 Better <span color="red">Forum</span></p>
             <p><a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Cookies</a></p>
         </footer>
     </div>
-    <script src="../assets/static/home.js"></script>
+    <script src="/assets/static/home.js"></script>
 </body>
-
 </html>
