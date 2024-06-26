@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"log"
 	"main/internal/api"
+	"main/internal/utils"
 	"net/http"
 	"net/url"
 	"strings"
@@ -18,16 +19,10 @@ type PageData struct {
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	// Chargement des topics
 	topics := api.GetAllTopics()
-	if topics == nil {
-		http.Error(w, "Could not fetch topics", http.StatusInternalServerError)
-		return
-	}
 
-	// Préparation des données pour le template
 	var data PageData
-	data.Topics = topics[:min(3, len(topics))] // Affiche seulement les trois premiers topics
+	data.Topics = topics[:min(3, len(topics))]
 
-	// Tentative de récupération du cookie utilisateur
 	cookie, err := r.Cookie("user")
 	if err == nil && cookie != nil {
 		value, err := url.QueryUnescape(cookie.Value)
@@ -40,13 +35,19 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		parts := strings.SplitN(value, ";", 2)
 		if len(parts) == 2 {
 			data.LoggedIn = true
-			data.Avatar = parts[1]
+			data.Avatar = utils.CleanAvatarURL(parts[1])
 		}
 	}
 
 	if !data.LoggedIn {
-		// Définir l'avatar par défaut si l'utilisateur n'est pas connecté
-		data.Avatar = "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png"
+		data.Avatar = "./web/assets/img/default-avatar.webp"
+	}
+
+	// Nettoyer les URLs des avatars dans les topics
+	for i := range data.Topics {
+		if data.Topics[i].Avatar.Valid {
+			data.Topics[i].Avatar.String = utils.CleanAvatarURL(data.Topics[i].Avatar.String)
+		}
 	}
 
 	// Chargement et exécution du template

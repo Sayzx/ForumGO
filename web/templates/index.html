@@ -22,7 +22,7 @@
               <div class="search-login">
                 {{if .LoggedIn}}
                     <div class="user-info">
-                        <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img" onclick="toggleMenu()">
+                        <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img" onerror="this.src='/assets/img/default-avatar.webp';" onclick="toggleMenu()">
                         <div id="popupMenu" class="popup-menu" style="display:none;">
                             <a href="/settings">Paramètres</a>
                             <a href="/logout">Se déconnecter</a>
@@ -32,7 +32,6 @@
                     <a href="/login"><button>Log in</button></a>
                 {{end}}
             </div>
-            
         </header>
         <div class="main-content">
             <nav class="sidebar">
@@ -80,30 +79,25 @@
                 </section>
                 <section class="discussions">
                     <h2>Discussions</h2>
-                    <!-- <div class="tabs">
-                        <button class="tab-button">Popular</button>
-                        <button class="tab-button">Recently active</button>
-                    </div> -->
                     <div id="discussion-cards" class="discussion-cards">
                         {{range .Topics}}
                         <div class="discussion-card">
                             <h3>{{.Title}}</h3>
                             <p>{{.Content}}</p>
-                            {{if .Avatar}}
-                            <img class="avatar" src="{{.Avatar}}" alt="Avatar">
+                            {{if .Avatar.Valid}}
+                                <img class="avatar" src="{{.Avatar.String}}" alt="Avatar" onerror="this.src='/assets/img/default-avatar.webp';">
                             {{else}}
-                            <img class="avatar" src="https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=667352e1&is=66720161&hm=e9706a01d813bf4d2ec8b92a71961800e1f6ee4f3ab8a148f0cf2b08abd40134&=&format=webp&quality=lossless" alt="Default Avatar">
+                                <img class="avatar" src="/assets/img/default-avatar.webp" alt="Avatar">
                             {{end}}
-                            <span>{{.Owner}}</span>
+                            <span class="owner-name">{{.Owner}}</span>
                         </div>
                         {{end}}
                     </div>
-                    
                 </section>
             </main>
         </div>
         <footer>
-            <p>&copy; 2023 Better <span color="red">Forum</span></p>
+            <p>&copy; 2024 Better <span color="red">Forum</span></p>
             <p><a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Cookies</a></p>
         </footer>
     </div>

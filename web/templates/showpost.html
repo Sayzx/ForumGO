@@ -66,15 +66,15 @@
                 </div>
             </nav>
             <main>
-
+                <!--  -->
                 <div class="subforum">
                     <div class="subforum-row">
-                        {{range .Topics}}
                         <div class="subforum-icon subforum-column center">
                             <i class="fa-solid fa-comment"></i>
                         </div>
+                        {{range .Topics}}
                         <div class="subforum-description subforum-column">
-                            <h4><a href="/showpost?postid={{.ID}}"> {{.Title}}</a></h4>
+                            <h4><a href="#"> {{.Title}}</a></h4>
                             <p>Brève Description {{.ContentShort}}</p>
                         </div>
                         <div class="subforum-stats subforum-column center">
@@ -82,12 +82,7 @@
                         </div>
                         <div class="subforum-info subforum-column">
                             Créer par <a href=""> {{.Owner}}</a>
-                            <br>le <small>{{.CreateAt}}</small>
-                            {{if .Avatar.Valid}}
-                            <img class="avatar" src="{{.Avatar.String}}" alt="Avatar">
-                            {{else}}
-                            <img class="avatar" src="./web/assets/img/default-avatar.webp" alt="Default Avatar">
-                            {{end}}
+                            <br>le <small>22/02/000</small>
                         </div>
                         {{end}}
                     </div>
@@ -97,7 +92,7 @@
             </main>
         </div>
         <footer>
-            <p>&copy; 2024 Better <span color="red">Forum</span></p>
+            <p>&copy; 2023 Better <span color="red">Forum</span></p>
             <p><a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Cookies</a></p>
         </footer>
     </div>

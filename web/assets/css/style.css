@@ -1,10 +1,8 @@
-
-
 .top-nav {
     background-color: #2980B9;
     padding: 10px 20px;
     width: 100%;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: fixed;
     top: 0;
     left: 0;
@@ -102,7 +100,8 @@
     border-radius: 4px;
 }
 
-.search-form button, .login-btn {
+.search-form button,
+.login-btn {
     padding: 8px 15px;
     background-color: #2980B9;
     color: white;
@@ -111,7 +110,8 @@
     cursor: pointer;
 }
 
-.search-form button:hover, .login-btn:hover {
+.search-form button:hover,
+.login-btn:hover {
     background-color: #3498DB;
 }
 
@@ -148,7 +148,7 @@
 
 .header h2 {
     flex: 1;
-    text-align: left; 
+    text-align: left;
 }
 
 .header-controls {
@@ -161,7 +161,7 @@
 .search-container {
     display: flex;
     flex-grow: 1;
-    justify-content: center; 
+    justify-content: center;
 }
 
 .search-form {
@@ -170,14 +170,15 @@
     max-width: 500px;
 }
 
-.search-form input[type="text"], .search-form button {
+.search-form input[type="text"],
+.search-form button {
     height: 32px;
     padding: 0 12px;
 }
 
 .search-form input[type="text"] {
     flex-grow: 1;
-    border-radius: 4px 0 0 4px; 
+    border-radius: 4px 0 0 4px;
     border: 2px solid #ccc;
 }
 
@@ -206,6 +207,7 @@
 .login-btn:hover {
     background-color: #3498DB;
 }
+
 .header {
     display: flex;
     justify-content: space-between;
@@ -214,7 +216,8 @@
     position: relative;
 }
 
-.header-left-placeholder, .header-right {
+.header-left-placeholder,
+.header-right {
     flex: 1;
 }
 
@@ -226,11 +229,12 @@
 
 .search-form {
     display: flex;
-    width: 100%; 
+    width: 100%;
     max-width: 500px;
 }
 
-.search-form input[type="text"], .search-form button {
+.search-form input[type="text"],
+.search-form button {
     height: 32px;
     padding: 0 12px;
 }
