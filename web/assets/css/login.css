@@ -1,11 +1,11 @@
 @font-face {
     font-family: 'Satoshi-Bold';
     src: url('../fonts/Satoshi-Bold.woff2') format('woff2'),
-         url('../fonts/Satoshi-Bold.woff') format('woff'),
-         url('../fonts/Satoshi-Bold.ttf') format('truetype');
-         font-weight: 700;
-         font-display: swap;
-         font-style: normal;
+        url('../fonts/Satoshi-Bold.woff') format('woff'),
+        url('../fonts/Satoshi-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-display: swap;
+    font-style: normal;
 }
 
 body {
@@ -23,11 +23,15 @@ body {
     background: white;
     padding: 20px;
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
 
-input[type="email"], input[type="password"], input[type="text"], input[type="submit"], input[type="username"] {
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="submit"],
+input[type="username"] {
     font-family: 'Satoshi-Bold';
     width: 90%;
     padding: 10px;
@@ -59,7 +63,8 @@ button {
     cursor: pointer;
 }
 
-.social-login button:hover, button:hover {
+.social-login button:hover,
+button:hover {
     opacity: 0.8;
 }
 
@@ -68,20 +73,24 @@ button .fa-brands {
 }
 
 .social-login button {
-    background-color: #dd4b39; /* Google button */
+    background-color: #dd4b39;
+    /* Google button */
     margin-top: 10px;
 }
 
 .social-login button:nth-child(2) {
-    background-color: #000000; /* GitHub button */
+    background-color: #000000;
+    /* GitHub button */
 }
 
 .social-login button:nth-child(3) {
-    background-color: #3b5998 ; /* Facebook button */
+    background-color: #3b5998;
+    /* Facebook button */
 }
 
 .social-login button:nth-child(4) {
-    background-color: #7289da ; /* Discord button */
+    background-color: #7289da;
+    /* Discord button */
 }
 
 /* if ton ecran est plus petit les boutton sont moins large */
@@ -98,10 +107,12 @@ button .fa-brands {
         margin: 10px;
         background-color: #5c67f2;
         color: white;
-        cursor: pointer;    
+        cursor: pointer;
     }
+
     button .fa-brands {
         font-size: 20px;
     }
+
     /* reduce social */
 }

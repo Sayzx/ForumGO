@@ -1,11 +1,13 @@
 package api
 
 import (
+	"database/sql"
 	"log"
 	dbsql "main/internal/sql"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 type Author struct {
@@ -18,8 +20,10 @@ type Topic struct {
 	Title        string
 	Content      string
 	Owner        string
-	Avatar       string
+	Avatar       sql.NullString
+	CheckLike    sql.NullInt64
 	Like         int
+	CheckDislike sql.NullInt64
 	Dislike      int
 	ContentShort string
 	CreateAt     *string // Utilisation d'un pointeur pour gérer les valeurs NULL
@@ -131,7 +135,7 @@ func GetAllTopicsById(id string) []Topic {
 	var topics []Topic
 	for rows.Next() {
 		var topic Topic
-		err := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar, &topic.Like, &topic.Dislike)
+		err := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar, &topic.CheckLike, &topic.CheckDislike)
 		if err != nil {
 			log.Println("Could not scan row:", err)
 			return nil
@@ -161,4 +165,10 @@ func GetAvatarByCookie(r *http.Request) string {
 
 	avatar := parts[1]
 	return avatar
+}
+
+func GetDateAndTime() string {
+	// get today date and time
+	now := time.Now()
+	return now.Format("2006-01-02 15:04:05")
 }

@@ -4,19 +4,24 @@ import (
 	"html/template"
 	"log"
 	"main/internal/api"
+	"main/internal/utils"
 	"net/http"
 	"net/url"
 	"strings"
 )
 
+type User struct {
+	Avatar string
+}
+
 type PageData struct {
 	LoggedIn bool
 	Avatar   string
 	Topics   []api.Topic
+	User     User
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	// Chargement des topics
 	topics := api.GetAllTopics()
 
 	var data PageData
@@ -31,18 +36,29 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		parts := strings.SplitN(value, ";", 2)
-		if len(parts) == 2 {
+		log.Println("Cookie value:", value)
+		parts := strings.SplitN(value, ";", 3)
+		if len(parts) == 3 {
 			data.LoggedIn = true
-			data.Avatar = parts[1]
+			data.Avatar = utils.CleanAvatarURL(parts[1])
+			data.User = User{Avatar: data.Avatar}
+			log.Println("Avatar URL after cleaning:", data.Avatar)
 		}
+	} else {
+		log.Println("No valid user cookie found, user not logged in.")
 	}
 
 	if !data.LoggedIn {
-		data.Avatar = "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=667a9321&is=667941a1&hm=733e73400a7e6e85dac74042fc2ce1f50eeb42c7d53d1228d0dde1e45718fc9d&=&format=webp&quality=lossless&width=640&height=640"
+		data.Avatar = "./web/assets/img/default-avatar.webp"
+		data.User = User{Avatar: data.Avatar}
 	}
 
-	// Chargement et exécution du template
+	for i := range data.Topics {
+		if data.Topics[i].Avatar.Valid {
+			data.Topics[i].Avatar.String = utils.CleanAvatarURL(data.Topics[i].Avatar.String)
+		}
+	}
+
 	tmpl, err := template.ParseFiles("./web/templates/index.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
