@@ -315,3 +315,49 @@ footer {
         font-size: 16px;
     }
 }
+
+
+/* Show Post */
+.comment {
+    display: flex;
+    align-items: flex-start;
+    background-color: #efe9e9;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #444;
+}
+
+.comment .avatar-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.comment p {
+    margin: 5px 0;
+}
+
+.comment p a {
+    color: #e61010;
+    text-decoration: none;
+}
+
+.comment p small {
+    color: #f30af7;
+}
+
+.comment-content {
+    flex: 1;
+}
+
+#postcontent {
+    display: flex;
+    align-items: flex-start;
+    background-color: #efe9e9;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #444;
+}
