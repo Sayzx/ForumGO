@@ -1,11 +1,13 @@
 package api
 
 import (
+	"database/sql"
 	"log"
 	dbsql "main/internal/sql"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 type Author struct {
@@ -18,16 +20,22 @@ type Topic struct {
 	Title        string
 	Content      string
 	Owner        string
-	Avatar       string
+	Avatar       sql.NullString
+	CheckLike    sql.NullInt64
 	Like         int
+	CheckDislike sql.NullInt64
 	Dislike      int
 	ContentShort string
-	createat     string
+	CreateAt     *string // Utilisation d'un pointeur pour gérer les valeurs NULL
 	Username     string
 }
 
 func GetUsernameByCookie(r *http.Request) string {
 	cookie, _ := r.Cookie("user")
+
+	if cookie == nil {
+		return ""
+	}
 
 	value, _ := url.QueryUnescape(cookie.Value)
 
@@ -38,8 +46,7 @@ func GetUsernameByCookie(r *http.Request) string {
 }
 
 func GetAllTopics() []Topic {
-	// Connect to the SQLite 3 database
-	db, err := dbsql.ConnectDB() // Use the renamed import
+	db, err := dbsql.ConnectDB()
 	if err != nil {
 		log.Println("Could not connect to the database:", err)
 		return nil
@@ -50,7 +57,6 @@ func GetAllTopics() []Topic {
 		}
 	}()
 
-	// Prepare the query to get all topics
 	stmt, err := db.Prepare("SELECT id, title, content, owner, avatar, createat FROM topics")
 	if err != nil {
 		log.Println("Could not prepare query:", err)
@@ -62,7 +68,6 @@ func GetAllTopics() []Topic {
 		}
 	}()
 
-	// Execute the query
 	rows, err := stmt.Query()
 	if err != nil {
 		log.Println("Could not execute query:", err)
@@ -74,11 +79,10 @@ func GetAllTopics() []Topic {
 		}
 	}()
 
-	// Process the result
 	var topics []Topic
 	for rows.Next() {
 		var topic Topic
-		err := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar, &topic.createat)
+		err := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar, &topic.CreateAt)
 		if err != nil {
 			log.Println("Could not scan row:", err)
 			return nil
@@ -95,8 +99,7 @@ func GetAllTopics() []Topic {
 }
 
 func GetAllTopicsById(id string) []Topic {
-	// Connect to the SQLite 3 database
-	db, err := dbsql.ConnectDB() // Use the renamed import
+	db, err := dbsql.ConnectDB()
 	if err != nil {
 		log.Println("Could not connect to the database:", err)
 		return nil
@@ -107,7 +110,6 @@ func GetAllTopicsById(id string) []Topic {
 		}
 	}()
 
-	// Prepare the query to get all topics
 	stmt, err := db.Prepare("SELECT id, title, content, owner, avatar, like, dislike FROM topics where categoryid = ?")
 	if err != nil {
 		log.Println("Could not prepare query:", err)
@@ -119,7 +121,6 @@ func GetAllTopicsById(id string) []Topic {
 		}
 	}()
 
-	// Execute the query
 	rows, err := stmt.Query(id)
 	if err != nil {
 		log.Println("Could not execute query:", err)
@@ -131,16 +132,14 @@ func GetAllTopicsById(id string) []Topic {
 		}
 	}()
 
-	// Process the result
 	var topics []Topic
 	for rows.Next() {
 		var topic Topic
-		err := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar, &topic.Like, &topic.Dislike)
+		err := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar, &topic.CheckLike, &topic.CheckDislike)
 		if err != nil {
 			log.Println("Could not scan row:", err)
 			return nil
 		}
-		// Compute ContentShort
 		if len(topic.Content) > 50 {
 			topic.ContentShort = topic.Content[:50] + "..."
 		} else {
@@ -155,4 +154,21 @@ func GetAllTopicsById(id string) []Topic {
 	}
 
 	return topics
+}
+
+func GetAvatarByCookie(r *http.Request) string {
+	cookie, _ := r.Cookie("user")
+
+	value, _ := url.QueryUnescape(cookie.Value)
+
+	parts := strings.Split(value, ";")
+
+	avatar := parts[1]
+	return avatar
+}
+
+func GetDateAndTime() string {
+	// get today date and time
+	now := time.Now()
+	return now.Format("2006-01-02 15:04:05")
 }

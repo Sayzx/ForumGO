@@ -1,8 +1,8 @@
 @font-face {
     font-family: 'Satoshi-Bold';
     src: url('../fonts/Satoshi-Bold.woff2') format('woff2'),
-         url('../fonts/Satoshi-Bold.woff') format('woff'),
-         url('../fonts/Satoshi-Bold.ttf') format('truetype');
+        url('../fonts/Satoshi-Bold.woff') format('woff'),
+        url('../fonts/Satoshi-Bold.ttf') format('truetype');
     font-weight: 700;
     font-display: swap;
     font-style: normal;
@@ -85,7 +85,7 @@ nav.sidebar {
     flex-direction: column;
     justify-content: space-between;
     height: 100vh;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     overflow: hidden;
 }
 
@@ -112,17 +112,15 @@ nav.sidebar ul li a {
 }
 
 .topics-scrollable {
-    overflow-y: auto; /* Enable vertical scrolling */
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    overflow-y: auto;
+    overflow-x: hidden;
     flex: 1;
 }
 
-/* Hide default scrollbar for Webkit browsers (Chrome, Safari) */
 .topics-scrollable::-webkit-scrollbar {
     display: none;
 }
 
-/* Custom scrollbar for Firefox */
 .topics-scrollable {
     scrollbar-width: thin;
     scrollbar-color: #888 #f4f4f4;
@@ -144,20 +142,23 @@ nav.sidebar ul li a {
 main {
     flex: 1;
     padding: 20px;
-    overflow-y: auto; /* Enable vertical scrolling */
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
-.whats-new, .discussions {
+.whats-new,
+.discussions {
     margin: 20px 0;
 }
 
-.cards, .discussion-cards {
+.cards,
+.discussion-cards {
     display: flex;
     gap: 20px;
 }
 
-.card, .discussion-card {
+.card,
+.discussion-card {
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 5px;
@@ -216,9 +217,10 @@ footer {
     color: #9e9ea7;
 }
 
-.input:focus, input:hover {
+.input:focus,
+input:hover {
     outline: none;
-    border-color: rgba(234,76,137,0.4);
+    border-color: rgba(234, 76, 137, 0.4);
     background-color: #fff;
     box-shadow: 0 0 0 4px rgb(234 76 137 / 10%);
 }
@@ -231,45 +233,45 @@ footer {
     height: 1rem;
 }
 
-.subforum{
+.subforum {
     margin-top: 20px;
 }
 
-.subforum-title{
+.subforum-title {
     background-color: #292B2E;
     padding: 5px;
     border-radius: 5px;
     margin: 4px;
 }
 
-.subforum-row{
+.subforum-row {
     display: grid;
     grid-template-columns: 7% 60% 13% 20%;
 }
 
-.subforum-column{
+.subforum-column {
     padding: 10px;
     margin: 4px;
     border-radius: 5px;
     background-color: #d9e3e6;
 }
 
-.subforum-description *{
+.subforum-description * {
     margin-block: 0;
 }
 
-.center{
+.center {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.subforum-icon i{
+.subforum-icon i {
     font-size: 45px;
 }
 
-.subforum-devider{
-    display: none;   
+.subforum-devider {
+    display: none;
 }
 
 /* For the smartphones */

@@ -3,12 +3,11 @@ package sql
 import (
 	"database/sql"
 	"fmt"
-
 	_ "modernc.org/sqlite"
 )
 
 func ConnectDB() (*sql.DB, error) {
-	db, err := sql.Open("sqlite", "forum.db")
+	db, err := sql.Open("sqlite", "internal/sql/forum.db")
 	if err != nil {
 		return nil, fmt.Errorf("failed to open the database: %v", err)
 	}

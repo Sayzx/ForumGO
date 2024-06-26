@@ -18,6 +18,8 @@ func Run() {
 	http.HandleFunc("/register", handler.RegisterHandler)
 	http.HandleFunc("/createtopic", handler.CreateTopicHandler)
 	http.HandleFunc("/addtopic", handler.AddTopicHandler)
+	http.HandleFunc("/showtopics", handler.ShowTopicsHandler)
+	// http.HandleFunc("/showposts", handler.ShowPostsHandler)
 
 	http.HandleFunc("/auth/github", handler.HandleGitHubLogin)
 	http.HandleFunc("/github/callback", handler.HandleGitHubCallback)
@@ -33,7 +35,6 @@ func Run() {
 	// Discord Authentication
 	http.HandleFunc("/auth/discord", handler.HandleDiscordLogin)
 	http.HandleFunc("/discord/callback", handler.HandleDiscordCallback)
-	http.HandleFunc("/showtopics", handler.ShowTopicsHandler)
 
 	// Logout
 	http.HandleFunc("/logout", handler.LogoutHandler)
