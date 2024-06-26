@@ -18,6 +18,10 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	email := r.FormValue("email")
 	password := r.FormValue("password")
+	if sql.UsernameIsExists(username) {
+		http.Error(w, "Username already exists", http.StatusBadRequest)
+		return
+	}
 
 	hashedPassword, err := HashPassword(password)
 	if err != nil {
