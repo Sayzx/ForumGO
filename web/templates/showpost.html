@@ -80,6 +80,13 @@
                     <img src="..\uploads\dev3.png" alt="Image" class="post-img">
                     {{end}}
                     <div class="comments">
+                        <h3>Actions</h3>
+                        <form action="/addcomment?id={{.Post.ID}}" method="POST">
+                            <input type="hidden" name="postid" value="{{.Post.ID}}">
+                            <input type="hidden" name="avatar" value="{{.Avatar}}">
+                            <textarea name="content" placeholder="Commentez ce post" class="comment-input"></textarea>
+                            <button type="submit" class="comment-button">Commenter</button>
+                        </form>
                         <h3>Commentaires</h3>
                         {{range .Comments}}
                         <div class="comment">
@@ -95,7 +102,7 @@
             </main>
         </div>
         <footer>
-            <p>&copy; 2023 Better <span color="red">Forum</span></p>
+            <p>&copy; 2024 Better <span color="red">Forum</span></p>
             <p><a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Cookies</a></p>
         </footer>
     </div>

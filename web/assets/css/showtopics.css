@@ -378,3 +378,15 @@ button {
     align-items: center;
     text-decoration: none;
 }
+
+textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    font-family: 'Satoshi';
+    /* enlever le fait d'agrandir */
+    resize: none;
+}
