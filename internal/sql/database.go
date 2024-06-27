@@ -9,7 +9,7 @@ import (
 )
 
 func ConnectDB() (*sql.DB, error) {
-	db, err := sql.Open("sqlite", "internal/sql/forum.db")
+	db, err := sql.Open("sqlite", "internal/sql/forum.db?_busy_timeout=5000")
 	if err != nil {
 		return nil, fmt.Errorf("failed to open the database: %v", err)
 	}
@@ -30,7 +30,8 @@ func ConnectDB() (*sql.DB, error) {
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		username TEXT NOT NULL,
 		email TEXT NOT NULL,
-		password TEXT NOT NULL
+		password TEXT NOT NULL,
+		avatar TEXT
 	);`
 
 	_, err = db.Exec(createUsersTableQuery)

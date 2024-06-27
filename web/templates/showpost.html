@@ -30,7 +30,14 @@
             </div>
             <div class="search-login">
                 {{if .LoggedIn}}
-                <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img">
+                <div class="user-info">
+                    <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img"
+                        onerror="this.src='/assets/img/default-avatar.webp';" onclick="toggleMenu()">
+                    <div id="popupMenu" class="popup-menu" style="display:none;">
+                        <a href="/settings">Paramètres</a>
+                        <a href="/logout">Se déconnecter</a>
+                    </div>
+                </div>
                 {{else}}
                 <a href="/login"><button>Log in</button></a>
                 {{end}}
@@ -43,16 +50,22 @@
                     <li><img src="../assets/img/home.png" alt="Home" width="20px"><a href="/"> Accueil</a></li>
                     <li><img src="../assets/img/home.png" alt="Home" width="20px"><a href="#"> Actus</a></li>
                     {{if .LoggedIn}}
-                    <li><img src="../assets/img/home.png" alt="Home" width="20px"><a href="/createtopic"> Crée un Topic</a> </li>
+                    <li><img src="../assets/img/home.png" alt="Home" width="20px"><a href="/createtopic"> Crée un
+                            Topic</a> </li>
                     <br>
                     {{end}}
                     <p id="topics">Topics</p>
                     <div class="topics-scrollable">
-                        <li><img src="../assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=1"> Général</a></li>
-                        <li><img src="../assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=2"> Jeux-Vidéos</a></li>
-                        <li><img src="../assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=3"> Développement</a></li>
-                        <li><img src="../assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=4"> Informatique</a></li>
-                        <li><img src="../assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=5"> Leak de jeux</a></li>
+                        <li><img src="../assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=1">
+                                Général</a></li>
+                        <li><img src="../assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=2">
+                                Jeux-Vidéos</a></li>
+                        <li><img src="../assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=3">
+                                Développement</a></li>
+                        <li><img src="../assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=4">
+                                Informatique</a></li>
+                        <li><img src="../assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=5"> Leak
+                                de jeux</a></li>
                     </div>
                 </ul>
                 <div class="sidebar-footer">
@@ -80,6 +93,13 @@
                     <img src="..\uploads\dev3.png" alt="Image" class="post-img">
                     {{end}}
                     <div class="comments">
+                        <h3>Actions</h3>
+                        <form action="/addcomment?id={{.Post.ID}}" method="POST">
+                            <input type="hidden" name="postid" value="{{.Post.ID}}">
+                            <input type="hidden" name="avatar" value="{{.Avatar}}">
+                            <textarea name="content" placeholder="Commentez ce post" class="comment-input"></textarea>
+                            <button type="submit" class="comment-button">Commenter</button>
+                        </form>
                         <h3>Commentaires</h3>
                         {{range .Comments}}
                         <div class="comment">
@@ -95,30 +115,12 @@
             </main>
         </div>
         <footer>
-            <p>&copy; 2023 Better <span color="red">Forum</span></p>
+            <p>&copy; 2024 Better <span color="red">Forum</span></p>
             <p><a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Cookies</a></p>
         </footer>
     </div>
-    <script>
-        function likePost(postID) {
-            fetch('/likepost', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'postid=' + postID,
-            }).then(response => location.reload());
-        }
-
-        function dislikePost(postID) {
-            fetch('/dislikepost', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'postid=' + postID,
-            }).then(response => location.reload());
-        }
-    </script>
+    <script src="../assets/static/showpost.js"></script>
+    <script src="../assets/static/home.js"></script>
 </body>
+
 </html>
