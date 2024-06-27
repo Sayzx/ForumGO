@@ -173,6 +173,48 @@ func GetDateAndTime() string {
 	return now.Format("2006-01-02 15:04:05")
 }
 
+func GetActiveUsers() []Author {
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		log.Println("Could not connect to the database:", err)
+		return nil
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			log.Println("Could not close the database connection:", err)
+		}
+	}()
+
+	rows, err := db.Query("SELECT username, avatar FROM users WHERE active = 1")
+	if err != nil {
+		log.Println("Could not query users:", err)
+		return nil
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Println("Could not close the rows:", err)
+		}
+	}()
+
+	var authors []Author
+	for rows.Next() {
+		var author Author
+		err := rows.Scan(&author.Name, &author.Avatar)
+		if err != nil {
+			log.Println("Could not scan row:", err)
+			return nil
+		}
+		authors = append(authors, author)
+	}
+
+	if err = rows.Err(); err != nil {
+		log.Println("Error encountered during row iteration:", err)
+		return nil
+	}
+
+	return authors
+}
+
 func DeletePost(id int) error {
 	db, err := dbsql.ConnectDB()
 	if err != nil {

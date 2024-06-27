@@ -4,10 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BetterForum | Catégorie</title>
+    <title>BetterForum</title>
     <link rel="icon" href="/assets/img/logo.png" type="image/png">
-    <link rel="stylesheet" href="../assets/css/showtopics.css">
-    <script src="https://kit.fontawesome.com/459ca3d53b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 
 <body>
@@ -31,7 +30,7 @@
             <div class="search-login">
                 {{if .LoggedIn}}
                 <div class="user-info">
-                    <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img"
+                    <img src="{{.User.Avatar}}" alt="Profile Picture" class="avatar-img"
                         onerror="this.src='/assets/img/default-avatar.webp';" onclick="toggleMenu()">
                     <div id="popupMenu" class="popup-menu" style="display:none;">
                         <a href="/settings">Paramètres</a>
@@ -55,16 +54,16 @@
                     {{end}}
                     <p id="topics">Topics</p>
                     <div class="topics-scrollable">
-                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=1">
+                        <li><img src="/assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=1">
                                 Général</a></li>
-                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=2">
+                        <li><img src="/assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=2">
                                 Jeux-Vidéos</a></li>
-                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=3">
+                        <li><img src="/assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=3">
                                 Développement</a></li>
-                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=4">
+                        <li><img src="/assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=4">
                                 Informatique</a></li>
-                        <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=5"> Leak
-                                de jeux</a></li>
+                        <li><img src="/assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=5"> Leak de
+                                jeux</a></li>
                     </div>
                 </ul>
                 <div class="sidebar-footer">
@@ -74,30 +73,25 @@
                 </div>
             </nav>
             <main>
-                <div class="subforum">
-                    <div class="subforum-row">
-                        {{range .Topics}}
-                        <div class="subforum-icon subforum-column center">
-                            {{if .Avatar.Valid}}
-                            <img class="avatar" src="{{.Avatar.String}}" alt="Avatar">
-                            {{else}}
-                            <img class="avatar" src="./web/assets/img/default-avatar.webp" alt="Default Avatar">
+                <h1>Administration</h1>
+                <div class="admin-content">
+                    <div class="admin-card">
+                        <h2>Post signalés</h2>
+                        <div id="discussion-cards" class="discussion-cards">
+                            {{range .Topics}}
+                            <div class="discussion-card">
+                                <h3>{{.Title}}</h3>
+                                <p>{{.Content}}</p>
+                                {{if .Avatar.Valid}}
+                                <img class="avatar" src="{{.Avatar.String}}" alt="Avatar"
+                                    onerror="this.src='/assets/img/default-avatar.webp';">
+                                {{else}}
+                                <img class="avatar" src="/assets/img/default-avatar.webp" alt="Avatar">
+                                {{end}}
+                                <span class="owner-name">{{.Owner}}</span>
+                            </div>
                             {{end}}
                         </div>
-                        <div class="subforum-description subforum-column">
-                            <h4><a href="/showpost?postid={{.ID}}"> {{.Title}}</a></h4>
-                            <p>Brève Description {{.ContentShort}}</p>
-                        </div>
-                        <div class="subforum-stats subforum-column center">
-                            <span>{{.Like}} Like | {{.Dislike}} Dislike</span>
-                        </div>
-                        <div class="subforum-info subforum-column">
-                            Créer par <a href=""> {{.Owner}}</a>
-                            <br>le <small>{{.CreateAt}}</small>
-                        </div>
-                        {{end}}
-                    </div>
-                </div>
             </main>
         </div>
         <footer>
@@ -105,7 +99,7 @@
             <p><a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Cookies</a></p>
         </footer>
     </div>
-    <script src="../assets/static/home.js"></script>
+    <script src="/assets/static/home.js"></script>
 </body>
 
 </html>
