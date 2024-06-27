@@ -17,6 +17,23 @@ import (
 	"golang.org/x/oauth2"
 )
 
+func UserAlreadyRegister(username string, platform string) bool {
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		log.Println("Could not connect to the database:", err)
+		return false
+	}
+	defer db.Close()
+
+	var count int
+	err = db.QueryRow("SELECT COUNT(*) FROM users WHERE username = ? AND platform = ?", username, platform).Scan(&count)
+	if err != nil {
+		log.Println("Could not execute query:", err)
+		return false
+	}
+
+	return count > 0
+}
 func HandleGoogleLogin(w http.ResponseWriter, r *http.Request) {
 	url := config.GoogleOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
@@ -286,6 +303,15 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !UserAlreadyRegister(userInfo.Username, "Discord") {
+		_, err = db.Exec("INSERT INTO users (username, platform, avatar, rank) VALUES (?, ?, ?, ?)", userInfo.Username, "Discord", cleanAvatar, "user")
+		if err != nil {
+			http.Error(w, "Database query error", http.StatusInternalServerError)
+			log.Println("Could not execute query:", err)
+			return
+		}
+	}
+
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -355,7 +381,7 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 			Path:    "/",
 		})
 		http.Redirect(w, r, "/", http.StatusSeeOther)
-		_, err = db.Exec("INSERT INTO loginlogs (username, plateform, datetime) VALUES (?, ?, ?)", email, "Local", time.Now())
+		_, err = db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", email, "Local", time.Now())
 		if err != nil {
 			http.Error(w, "Database query error", http.StatusInternalServerError)
 			log.Println("Could not execute query:", err)
