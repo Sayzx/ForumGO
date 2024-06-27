@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"main/internal/api"
 	dbsql "main/internal/sql"
 	"net/http"
@@ -8,51 +9,10 @@ import (
 )
 
 func LikePostHandler(w http.ResponseWriter, r *http.Request) {
-	postIDStr := r.FormValue("postid")
-	postID, err := strconv.Atoi(postIDStr)
-	if err != nil {
-		http.Error(w, "Invalid post ID", http.StatusBadRequest)
-		return
-	}
-
-	db, err := dbsql.ConnectDB()
-	if err != nil {
-		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		return
-	}
-	defer db.Close()
-
-	_, err = db.Exec("UPDATE topics SET like = like + 1 WHERE id = ?", postID)
-	if err != nil {
-		http.Error(w, "Database query error", http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-}
-
-func DislikePostHandler(w http.ResponseWriter, r *http.Request) {
-	postIDStr := r.FormValue("postid")
-	postID, err := strconv.Atoi(postIDStr)
-	if err != nil {
-		http.Error(w, "Invalid post ID", http.StatusBadRequest)
-		return
-	}
-
-	db, err := dbsql.ConnectDB()
-	if err != nil {
-		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		return
-	}
-	defer db.Close()
-
-	_, err = db.Exec("UPDATE topics SET dislike = dislike + 1 WHERE id = ?", postID)
-	if err != nil {
-		http.Error(w, "Database query error", http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
+	postid := r.FormValue("id")
+	username := r.FormValue("username")
+	fmt.Println(postid)
+	fmt.Println(username)
 }
 
 func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
