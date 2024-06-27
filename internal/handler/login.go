@@ -67,6 +67,7 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cleanAvatar := utils.CleanAvatarURL(userInfo.Picture)
+	log.Println("Cleaned Avatar URL: ", cleanAvatar)
 	userUID := uuid.New().String()
 
 	http.SetCookie(w, &http.Cookie{

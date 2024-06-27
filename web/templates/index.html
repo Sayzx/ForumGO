@@ -37,10 +37,13 @@
             <nav class="sidebar">
                 <ul>
                     <p id="topics">Menu</p>
-                    <li><img src="/assets/img/home.png" alt="Home" width="20px"><a href="/"> Accueil</a></li>
-                    <li><img src="/assets/img/home.png" alt="Home" width="20px"><a href="#"> Actus</a></li>
-                    <li><img src="/assets/img/home.png" alt="Home" width="20px"><a href="/createtopic"> Crée un Topic</a> </li>
+                    <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="/"> Accueil</a></li>
+                    <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="#"> Actus</a></li>
+                    {{if .LoggedIn}}
+                    <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="/createtopic"> Crée un
+                            Topic</a> </li>
                     <br>
+                    {{end}}
                     <p id="topics">Topics</p>
                     <div class="topics-scrollable">
                         <li><img src="/assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=1"> Général</a></li>

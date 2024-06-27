@@ -30,7 +30,8 @@
             <div class="search-login">
                 {{if .LoggedIn}}
                 <div class="user-info">
-                    <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img" onclick="toggleMenu()">
+                    <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img"
+                        onerror="this.src='/assets/img/default-avatar.webp';" onclick="toggleMenu()">
                     <div id="popupMenu" class="popup-menu" style="display:none;">
                         <a href="/settings">Paramètres</a>
                         <a href="/logout">Se déconnecter</a>
@@ -103,11 +104,10 @@
                             <textarea id="content" name="content" rows="10" required></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="images">Ajouter des images (max 250MB):</label>
+                            <label for="images">Ajouter des images (max 20MB):</label>
                             <input type="file" id="images" name="images[]" multiple>
                         </div>
                         <button type="submit">Créer le topic</button>
-                        <input type="hidden" id="username" name="username" value="{{.Username}}">
                     </form>
                 </div>
             </main>

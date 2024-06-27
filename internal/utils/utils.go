@@ -3,8 +3,10 @@ package utils
 import (
 	"log"
 	dbsql "main/internal/sql"
+	"math/rand"
 	"net/url"
 	"strings"
+	"time"
 )
 
 type OAuthProfile struct {
@@ -19,6 +21,9 @@ func CleanAvatarURL(rawURL string) string {
 		return rawURL
 	}
 	cleanURL := strings.TrimSpace(parsedURL.String())
+	// Ajoutez un paramètre aléatoire pour éviter le cache
+	randomParam := GenerateRandomString(10)
+	cleanURL = cleanURL + "?rand=" + randomParam
 	return cleanURL
 }
 
@@ -57,4 +62,15 @@ func CleanDatabaseAvatars() {
 	if err := rows.Err(); err != nil {
 		log.Println("Error encountered during row iteration:", err)
 	}
+}
+
+// GenerateRandomString génère une chaîne aléatoire de longueur n
+func GenerateRandomString(n int) string {
+	const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	rand.Seed(time.Now().UnixNano())
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
 }

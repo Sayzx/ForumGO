@@ -26,7 +26,7 @@ body {
 }
 
 .avatar {
-    width: 20px;
+    width: 55px;
     border-radius: 50%;
 }
 
@@ -34,6 +34,7 @@ body {
     height: 40px;
     width: 40px;
     border-radius: 50%;
+    cursor: pointer;
 }
 
 header {
@@ -316,4 +317,82 @@ input:hover {
     h1 {
         font-size: 16px;
     }
+}
+
+/* Show Post */
+.comment {
+    display: flex;
+    align-items: flex-start;
+    background-color: #efe9e9;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #444;
+}
+
+.comment .avatar-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.comment p {
+    margin: 5px 0;
+}
+
+.comment p a {
+    color: #e61010;
+    text-decoration: none;
+}
+
+.comment p small {
+    color: #f30af7;
+}
+
+.comment-content {
+    flex: 1;
+}
+
+#postcontent {
+    display: flex;
+    align-items: flex-start;
+    background-color: #efe9e9;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #444;
+}
+
+button {
+    font-weight: bold;
+    font-size: 0.8em;
+    color: white;
+    border-radius: 3rem;
+    cursor: pointer;
+    width: 130px;
+    height: 36px;
+    border: none;
+    background-color: #3653f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+}
+
+.popup-menu {
+    position: absolute;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    padding: 12px 16px;
+    z-index: 1;
+    right: 0;
+    top: 50px;
+}
+
+.popup-menu a {
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    color: black;
 }
