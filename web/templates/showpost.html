@@ -100,6 +100,19 @@
                             <textarea name="content" placeholder="Commentez ce post" class="comment-input"></textarea>
                             <button type="submit" class="comment-button">Commenter</button>
                         </form>
+                        <br>
+                            <form action="/like?id={{.Post.ID}}" method="POST">
+                                <input type="hidden" name="postid" value="{{.Post.ID}}">
+                                <input type="hidden" name="username" value="{{.Username}}">
+                                <button type="submit" class="comment-button"><i class="fa-regular fa-thumbs-up"></i></button>
+                                <br>
+                            </form>
+
+                            <form action="/dislike?id={{.Post.ID}}" method="POST">
+                                <input type="hidden" name="postid" value="{{.Post.ID}}">
+                                <input type="hidden" name="username" value="{{.Username}}">
+                                <button type="submit" class="comment-button"><i class="fa-regular fa-thumbs-down"></i></button>
+                            </form>
                         <h3>Commentaires</h3>
                         {{range .Comments}}
                         <div class="comment">
