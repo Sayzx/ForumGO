@@ -34,6 +34,7 @@ body {
     height: 40px;
     width: 40px;
     border-radius: 50%;
+    cursor: pointer;
 }
 
 header {
@@ -389,4 +390,22 @@ textarea {
     font-family: 'Satoshi';
     /* enlever le fait d'agrandir */
     resize: none;
+}
+
+.popup-menu {
+    position: absolute;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    padding: 12px 16px;
+    z-index: 1;
+    right: 0;
+    top: 50px;
+}
+
+.popup-menu a {
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    color: black;
+
 }
