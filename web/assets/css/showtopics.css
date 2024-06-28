@@ -37,6 +37,13 @@ body {
     cursor: pointer;
 }
 
+.avatar-img-comment {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 20px;
+}
+
 header {
     display: flex;
     justify-content: space-between;
@@ -296,13 +303,6 @@ input:hover {
     border: 1px solid #444;
 }
 
-.comment .avatar-img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 15px;
-}
-
 .comment p {
     margin: 5px 0;
 }
@@ -320,6 +320,10 @@ input:hover {
     flex: 1;
 }
 
+.comment-input {
+    font-family: 'Satoshi-Bold';
+}
+
 #postcontent {
     display: flex;
     align-items: flex-start;
@@ -331,6 +335,7 @@ input:hover {
 }
 
 button {
+    font-family: 'Satoshi-Bold';
     font-weight: bold;
     font-size: 0.8em;
     color: white;
