@@ -51,22 +51,6 @@ p[id="topics"] {
     font-family: 'Satoshi-Bold';
 }
 
-.search-login {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.search-login input {
-    padding: 3px;
-    font-size: 0.9em;
-}
-
-.search-login button {
-    padding: 3px 6px;
-    font-size: 0.9em;
-}
-
 .logo img {
     height: 100%;
     max-height: 70px;
@@ -170,26 +154,6 @@ footer {
     text-align: center;
     padding: 20px;
     border-top: 1px solid #ddd;
-}
-
-.search-login button {
-    font-weight: bold;
-    font-size: 0.8em;
-    color: white;
-    border-radius: 3rem;
-    cursor: pointer;
-    width: 70.02px;
-    height: 35.66px;
-    border: none;
-    background-color: #3653f8;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-decoration: none;
-}
-
-.search-login a {
-    text-decoration: none;
 }
 
 .group {
