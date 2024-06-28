@@ -17,7 +17,9 @@ import (
 	"golang.org/x/oauth2"
 )
 
-func UserAlreadyRegister(username string, platform string) bool {
+// create function we take in parameter username and platform if existe on users table
+
+func UserAlreadyRegister(username, platform string) bool {
 	db, err := dbsql.ConnectDB()
 	if err != nil {
 		log.Println("Could not connect to the database:", err)
@@ -34,6 +36,7 @@ func UserAlreadyRegister(username string, platform string) bool {
 
 	return count > 0
 }
+
 func HandleGoogleLogin(w http.ResponseWriter, r *http.Request) {
 	url := config.GoogleOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
@@ -86,7 +89,6 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	cleanAvatar := utils.CleanAvatarURL(userInfo.Picture)
 	log.Println("Cleaned Avatar URL: ", cleanAvatar)
 	userUID := uuid.New().String()
-
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
 		Value:   url.QueryEscape(userInfo.Email + ";" + cleanAvatar + ";" + userUID),
@@ -113,6 +115,15 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !UserAlreadyRegister(userInfo.Email, "Google") {
+		usernamehash, err := bcrypt.GenerateFromPassword([]byte(userInfo.Email), bcrypt.DefaultCost)
+		_, err = db.Exec("INSERT INTO users (username, platform, email, avatar, rank, password) VALUES (?, ?, ?, ?, ?, ?)", userInfo.Email, "Google", userInfo.Email, cleanAvatar, "user", usernamehash)
+		if err != nil {
+			http.Error(w, "Database query error", http.StatusInternalServerError)
+			log.Println("Could not execute query:", err)
+			return
+		}
+	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -175,6 +186,15 @@ func HandleGitHubCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !UserAlreadyRegister(userInfo.Login, "GitHub") {
+		usernamehash, err := bcrypt.GenerateFromPassword([]byte(userInfo.Login), bcrypt.DefaultCost)
+		_, err = db.Exec("INSERT INTO users (username, platform, email, avatar, rank, password) VALUES (?, ?, ?, ?, ?, ?)", userInfo.Login, "GitHub", userInfo.Login, cleanAvatar, "user", usernamehash)
+		if err != nil {
+			http.Error(w, "Database query error", http.StatusInternalServerError)
+			log.Println("Could not execute query:", err)
+			return
+		}
+	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -236,7 +256,15 @@ func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
 		log.Println("Could not execute query:", err)
 		return
 	}
-
+	if !UserAlreadyRegister(userInfo.Name, "Facebook") {
+		usernamehash, err := bcrypt.GenerateFromPassword([]byte(userInfo.Name), bcrypt.DefaultCost)
+		_, err = db.Exec("INSERT INTO users (username, platform, email, avatar, rank, password) VALUES (?, ?, ?, ?, ?, ?)", userInfo.Name, "Facebook", userInfo.Name, cleanAvatar, "user", usernamehash)
+		if err != nil {
+			http.Error(w, "Database query error", http.StatusInternalServerError)
+			log.Println("Could not execute query:", err)
+			return
+		}
+	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -303,8 +331,10 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// if UserAlreadyRegister est différent de true alors on insert dans la table users
 	if !UserAlreadyRegister(userInfo.Username, "Discord") {
-		_, err = db.Exec("INSERT INTO users (username, platform, avatar, rank) VALUES (?, ?, ?, ?)", userInfo.Username, "Discord", cleanAvatar, "user")
+		usernamehash, err := bcrypt.GenerateFromPassword([]byte(userInfo.Username), bcrypt.DefaultCost)
+		_, err = db.Exec("INSERT INTO users (username, platform, email, avatar, rank, password) VALUES (?, ?, ?, ?, ?, ?)", userInfo.Username, "Discord", userInfo.Username, cleanAvatar, "user", usernamehash)
 		if err != nil {
 			http.Error(w, "Database query error", http.StatusInternalServerError)
 			log.Println("Could not execute query:", err)
