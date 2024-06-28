@@ -19,14 +19,16 @@ type ShowPostData struct {
 }
 
 type Post struct {
-	ID       int
-	Title    string
-	Content  string
-	Images   string
-	Owner    string
-	Like     int
-	Dislike  int
-	CreateAt string
+	ID              int
+	Title           string
+	Content         string
+	Images          string
+	Owner           string
+	Like            int
+	Dislike         int
+	CreateAt        string
+	UserHaveLike    bool
+	UserHaveDislike bool
 }
 
 type Comment struct {
@@ -40,7 +42,6 @@ type Comment struct {
 
 func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 	var data ShowPostData
-
 	// Attempt to retrieve the user cookie
 	cookie, err := r.Cookie("user")
 	if err == nil && cookie != nil {
@@ -128,7 +129,14 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("Comments found:", len(data.Comments))
-
+	HaveLike := GetIfUserLikedPost(postID, data.Username)
+	HaveDisLike := GetIfUserHaveDisLike(postID, data.Username)
+	if HaveDisLike {
+		data.Post.UserHaveDislike = true
+	}
+	if HaveLike {
+		data.Post.UserHaveLike = true
+	}
 	// Load and execute the template
 	tmpl, err := template.ParseFiles("./web/templates/showpost.html")
 	if err != nil {

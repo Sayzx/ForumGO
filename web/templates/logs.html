@@ -48,8 +48,9 @@
                 <ul>
                     <p id="topics">Menu</p>
                     <li><img src="../assets/img/home.png" alt="Home" width="20px"><a href="/"> Accueil</a></li>
+                    <li><img src="../assets/img/home.png" alt="Home" width="20px"><a href="#"> Actus</a></li>
                     {{if .LoggedIn}}
-                    <li><img src="../assets/img/home.png" alt="Home" width="20px"><a href="/createtopic"> Créer un
+                    <li><img src="../assets/img/home.png" alt="Home" width="20px"><a href="/createtopic"> Crée un
                             Topic</a> </li>
                     <br>
                     {{end}}
@@ -124,8 +125,7 @@
                         <h3>Commentaires</h3>
                         {{range .Comments}}
                         <div class="comment">
-                            <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img-comment"
-                                onerror="this.src='/assets/img/default-avatar.webp';">
+                            <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img">
                             <div class="comment-content">
                                 <p>{{.Content}}</p>
                                 <p>Par <a href="#">{{.Owner}}</a> le <small>{{.CreateAt}}</small></p>

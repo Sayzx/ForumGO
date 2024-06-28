@@ -27,6 +27,9 @@ func Run() {
 	http.HandleFunc("/upload", handler.UploadHandler)
 	http.HandleFunc("/addcomment", handler.AddCommentHandler)
 	http.HandleFunc("/deletepost", handler.DeletePostHandler)
+	http.HandleFunc("/like", handler.LikePostHandler)
+	http.HandleFunc("/dislike", handler.DislikePostHandler)
+	http.HandleFunc("/logs", handler.LogsHandler)
 
 	// GitHub Authentication
 	http.HandleFunc("/auth/github", handler.HandleGitHubLogin)

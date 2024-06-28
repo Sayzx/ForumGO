@@ -17,6 +17,26 @@ import (
 	"golang.org/x/oauth2"
 )
 
+// create function we take in parameter username and platform if existe on users table
+
+func UserAlreadyRegister(username, platform string) bool {
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		log.Println("Could not connect to the database:", err)
+		return false
+	}
+	defer db.Close()
+
+	var count int
+	err = db.QueryRow("SELECT COUNT(*) FROM users WHERE username = ? AND platform = ?", username, platform).Scan(&count)
+	if err != nil {
+		log.Println("Could not execute query:", err)
+		return false
+	}
+
+	return count > 0
+}
+
 func HandleGoogleLogin(w http.ResponseWriter, r *http.Request) {
 	url := config.GoogleOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
@@ -69,7 +89,6 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	cleanAvatar := utils.CleanAvatarURL(userInfo.Picture)
 	log.Println("Cleaned Avatar URL: ", cleanAvatar)
 	userUID := uuid.New().String()
-
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
 		Value:   url.QueryEscape(userInfo.Email + ";" + cleanAvatar + ";" + userUID),
@@ -96,6 +115,15 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !UserAlreadyRegister(userInfo.Email, "Google") {
+		usernamehash, err := bcrypt.GenerateFromPassword([]byte(userInfo.Email), bcrypt.DefaultCost)
+		_, err = db.Exec("INSERT INTO users (username, platform, email, avatar, rank, password) VALUES (?, ?, ?, ?, ?, ?)", userInfo.Email, "Google", userInfo.Email, cleanAvatar, "user", usernamehash)
+		if err != nil {
+			http.Error(w, "Database query error", http.StatusInternalServerError)
+			log.Println("Could not execute query:", err)
+			return
+		}
+	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -158,6 +186,15 @@ func HandleGitHubCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !UserAlreadyRegister(userInfo.Login, "GitHub") {
+		usernamehash, err := bcrypt.GenerateFromPassword([]byte(userInfo.Login), bcrypt.DefaultCost)
+		_, err = db.Exec("INSERT INTO users (username, platform, email, avatar, rank, password) VALUES (?, ?, ?, ?, ?, ?)", userInfo.Login, "GitHub", userInfo.Login, cleanAvatar, "user", usernamehash)
+		if err != nil {
+			http.Error(w, "Database query error", http.StatusInternalServerError)
+			log.Println("Could not execute query:", err)
+			return
+		}
+	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -219,7 +256,15 @@ func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
 		log.Println("Could not execute query:", err)
 		return
 	}
-
+	if !UserAlreadyRegister(userInfo.Name, "Facebook") {
+		usernamehash, err := bcrypt.GenerateFromPassword([]byte(userInfo.Name), bcrypt.DefaultCost)
+		_, err = db.Exec("INSERT INTO users (username, platform, email, avatar, rank, password) VALUES (?, ?, ?, ?, ?, ?)", userInfo.Name, "Facebook", userInfo.Name, cleanAvatar, "user", usernamehash)
+		if err != nil {
+			http.Error(w, "Database query error", http.StatusInternalServerError)
+			log.Println("Could not execute query:", err)
+			return
+		}
+	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -284,6 +329,17 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Database query error", http.StatusInternalServerError)
 		log.Println("Could not execute query:", err)
 		return
+	}
+
+	// if UserAlreadyRegister est différent de true alors on insert dans la table users
+	if !UserAlreadyRegister(userInfo.Username, "Discord") {
+		usernamehash, err := bcrypt.GenerateFromPassword([]byte(userInfo.Username), bcrypt.DefaultCost)
+		_, err = db.Exec("INSERT INTO users (username, platform, email, avatar, rank, password) VALUES (?, ?, ?, ?, ?, ?)", userInfo.Username, "Discord", userInfo.Username, cleanAvatar, "user", usernamehash)
+		if err != nil {
+			http.Error(w, "Database query error", http.StatusInternalServerError)
+			log.Println("Could not execute query:", err)
+			return
+		}
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -355,7 +411,7 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 			Path:    "/",
 		})
 		http.Redirect(w, r, "/", http.StatusSeeOther)
-		_, err = db.Exec("INSERT INTO loginlogs (username, plateform, datetime) VALUES (?, ?, ?)", email, "Local", time.Now())
+		_, err = db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", email, "Local", time.Now())
 		if err != nil {
 			http.Error(w, "Database query error", http.StatusInternalServerError)
 			log.Println("Could not execute query:", err)
