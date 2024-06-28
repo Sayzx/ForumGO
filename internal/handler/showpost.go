@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"fmt"
 	"html/template"
 	"log"
+	"main/internal/api"
 	dbsql "main/internal/sql"
 	"net/http"
 	"net/url"
@@ -11,11 +13,12 @@ import (
 )
 
 type ShowPostData struct {
-	LoggedIn bool
-	Avatar   string
-	Username string
-	Post     Post
-	Comments []Comment
+	LoggedIn    bool
+	Avatar      string
+	Username    string
+	Post        Post
+	Comments    []Comment
+	IsModerator bool
 }
 
 type Post struct {
@@ -61,7 +64,12 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !data.LoggedIn {
-		data.Avatar = "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png"
+		data.Avatar = "./web/assets/img/default-avatar.webp"
+	}
+
+	// Get user role
+	if data.LoggedIn {
+		data.IsModerator = api.GetGroupByUsername(data.Username) == "moderator"
 	}
 
 	// Retrieve post ID from URL
@@ -137,6 +145,7 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 	if HaveLike {
 		data.Post.UserHaveLike = true
 	}
+
 	// Load and execute the template
 	tmpl, err := template.ParseFiles("./web/templates/showpost.html")
 	if err != nil {
@@ -149,4 +158,29 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error executing template:", err)
 		http.Error(w, "Error executing template", http.StatusInternalServerError)
 	}
+}
+
+func ReportPostHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		return
+	}
+
+	postIDStr := r.URL.Query().Get("id")
+	if postIDStr == "" {
+		http.Error(w, "Missing post ID", http.StatusBadRequest)
+		return
+	}
+
+	postID, err := strconv.Atoi(postIDStr)
+	if err != nil {
+		http.Error(w, "Invalid post ID", http.StatusBadRequest)
+		return
+	}
+
+	// Logic to handle the report (e.g., log the report, mark the post as reported, etc.)
+	log.Printf("Post %d has been reported", postID)
+
+	// Redirect back to the post page or to a confirmation page
+	http.Redirect(w, r, fmt.Sprintf("/showpost?postid=%d", postID), http.StatusSeeOther)
 }
