@@ -38,14 +38,10 @@ body {
 }
 
 .avatar-img-comment {
-    height: 55px;
-    width: 55px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     margin-right: 20px;
-}
-
-.comment-input {
-    font-family: 'Satoshi-Bold';
 }
 
 header {
@@ -342,13 +338,6 @@ input:hover {
     border: 1px solid #444;
 }
 
-.comment .avatar-img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 15px;
-}
-
 .comment p {
     margin: 5px 0;
 }
@@ -364,6 +353,10 @@ input:hover {
 
 .comment-content {
     flex: 1;
+}
+
+.comment-input {
+    font-family: 'Satoshi-Bold';
 }
 
 #postcontent {
