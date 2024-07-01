@@ -13,7 +13,7 @@ func Run() {
 	http.HandleFunc("/", handler.HomeHandler)
 
 	// Admin Page
-	http.HandleFunc("/admin", handler.AdminHandler)
+	// http.HandleFunc("/admin", handler.AdminHandler)
 
 	// Login, Signup, Topic, Post, Comment, Report, Delete, Like, Dislike, Logs
 	http.HandleFunc("/login", handler.LoginHandler)

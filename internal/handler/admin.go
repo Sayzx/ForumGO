@@ -11,12 +11,15 @@
 // 	"strings"
 // )
 
+// type User struct {
+// 	Avatar string
+// }
+
 // type AdminData struct {
-// 	LoggedIn    bool
 // 	ActiveUsers string
 // 	Avatar      string
-// 	User        User
 // 	Topics      []api.Topic
+// 	User        User
 // }
 
 // func AdminHandler(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +28,6 @@
 // 	// Get the number of active users
 // 	activeUsers := api.GetActiveUsers()
 // 	data := AdminData{
-// 		LoggedIn:    true,
 // 		ActiveUsers: strconv.Itoa(len(activeUsers)),
 // 	}
 
@@ -41,7 +43,7 @@
 // 		log.Println("Cookie value:", value)
 // 		parts := strings.SplitN(value, ";", 3)
 // 		if len(parts) == 3 {
-// 			data.LoggedIn = true
+// 			PageData.LoggedIn = true
 // 			data.Avatar = utils.CleanAvatarURL(parts[1])
 // 			data.User = User{Avatar: data.Avatar}
 // 			log.Println("Avatar URL after cleaning:", data.Avatar)
@@ -50,7 +52,7 @@
 // 		log.Println("No valid user cookie found, user not logged in.")
 // 	}
 
-// 	if !data.LoggedIn {
+// 	if !PageData.LoggedIn {
 // 		data.Avatar = "./web/assets/img/default-avatar.webp"
 // 		data.User = User{Avatar: data.Avatar}
 // 	}
