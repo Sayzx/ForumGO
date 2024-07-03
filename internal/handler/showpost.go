@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"main/internal/api"
@@ -75,8 +74,8 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 	// Retrieve post ID from URL
 	postIDStr := r.URL.Query().Get("postid")
 	if postIDStr == "" {
-		http.Error(w, "Missing post ID", http.StatusBadRequest)
-		log.Println("Missing post ID")
+		http.Error(w, "Missing post ID 2", http.StatusBadRequest)
+		log.Println("Missing post ID 2")
 		return
 	}
 
@@ -158,29 +157,4 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error executing template:", err)
 		http.Error(w, "Error executing template", http.StatusInternalServerError)
 	}
-}
-
-func ReportPostHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		return
-	}
-
-	postIDStr := r.URL.Query().Get("id")
-	if postIDStr == "" {
-		http.Error(w, "Missing post ID", http.StatusBadRequest)
-		return
-	}
-
-	postID, err := strconv.Atoi(postIDStr)
-	if err != nil {
-		http.Error(w, "Invalid post ID", http.StatusBadRequest)
-		return
-	}
-
-	// Logic to handle the report (e.g., log the report, mark the post as reported, etc.)
-	log.Printf("Post %d has been reported", postID)
-
-	// Redirect back to the post page or to a confirmation page
-	http.Redirect(w, r, fmt.Sprintf("/showpost?postid=%d", postID), http.StatusSeeOther)
 }
