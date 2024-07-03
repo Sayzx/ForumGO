@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script>
         function validateForm() {
-            var password = document.getElementById("password").value;
-            var repeatPassword = document.getElementById("repeatpassword").value;
+            let password = document.getElementById("password").value;
+            let repeatPassword = document.getElementById("repeatpassword").value;
 
             if (password !== repeatPassword) {
                 document.getElementById("error-message").innerText = "Les mots de passe ne correspondent pas.";

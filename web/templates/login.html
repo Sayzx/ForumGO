@@ -10,31 +10,35 @@
 </head>
 
 <body>
-    <div class="login-container">
-        <h2>Connexion au Forum</h2>
-        <form action="/login-form" method="POST">
+<div class="login-container">
+    <h2>Connexion au Forum</h2>
+    <form action="/login-form" method="POST">
+        <label for="email">
             <input type="email" id="email" name="email" placeholder="Email" required>
-            <input type="password" id="password" name="password" placeholder="Mot de passe" required>
-            <button type="submit">Se connecter</button>
-        </form>
-        <div class="social-login">
-            <button onclick="window.location='/auth/google';" class="icon-button">
-                <i class="fa-brands fa-google"></i>
-            </button>
-            <button onclick="window.location='/auth/github';" class="icon-button">
-                <i class="fa-brands fa-github"></i>
-            </button>
-            <button onclick="window.location='/auth/facebook';" class="icon-button">
-                <i class="fa-brands fa-facebook"></i>
-            </button>
-            <button onclick="window.location='/auth/discord';" class="icon-button">
-                <i class="fa-brands fa-discord"></i>
-            </button>  
-            <br>
+        </label>
 
-            <p id="signup">Pas encore de compte ? <a href="/register">Inscrivez-vous</a></p>
-</div>
+        <label for="password">
+            <input type="password" id="password" name="password" placeholder="Mot de passe" required>
+        </label>
+        <button type="submit">Se connecter</button>
+    </form>
+    <div class="social-login">
+        <button onclick="window.location='/auth/google';" class="icon-button">
+            <i class="fa-brands fa-google"></i>
+        </button>
+        <button onclick="window.location='/auth/github';" class="icon-button">
+            <i class="fa-brands fa-github"></i>
+        </button>
+        <button onclick="window.location='/auth/facebook';" class="icon-button">
+            <i class="fa-brands fa-facebook"></i>
+        </button>
+        <button onclick="window.location='/auth/discord';" class="icon-button">
+            <i class="fa-brands fa-discord"></i>
+        </button>
+        <br>
+        <p id="signup">Pas encore de compte ? <a href="/register">Inscrivez-vous</a></p>
     </div>
+</div>
 </body>
 
 </html>
