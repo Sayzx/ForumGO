@@ -3,38 +3,58 @@ package handler
 import (
 	"database/sql"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io"
 	"log"
 	"main/internal/config"
 	dbsql "main/internal/sql"
+	"main/internal/utils"
 	"net/http"
 	"net/url"
 	"time"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/oauth2"
 )
 
+// create function we take in parameter username and platform if existe on users table
+
+func UserAlreadyRegister(username, platform string) bool {
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		log.Println("Could not connect to the database:", err)
+		return false
+	}
+	defer db.Close()
+
+	var count int
+	err = db.QueryRow("SELECT COUNT(*) FROM users WHERE username = ? AND platform = ?", username, platform).Scan(&count)
+	if err != nil {
+		log.Println("Could not execute query:", err)
+		return false
+	}
+
+	return count > 0
+}
+
 func HandleGoogleLogin(w http.ResponseWriter, r *http.Request) {
-	authUrl := config.GoogleOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
-	http.Redirect(w, r, authUrl, http.StatusTemporaryRedirect)
+	url := config.GoogleOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
+	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
 func HandleGitHubLogin(w http.ResponseWriter, r *http.Request) {
-	authUrl := config.GitHubOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
-	http.Redirect(w, r, authUrl, http.StatusTemporaryRedirect)
+	url := config.GitHubOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
+	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
 func HandleFacebookLogin(w http.ResponseWriter, r *http.Request) {
-	authUrl := config.FacebookOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
-	http.Redirect(w, r, authUrl, http.StatusTemporaryRedirect)
+	url := config.FacebookOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
+	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
 func HandleDiscordLogin(w http.ResponseWriter, r *http.Request) {
-	authUrl := config.DiscordOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
-	http.Redirect(w, r, authUrl, http.StatusTemporaryRedirect)
+	url := config.DiscordOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
+	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
 func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
@@ -49,52 +69,60 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to exchange token: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	resp, err1 := http.Get("https://www.googleapis.com/oauth2/v3/userinfo?access_token=" + token.AccessToken)
-	if err1 != nil {
-		http.Error(w, "Failed to get user info: "+err1.Error(), http.StatusInternalServerError)
+	resp, err := http.Get("https://www.googleapis.com/oauth2/v3/userinfo?access_token=" + token.AccessToken)
+	if err != nil {
+		http.Error(w, "Failed to get user info: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer func(Body io.ReadCloser) {
-		err2 := Body.Close()
-		if err2 != nil {
-
-		}
-	}(resp.Body)
+	defer resp.Body.Close()
 
 	userInfo := struct {
 		Email   string `json:"email"`
 		Picture string `json:"picture"`
 	}{}
 
-	if err3 := json.NewDecoder(resp.Body).Decode(&userInfo); err3 != nil {
-		http.Error(w, "Failed to decode user info: "+err3.Error(), http.StatusInternalServerError)
+	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
+		http.Error(w, "Failed to decode user info: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	cleanAvatar := utils.CleanAvatarURL(userInfo.Picture)
+	log.Println("Cleaned Avatar URL: ", cleanAvatar)
+	userUID := uuid.New().String()
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
-		Value:   url.QueryEscape(userInfo.Email + ";" + userInfo.Picture),
+		Value:   url.QueryEscape(userInfo.Email + ";" + cleanAvatar + ";" + userUID),
 		Expires: time.Now().Add(24 * time.Hour),
 		Path:    "/",
 	})
 
-	db, err4 := dbsql.ConnectDB()
-	if err4 != nil {
+	db, err := dbsql.ConnectDB()
+	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err4)
+		log.Println("Could not connect to the database:", err)
 		return
 	}
 	defer func(db *sql.DB) {
-		if err5 := db.Close(); err5 != nil {
-			log.Println("Could not close the database connection:", err5)
+		if err := db.Close(); err != nil {
+			log.Println("Could not close the database connection:", err)
 		}
 	}(db)
 
-	_, err6 := db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", userInfo.Email, "Google", time.Now())
-	if err6 != nil {
+	_, err = db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", userInfo.Email, "Google", time.Now())
+	if err != nil {
 		http.Error(w, "Database query error", http.StatusInternalServerError)
-		log.Println("Could not execute query:", err6)
+		log.Println("Could not execute query:", err)
 		return
+	}
+
+	if !UserAlreadyRegister(userInfo.Email, "Google") {
+		usernamehash, err := bcrypt.GenerateFromPassword([]byte(userInfo.Email), bcrypt.DefaultCost)
+		_, err = db.Exec("INSERT INTO users (username, platform, email, avatar, rank, password) VALUES (?, ?, ?, ?, ?, ?)", userInfo.Email, "Google", userInfo.Email, cleanAvatar, "user", usernamehash)
+		if err != nil {
+			http.Error(w, "Database query error", http.StatusInternalServerError)
+			log.Println("Could not execute query:", err)
+			return
+		}
 	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
@@ -112,54 +140,61 @@ func HandleGitHubCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	client := config.GitHubOauthConfig.Client(ctx, token)
-	user, err1 := client.Get("https://api.github.com/user")
-	if err1 != nil {
-		http.Error(w, "Failed to get user info: "+err1.Error(), http.StatusInternalServerError)
+	user, err := client.Get("https://api.github.com/user")
+	if err != nil {
+		http.Error(w, "Failed to get user info: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer func(Body io.ReadCloser) {
-		err2 := Body.Close()
-		if err2 != nil {
-
-		}
-	}(user.Body)
+	defer user.Body.Close()
 
 	userInfo := struct {
 		Login     string `json:"login"`
 		AvatarURL string `json:"avatar_url"`
 	}{}
 
-	if err3 := json.NewDecoder(user.Body).Decode(&userInfo); err3 != nil {
-		http.Error(w, "Failed to decode user info: "+err3.Error(), http.StatusInternalServerError)
+	if err := json.NewDecoder(user.Body).Decode(&userInfo); err != nil {
+		http.Error(w, "Failed to decode user info: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	cleanAvatar := utils.CleanAvatarURL(userInfo.AvatarURL)
+	userUID := uuid.New().String()
+
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
-		Value:   url.QueryEscape(userInfo.Login + ";" + userInfo.AvatarURL),
+		Value:   url.QueryEscape(userInfo.Login + ";" + cleanAvatar + ";" + userUID),
 		Expires: time.Now().Add(24 * time.Hour),
 		Path:    "/",
 	})
 
-	db, err4 := dbsql.ConnectDB()
-	if err4 != nil {
+	db, err := dbsql.ConnectDB()
+	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err4)
+		log.Println("Could not connect to the database:", err)
 		return
 	}
 	defer func(db *sql.DB) {
-		if err5 := db.Close(); err5 != nil {
-			log.Println("Could not close the database connection:", err5)
+		if err := db.Close(); err != nil {
+			log.Println("Could not close the database connection:", err)
 		}
 	}(db)
 
-	_, err6 := db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", userInfo.Login, "GitHub", time.Now())
-	if err6 != nil {
+	_, err = db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", userInfo.Login, "GitHub", time.Now())
+	if err != nil {
 		http.Error(w, "Database query error", http.StatusInternalServerError)
-		log.Println("Could not execute query:", err6)
+		log.Println("Could not execute query:", err)
 		return
 	}
 
+	if !UserAlreadyRegister(userInfo.Login, "GitHub") {
+		usernamehash, err := bcrypt.GenerateFromPassword([]byte(userInfo.Login), bcrypt.DefaultCost)
+		_, err = db.Exec("INSERT INTO users (username, platform, email, avatar, rank, password) VALUES (?, ?, ?, ?, ?, ?)", userInfo.Login, "GitHub", userInfo.Login, cleanAvatar, "user", usernamehash)
+		if err != nil {
+			http.Error(w, "Database query error", http.StatusInternalServerError)
+			log.Println("Could not execute query:", err)
+			return
+		}
+	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -176,17 +211,12 @@ func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	client := config.FacebookOauthConfig.Client(ctx, token)
-	user, err1 := client.Get("https://graph.facebook.com/me?fields=id,name,email,picture")
-	if err1 != nil {
-		http.Error(w, "Failed to get user info: "+err1.Error(), http.StatusInternalServerError)
+	user, err := client.Get("https://graph.facebook.com/me?fields=id,name,email,picture")
+	if err != nil {
+		http.Error(w, "Failed to get user info: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer func(Body io.ReadCloser) {
-		err2 := Body.Close()
-		if err2 != nil {
-
-		}
-	}(user.Body)
+	defer user.Body.Close()
 
 	userInfo := struct {
 		Name    string `json:"name"`
@@ -197,18 +227,44 @@ func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
 		} `json:"picture"`
 	}{}
 
-	if err3 := json.NewDecoder(user.Body).Decode(&userInfo); err3 != nil {
-		http.Error(w, "Failed to decode user info: "+err3.Error(), http.StatusInternalServerError)
+	if err := json.NewDecoder(user.Body).Decode(&userInfo); err != nil {
+		http.Error(w, "Failed to decode user info: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	cleanAvatar := utils.CleanAvatarURL(userInfo.Picture.Data.URL)
+	userUID := uuid.New().String()
+
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
-		Value:   url.QueryEscape(userInfo.Name + ";" + userInfo.Picture.Data.URL),
+		Value:   url.QueryEscape(userInfo.Name + ";" + cleanAvatar + ";" + userUID),
 		Expires: time.Now().Add(24 * time.Hour),
 		Path:    "/",
 	})
 
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		http.Error(w, "Database connection error", http.StatusInternalServerError)
+		log.Println("Could not connect to the database:", err)
+		return
+	}
+	defer db.Close()
+
+	_, err = db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", userInfo.Name, "Facebook", time.Now())
+	if err != nil {
+		http.Error(w, "Database query error", http.StatusInternalServerError)
+		log.Println("Could not execute query:", err)
+		return
+	}
+	if !UserAlreadyRegister(userInfo.Name, "Facebook") {
+		usernamehash, err := bcrypt.GenerateFromPassword([]byte(userInfo.Name), bcrypt.DefaultCost)
+		_, err = db.Exec("INSERT INTO users (username, platform, email, avatar, rank, password) VALUES (?, ?, ?, ?, ?, ?)", userInfo.Name, "Facebook", userInfo.Name, cleanAvatar, "user", usernamehash)
+		if err != nil {
+			http.Error(w, "Database query error", http.StatusInternalServerError)
+			log.Println("Could not execute query:", err)
+			return
+		}
+	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -225,17 +281,12 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	client := config.DiscordOauthConfig.Client(ctx, token)
-	user, err1 := client.Get("https://discord.com/api/users/@me")
-	if err1 != nil {
-		http.Error(w, "Failed to get user info: "+err1.Error(), http.StatusInternalServerError)
+	user, err := client.Get("https://discord.com/api/users/@me")
+	if err != nil {
+		http.Error(w, "Failed to get user info: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer func(Body io.ReadCloser) {
-		err2 := Body.Close()
-		if err2 != nil {
-
-		}
-	}(user.Body)
+	defer user.Body.Close()
 
 	userInfo := struct {
 		Username string `json:"username"`
@@ -243,8 +294,8 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		ID       string `json:"id"`
 	}{}
 
-	if err3 := json.NewDecoder(user.Body).Decode(&userInfo); err3 != nil {
-		http.Error(w, "Failed to decode user info: "+err3.Error(), http.StatusInternalServerError)
+	if err := json.NewDecoder(user.Body).Decode(&userInfo); err != nil {
+		http.Error(w, "Failed to decode user info: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -252,33 +303,43 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 	if userInfo.Avatar != "" {
 		avatarURL = fmt.Sprintf("https://cdn.discordapp.com/avatars/%s/%s.png", userInfo.ID, userInfo.Avatar)
 	} else {
-		avatarURL = "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=6673fba1&is=6672aa21&hm=5741edc76eb55c2e3e4ac8924a89c2d610df57a88caf4880636b97a92b3fc153&format=webp&quality=lossless&width=640&height=640&"
+		avatarURL = "/web/assets/img/default-avatar.webp"
 	}
+
+	cleanAvatar := utils.CleanAvatarURL(avatarURL)
+	userUID := uuid.New().String()
 
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
-		Value:   url.QueryEscape(userInfo.Username + ";" + avatarURL),
+		Value:   url.QueryEscape(userInfo.Username + ";" + cleanAvatar + ";" + userUID),
 		Expires: time.Now().Add(24 * time.Hour),
 		Path:    "/",
 	})
 
-	db, err4 := dbsql.ConnectDB()
-	if err4 != nil {
+	db, err := dbsql.ConnectDB()
+	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err4)
+		log.Println("Could not connect to the database:", err)
 		return
 	}
-	defer func(db *sql.DB) {
-		if err5 := db.Close(); err5 != nil {
-			log.Println("Could not close the database connection:", err5)
-		}
-	}(db)
+	defer db.Close()
 
-	_, err6 := db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", userInfo.Username, "Discord", time.Now())
-	if err6 != nil {
+	_, err = db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", userInfo.Username, "Discord", time.Now())
+	if err != nil {
 		http.Error(w, "Database query error", http.StatusInternalServerError)
-		log.Println("Could not execute query:", err6)
+		log.Println("Could not execute query:", err)
 		return
+	}
+
+	// if UserAlreadyRegister est différent de true alors on insert dans la table users
+	if !UserAlreadyRegister(userInfo.Username, "Discord") {
+		usernamehash, err := bcrypt.GenerateFromPassword([]byte(userInfo.Username), bcrypt.DefaultCost)
+		_, err = db.Exec("INSERT INTO users (username, platform, email, avatar, rank, password) VALUES (?, ?, ?, ?, ?, ?)", userInfo.Username, "Discord", userInfo.Username, cleanAvatar, "user", usernamehash)
+		if err != nil {
+			http.Error(w, "Database query error", http.StatusInternalServerError)
+			log.Println("Could not execute query:", err)
+			return
+		}
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -321,44 +382,39 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db, err1 := dbsql.ConnectDB()
-	if err1 != nil {
+	db, err := dbsql.ConnectDB()
+	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err1)
+		log.Println("Could not connect to the database:", err)
 		return
 	}
-	defer func(db *sql.DB) {
-		err2 := db.Close()
-		if err2 != nil {
-
-		}
-	}(db)
+	defer db.Close()
 
 	var storedEmail, storedPasswordHash string
-	err3 := db.QueryRow("SELECT email, password FROM users WHERE email = ?", email).Scan(&storedEmail, &storedPasswordHash)
-	if err3 != nil {
-		if errors.Is(err3, sql.ErrNoRows) {
+	err = db.QueryRow("SELECT email, password FROM users WHERE email = ?", email).Scan(&storedEmail, &storedPasswordHash)
+	if err != nil {
+		if err == sql.ErrNoRows {
 			http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 		} else {
 			http.Error(w, "Database query error", http.StatusInternalServerError)
-			log.Println("Could not execute query:", err3)
+			log.Println("Could not execute query:", err)
 		}
 		return
 	}
 
 	if CheckPasswordHash(password, storedPasswordHash) {
-		fmt.Println("Login successful!")
+		userUIID := uuid.New().String()
 		http.SetCookie(w, &http.Cookie{
 			Name:    "user",
-			Value:   url.QueryEscape(storedEmail + ";https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=667a9321&is=667941a1&hm=733e73400a7e6e85dac74042fc2ce1f50eeb42c7d53d1228d0dde1e45718fc9d&=&format=webp&quality=lossless&width=640&height=640"),
+			Value:   url.QueryEscape(storedEmail+";./web/assets/img/default-avatar.webp") + ";" + userUIID,
 			Expires: time.Now().Add(1 * time.Hour),
 			Path:    "/",
 		})
 		http.Redirect(w, r, "/", http.StatusSeeOther)
-		_, err4 := db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", email, "Local", time.Now())
-		if err4 != nil {
+		_, err = db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", email, "Local", time.Now())
+		if err != nil {
 			http.Error(w, "Database query error", http.StatusInternalServerError)
-			log.Println("Could not execute query:", err4)
+			log.Println("Could not execute query:", err)
 			return
 		}
 	} else {

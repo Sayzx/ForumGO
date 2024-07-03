@@ -3,10 +3,13 @@ package main
 import (
 	"fmt"
 	"main/internal/routes"
+	"main/internal/utils"
 	"net/http"
 )
 
 func main() {
+	// Nettoyage des URLs d'avatars dans la base de données
+	utils.CleanDatabaseAvatars()
 	routes.Run()
 
 	fmt.Println("Server started at http://localhost:8080")

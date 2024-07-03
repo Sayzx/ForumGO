@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 type Author struct {
@@ -25,23 +26,23 @@ type Topic struct {
 	CheckDislike sql.NullInt64
 	Dislike      int
 	ContentShort string
-	CreatedAt    sql.NullString
+	CreateAt     *string // Utilisation d'un pointeur pour gérer les valeurs NULL
 	Username     string
 }
 
 func GetUsernameByCookie(r *http.Request) string {
-	cookie, err := r.Cookie("user")
-	if err != nil || cookie == nil {
+	cookie, _ := r.Cookie("user")
+
+	if cookie == nil {
 		return ""
 	}
 
-	value, err1 := url.QueryUnescape(cookie.Value)
-	if err1 != nil {
-		return ""
-	}
+	value, _ := url.QueryUnescape(cookie.Value)
 
 	parts := strings.Split(value, ";")
-	return parts[0]
+
+	username := parts[0]
+	return username
 }
 
 func GetAllTopics() []Topic {
@@ -51,46 +52,46 @@ func GetAllTopics() []Topic {
 		return nil
 	}
 	defer func() {
-		if err1 := db.Close(); err1 != nil {
-			log.Println("Could not close the database connection:", err1)
+		if err := db.Close(); err != nil {
+			log.Println("Could not close the database connection:", err)
 		}
 	}()
 
-	stmt, err1 := db.Prepare("SELECT id, title, content, owner, avatar, createat FROM topics")
-	if err1 != nil {
-		log.Println("Could not prepare query:", err1)
+	stmt, err := db.Prepare("SELECT id, title, content, owner, avatar, createat FROM topics")
+	if err != nil {
+		log.Println("Could not prepare query:", err)
 		return nil
 	}
 	defer func() {
-		if err2 := stmt.Close(); err2 != nil {
-			log.Println("Could not close the statement:", err2)
+		if err := stmt.Close(); err != nil {
+			log.Println("Could not close the statement:", err)
 		}
 	}()
 
-	rows, err2 := stmt.Query()
-	if err2 != nil {
-		log.Println("Could not execute query:", err2)
+	rows, err := stmt.Query()
+	if err != nil {
+		log.Println("Could not execute query:", err)
 		return nil
 	}
 	defer func() {
-		if err3 := rows.Close(); err3 != nil {
-			log.Println("Could not close the rows:", err3)
+		if err := rows.Close(); err != nil {
+			log.Println("Could not close the rows:", err)
 		}
 	}()
 
 	var topics []Topic
 	for rows.Next() {
 		var topic Topic
-		err3 := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar, &topic.CreatedAt)
-		if err3 != nil {
-			log.Println("Could not scan row:", err3)
+		err := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar, &topic.CreateAt)
+		if err != nil {
+			log.Println("Could not scan row:", err)
 			return nil
 		}
 		topics = append(topics, topic)
 	}
 
-	if err4 := rows.Err(); err4 != nil {
-		log.Println("Error encountered during row iteration:", err4)
+	if err = rows.Err(); err != nil {
+		log.Println("Error encountered during row iteration:", err)
 		return nil
 	}
 
@@ -104,44 +105,41 @@ func GetAllTopicsById(id string) []Topic {
 		return nil
 	}
 	defer func() {
-		if err1 := db.Close(); err1 != nil {
-			log.Println("Could not close the database connection:", err1)
+		if err := db.Close(); err != nil {
+			log.Println("Could not close the database connection:", err)
 		}
 	}()
 
-	stmt, err1 := db.Prepare("SELECT id, title, content, owner, avatar, like, dislike FROM topics WHERE categoryid = ?")
-	if err1 != nil {
-		log.Println("Could not prepare query:", err1)
+	stmt, err := db.Prepare("SELECT id, title, content, owner, avatar, like, dislike FROM topics where categoryid = ?")
+	if err != nil {
+		log.Println("Could not prepare query:", err)
 		return nil
 	}
 	defer func() {
-		if err2 := stmt.Close(); err2 != nil {
-			log.Println("Could not close the statement:", err2)
+		if err := stmt.Close(); err != nil {
+			log.Println("Could not close the statement:", err)
 		}
 	}()
 
-	rows, err2 := stmt.Query(id)
-	if err2 != nil {
-		log.Println("Could not execute query:", err2)
+	rows, err := stmt.Query(id)
+	if err != nil {
+		log.Println("Could not execute query:", err)
 		return nil
 	}
 	defer func() {
-		if err3 := rows.Close(); err3 != nil {
-			log.Println("Could not close the rows:", err3)
+		if err := rows.Close(); err != nil {
+			log.Println("Could not close the rows:", err)
 		}
 	}()
 
 	var topics []Topic
 	for rows.Next() {
 		var topic Topic
-		err3 := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar, &topic.CheckLike, &topic.CheckDislike)
-		if err3 != nil {
-			log.Println("Could not scan row:", err3)
+		err := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar, &topic.Like, &topic.Dislike)
+		if err != nil {
+			log.Println("Could not scan row:", err)
 			return nil
 		}
-		topic.Like = int(topic.CheckLike.Int64)
-		topic.Dislike = int(topic.CheckDislike.Int64)
-
 		if len(topic.Content) > 50 {
 			topic.ContentShort = topic.Content[:50] + "..."
 		} else {
@@ -150,10 +148,140 @@ func GetAllTopicsById(id string) []Topic {
 		topics = append(topics, topic)
 	}
 
-	if err4 := rows.Err(); err4 != nil {
-		log.Println("Error encountered during row iteration:", err4)
+	if err = rows.Err(); err != nil {
+		log.Println("Error encountered during row iteration:", err)
 		return nil
 	}
 
 	return topics
+}
+
+func GetAvatarByCookie(r *http.Request) string {
+	cookie, _ := r.Cookie("user")
+
+	value, _ := url.QueryUnescape(cookie.Value)
+
+	parts := strings.Split(value, ";")
+
+	avatar := parts[1]
+	return avatar
+}
+
+func GetDateAndTime() string {
+	// get today date and time
+	now := time.Now()
+	return now.Format("2006-01-02 15:04:05")
+}
+
+func GetActiveUsers() []Author {
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		log.Println("Could not connect to the database:", err)
+		return nil
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			log.Println("Could not close the database connection:", err)
+		}
+	}()
+
+	rows, err := db.Query("SELECT username, avatar FROM users WHERE active = 1")
+	if err != nil {
+		log.Println("Could not query users:", err)
+		return nil
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Println("Could not close the rows:", err)
+		}
+	}()
+
+	var authors []Author
+	for rows.Next() {
+		var author Author
+		err := rows.Scan(&author.Name, &author.Avatar)
+		if err != nil {
+			log.Println("Could not scan row:", err)
+			return nil
+		}
+		authors = append(authors, author)
+	}
+
+	if err = rows.Err(); err != nil {
+		log.Println("Error encountered during row iteration:", err)
+		return nil
+	}
+
+	return authors
+}
+
+func DeletePost(id int) error {
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			log.Println("Could not close the database connection:", err)
+		}
+	}()
+
+	stmt, err := db.Prepare("DELETE FROM topics WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err := stmt.Close(); err != nil {
+			log.Println("Could not close the statement:", err)
+		}
+	}()
+
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GetGroupByUsername(username string) string {
+	// select rank from users where username = username
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		log.Println("Could not connect to the database:", err)
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			log.Println("Could not close the database connection:", err)
+		}
+	}()
+
+	stmt, err := db.Prepare("SELECT rank FROM users WHERE email = ?")
+	if err != nil {
+		log.Println("Could not prepare query:", err)
+	}
+	defer func() {
+		if err := stmt.Close(); err != nil {
+			log.Println("Could not close the statement:", err)
+		}
+	}()
+
+	rows, err := stmt.Query(username)
+	if err != nil {
+		log.Println("Could not execute query:", err)
+	}
+
+	var rank string
+	for rows.Next() {
+		err := rows.Scan(&rank)
+		if err != nil {
+			log.Println("Could not scan row:", err)
+		}
+	}
+
+	if err = rows.Err(); err != nil {
+		log.Println("Error encountered during row iteration:", err)
+	}
+
+	return rank
 }

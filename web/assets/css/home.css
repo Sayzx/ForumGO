@@ -48,8 +48,7 @@ header {
 }
 
 p[id="topics"] {
-    text-decoration: underline;
-    font-family: 'Arial';
+    font-family: 'Satoshi-Bold';
 }
 
 .logo img {
@@ -199,69 +198,6 @@ input:hover {
     height: 1rem;
 }
 
-.create-topic-form {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-top: 50px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.create-topic-form h2 {
-    margin-bottom: 20px;
-    font-size: 1.5em;
-    color: #333;
-}
-
-.create-topic-form .form-group {
-    margin-bottom: 15px;
-}
-
-.create-topic-form .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
-}
-
-.create-topic-form .form-group input,
-.create-topic-form .form-group select,
-.create-topic-form .form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1em;
-}
-
-.create-topic-form .form-group textarea {
-    resize: vertical;
-}
-
-.create-topic-form .form-group input[type="file"] {
-    padding: 3px;
-}
-
-.create-topic-form button {
-    display: inline-block;
-    padding: 10px 20px;
-    font-size: 1em;
-    font-weight: bold;
-    color: #fff;
-    background-color: #3653f8;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.create-topic-form button:hover {
-    background-color: #2b44c1;
-}
-
 .popup-menu {
     position: absolute;
     background-color: #f9f9f9;
@@ -277,4 +213,17 @@ input:hover {
     text-decoration: none;
     display: block;
     color: black;
+}
+
+.avatar-menu {
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+}
+
+.owner-name {
+    font-family: 'Satoshi-Bold';
+    position: relative;
+    top: -5px;
+    margin-left: 4px;
 }

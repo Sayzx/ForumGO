@@ -1,8 +1,8 @@
 @font-face {
     font-family: 'Satoshi-Bold';
     src: url('../fonts/Satoshi-Bold.woff2') format('woff2'),
-         url('../fonts/Satoshi-Bold.woff') format('woff'),
-         url('../fonts/Satoshi-Bold.ttf') format('truetype');
+        url('../fonts/Satoshi-Bold.woff') format('woff'),
+        url('../fonts/Satoshi-Bold.ttf') format('truetype');
     font-weight: 700;
     font-display: swap;
     font-style: normal;
@@ -26,7 +26,7 @@ body {
 }
 
 .avatar {
-    width: 20px;
+    width: 55px;
     border-radius: 50%;
 }
 
@@ -34,6 +34,14 @@ body {
     height: 40px;
     width: 40px;
     border-radius: 50%;
+    cursor: pointer;
+}
+
+.avatar-img-comment {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 20px;
 }
 
 header {
@@ -51,24 +59,10 @@ p[class="topics"] {
     font-family: 'Arial';
 }
 
-.search-login {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.search-login input {
-    padding: 3px;
-    font-size: 0.9em;
-}
-
-.search-login button {
-    padding: 3px 6px;
-    font-size: 0.9em;
-}
 
 .logo img {
-    max-height: 50px;
+    height: 100%;
+    max-height: 70px;
 }
 
 .main-content {
@@ -85,7 +79,7 @@ nav.sidebar {
     flex-direction: column;
     justify-content: space-between;
     height: 100vh;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     overflow: hidden;
 }
 
@@ -112,17 +106,15 @@ nav.sidebar ul li a {
 }
 
 .topics-scrollable {
-    overflow-y: auto; /* Enable vertical scrolling */
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    overflow-y: auto;
+    overflow-x: hidden;
     flex: 1;
 }
 
-/* Hide default scrollbar for Webkit browsers (Chrome, Safari) */
 .topics-scrollable::-webkit-scrollbar {
     display: none;
 }
 
-/* Custom scrollbar for Firefox */
 .topics-scrollable {
     scrollbar-width: thin;
     scrollbar-color: #888 #f4f4f4;
@@ -144,20 +136,23 @@ nav.sidebar ul li a {
 main {
     flex: 1;
     padding: 20px;
-    overflow-y: auto; /* Enable vertical scrolling */
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
-.whats-new, .discussions {
+.whats-new,
+.discussions {
     margin: 20px 0;
 }
 
-.cards, .discussion-cards {
+.cards,
+.discussion-cards {
     display: flex;
     gap: 20px;
 }
 
-.card, .discussion-card {
+.card,
+.discussion-card {
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 5px;
@@ -168,26 +163,6 @@ footer {
     text-align: center;
     padding: 20px;
     border-top: 1px solid #ddd;
-}
-
-.search-login button {
-    font-weight: bold;
-    font-size: 0.8em;
-    color: white;
-    border-radius: 3rem;
-    cursor: pointer;
-    width: 70px;
-    height: 36px;
-    border: none;
-    background-color: #3653f8;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-decoration: none;
-}
-
-.search-login a {
-    text-decoration: none;
 }
 
 .group {
@@ -216,9 +191,10 @@ footer {
     color: #9e9ea7;
 }
 
-.input:focus, input:hover {
+.input:focus,
+input:hover {
     outline: none;
-    border-color: rgba(234,76,137,0.4);
+    border-color: rgba(234, 76, 137, 0.4);
     background-color: #fff;
     box-shadow: 0 0 0 4px rgb(234 76 137 / 10%);
 }
@@ -231,45 +207,45 @@ footer {
     height: 1rem;
 }
 
-.subforum{
+.subforum {
     margin-top: 20px;
 }
 
-.subforum-title{
+.subforum-title {
     background-color: #292B2E;
     padding: 5px;
     border-radius: 5px;
     margin: 4px;
 }
 
-.subforum-row{
+.subforum-row {
     display: grid;
     grid-template-columns: 7% 60% 13% 20%;
 }
 
-.subforum-column{
+.subforum-column {
     padding: 10px;
     margin: 4px;
     border-radius: 5px;
     background-color: #d9e3e6;
 }
 
-.subforum-description *{
+.subforum-description * {
     margin-block: 0;
 }
 
-.center{
+.center {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.subforum-icon i{
+.subforum-icon i {
     font-size: 45px;
 }
 
-.subforum-devider{
-    display: none;   
+.subforum-devider {
+    display: none;
 }
 
 /* For the smartphones */
@@ -315,3 +291,178 @@ footer {
         font-size: 16px;
     }
 }
+
+/* Show Post */
+.comment {
+    display: flex;
+    align-items: flex-start;
+    background-color: #efe9e9;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #444;
+}
+
+.comment p {
+    margin: 5px 0;
+}
+
+.comment p a {
+    color: #e61010;
+    text-decoration: none;
+}
+
+.comment p small {
+    color: #f30af7;
+}
+
+.comment-content {
+    flex: 1;
+}
+
+.comment-input {
+    font-family: 'Satoshi-Bold';
+}
+
+#postcontent {
+    display: flex;
+    align-items: flex-start;
+    background-color: #efe9e9;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #444;
+}
+
+button {
+    font-family: 'Satoshi-Bold';
+    font-weight: bold;
+    font-size: 0.8em;
+    color: white;
+    border-radius: 3rem;
+    cursor: pointer;
+    width: 130px;
+    height: 36px;
+    border: none;
+    background-color: #3653f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    font-family: 'Satoshi';
+    /* enlever le fait d'agrandir */
+    resize: none;
+}
+
+.popup-menu {
+    position: absolute;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    padding: 12px 16px;
+    z-index: 1;
+    right: 0;
+    top: 50px;
+}
+
+.popup-menu a {
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    color: black;
+
+}
+
+.heart-container {
+    --heart-color: rgb(91, 255, 195);
+    position: relative;
+    width: 50px;
+    height: 50px;
+    transition: .3s;
+  }
+  
+  .heart-container .checkbox {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 20;
+    cursor: pointer;
+  }
+  
+  .heart-container .svg-container {
+    width: 50%;
+    height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .heart-container .svg-outline,
+          .heart-container .svg-filled {
+    fill: var(--heart-color);
+    position: absolute;
+  }
+  
+  .heart-container .svg-filled {
+    animation: keyframes-svg-filled 1s;
+    display: none;
+  }
+  
+  .heart-container .svg-celebrate {
+    position: absolute;
+    animation: keyframes-svg-celebrate .5s;
+    animation-fill-mode: forwards;
+    display: none;
+    stroke: var(--heart-color);
+    fill: var(--heart-color);
+    stroke-width: 2px;
+  }
+  
+  .heart-container .checkbox:checked~.svg-container .svg-filled {
+    display: block
+  }
+  
+  .heart-container .checkbox:checked~.svg-container .svg-celebrate {
+    display: block
+  }
+  
+  @keyframes keyframes-svg-filled {
+    0% {
+      transform: scale(0);
+    }
+  
+    25% {
+      transform: scale(1.2);
+    }
+  
+    50% {
+      transform: scale(1);
+      filter: brightness(1.5);
+    }
+  }
+  
+  @keyframes keyframes-svg-celebrate {
+    0% {
+      transform: scale(0);
+    }
+  
+    50% {
+      opacity: 1;
+      filter: brightness(1.5);
+    }
+  
+    100% {
+      transform: scale(1.4);
+      opacity: 0;
+      display: none;
+    }
+  }
