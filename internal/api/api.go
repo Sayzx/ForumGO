@@ -30,6 +30,14 @@ type Topic struct {
 	Username     string
 }
 
+type ReportedPost struct {
+	ID      int
+	Title   string
+	Content string
+	Owner   string
+	Avatar  sql.NullString
+}
+
 func GetUsernameByCookie(r *http.Request) string {
 	cookie, _ := r.Cookie("user")
 
@@ -243,6 +251,51 @@ func DeletePost(id int) error {
 
 	return nil
 }
+func DeletePostfromAdmin(id int) error {
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			log.Println("Could not close the database connection:", err)
+		}
+	}()
+
+	// Delete from reportspost table
+	stmt1, err := db.Prepare("DELETE FROM reportspost WHERE postid = ?")
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err := stmt1.Close(); err != nil {
+			log.Println("Could not close the statement:", err)
+		}
+	}()
+
+	_, err = stmt1.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	// Delete from topics table
+	stmt2, err := db.Prepare("DELETE FROM topics WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err := stmt2.Close(); err != nil {
+			log.Println("Could not close the statement:", err)
+		}
+	}()
+
+	_, err = stmt2.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func GetGroupByUsername(username string) string {
 	// select rank from users where username = username
@@ -284,4 +337,60 @@ func GetGroupByUsername(username string) string {
 	}
 
 	return rank
+}
+
+func GetReportedPosts() ([]ReportedPost, error) {
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		log.Println("Could not connect to the database:", err)
+		return nil, err
+	}
+	defer db.Close()
+
+	rows, err := db.Query("SELECT postid, title, content, owner, avatar FROM reportspost")
+	if err != nil {
+		log.Println("Could not query reported posts:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var reportedPosts []ReportedPost
+	for rows.Next() {
+		var post ReportedPost
+		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Owner, &post.Avatar)
+		if err != nil {
+			log.Println("Could not scan row:", err)
+			return nil, err
+		}
+		reportedPosts = append(reportedPosts, post)
+	}
+
+	if err = rows.Err(); err != nil {
+		log.Println("Error encountered during row iteration:", err)
+		return nil, err
+	}
+
+	return reportedPosts, nil
+}
+
+func AcceptPost(id int) error {
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	// Supprimer le post de la table "reportspost"
+	stmt, err := db.Prepare("DELETE FROM reportspost WHERE postid = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

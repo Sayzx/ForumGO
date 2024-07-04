@@ -1,11 +1,20 @@
 package handler
 
 import (
+	"database/sql"
 	"fmt"
 	"main/internal/api"
 	dbsql "main/internal/sql"
 	"net/http"
 )
+
+type ReportedPost struct {
+	PostID  int
+	Content string
+	Owner   string
+	Title   string
+	Avatar  sql.NullString
+}
 
 func ReportPostHandler(w http.ResponseWriter, r *http.Request) {
 	// Attempt to retrieve the user cookie
@@ -45,4 +54,29 @@ func ReportPostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func GetReportedPosts() ([]ReportedPost, error) {
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	rows, err := db.Query("SELECT postid, content, owner, title, avatar FROM reportspost")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var posts []ReportedPost
+	for rows.Next() {
+		var post ReportedPost
+		if err := rows.Scan(&post.PostID, &post.Content, &post.Owner, &post.Title, &post.Avatar); err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	return posts, nil
 }

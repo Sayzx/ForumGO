@@ -80,7 +80,7 @@
                     {{if eq .Username .Post.Owner}}
                     <form action="/deletepost?id={{.Post.ID}}" method="POST">
                         <input type="hidden" name="postid" value="{{.Post.ID}}">
-                        <button type="submit" class="delete-button">Supprimer votre post</button>
+                        <button type="submit" class="delete-your-post-button">Supprimer votre post</button>
                     </form>
                     {{end}}
                     {{end}}

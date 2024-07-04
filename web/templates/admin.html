@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BetterForum</title>
+    <title>BetterForum | Administration</title>
     <link rel="icon" href="/assets/img/logo.png" type="image/png">
-    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="../assets/css/showtopics.css">
+    <script src="https://kit.fontawesome.com/459ca3d53b.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -49,7 +50,7 @@
                     <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="/"> Accueil</a></li>
                     {{if .LoggedIn}}
                     <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="/createtopic"> Créer un
-                            Topic</a> </li>
+                            Topic</a></li>
                     <br>
                     {{end}}
                     <p id="topics">Topics</p>
@@ -74,24 +75,34 @@
             </nav>
             <main>
                 <h1>Administration</h1>
-                <div class="admin-content">
-                    <div class="admin-card">
-                        <h2>Post signalés</h2>
-                        <div id="discussion-cards" class="discussion-cards">
-                            {{range .Topics}}
-                            <div class="discussion-card">
-                                <h3>{{.Title}}</h3>
-                                <p>{{.Content}}</p>
-                                {{if .Avatar.Valid}}
-                                <img class="avatar" src="{{.Avatar.String}}" alt="Avatar"
-                                    onerror="this.src='/assets/img/default-avatar.webp';">
-                                {{else}}
-                                <img class="avatar" src="/assets/img/default-avatar.webp" alt="Avatar">
-                                {{end}}
-                                <span class="owner-name">{{.Owner}}</span>
-                            </div>
+                <h2>Posts signalés</h2>
+                <div class="subforum">
+                    {{range .ReportedPosts}}
+                    <div class="subforum-row">
+                        <div class="subforum-icon subforum-column center">
+                            {{if .Avatar.Valid}}
+                            <img class="avatar" src="{{.Avatar.String}}" alt="Avatar">
+                            {{else}}
+                            <img class="avatar" src="./web/assets/img/default-avatar.webp" alt="Default Avatar">
                             {{end}}
                         </div>
+                        <div class="subforum-description subforum-column">
+                            <h4><a href="/showpost?postid={{.ID}}"> {{.Title}}</a></h4>
+                            <p>Brève Description {{.Content}}</p>
+                        </div>
+                        <div class="subforum-actions subforum-column center">
+                            <form action="/acceptpost?id={{.ID}}" method="post">
+                                <button type="submit" class="accept-button"><i
+                                        class="fa fa-check accept-icon"></i></button>
+                            </form>
+                            <form action="/deletepostfromadmin?id={{.ID}}" method="post">
+                                <button type="submit" class="delete-button"><i
+                                        class="fa fa-times reject-icon"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
             </main>
         </div>
         <footer>
@@ -99,7 +110,7 @@
             <p><a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Cookies</a></p>
         </footer>
     </div>
-    <script src="/assets/static/home.js"></script>
+    <script src="../assets/static/home.js"></script>
 </body>
 
 </html>
