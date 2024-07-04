@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var avatarImg = document.querySelector('.avatar-img');
 
     document.addEventListener('click', function (event) {
-        // Vérifier si le clic n'est pas sur l'avatar et pas sur le menu
         var isClickInsideAvatar = avatarImg.contains(event.target);
         var isClickInsideMenu = menu.contains(event.target);
 
@@ -12,10 +11,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Fonction pour basculer la visibilité du menu
     avatarImg.addEventListener('click', function (event) {
         toggleMenu();
-        event.stopPropagation(); // Empêcher l'événement de se propager plus loin
+        event.stopPropagation();
     });
 
     function toggleMenu() {
@@ -26,3 +24,31 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 });
+
+function acceptPost(postId) {
+    fetch(`/acceptpost?id=${postId}`, {
+        method: 'POST'
+    }).then(response => {
+        if (response.ok) {
+            location.reload();
+        } else {
+            console.error('Failed to accept post');
+        }
+    }).catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function deletePost(postId) {
+    fetch(`/deletepost?id=${postId}`, {
+        method: 'POST'
+    }).then(response => {
+        if (response.ok) {
+            location.reload();
+        } else {
+            console.error('Failed to delete post');
+        }
+    }).catch(error => {
+        console.error('Error:', error);
+    });
+}
