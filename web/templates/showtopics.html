@@ -30,7 +30,14 @@
             </div>
             <div class="search-login">
                 {{if .LoggedIn}}
-                <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img">
+                <div class="user-info">
+                    <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img"
+                        onerror="this.src='/assets/img/default-avatar.webp';" onclick="toggleMenu()">
+                    <div id="popupMenu" class="popup-menu" style="display:none;">
+                        <a href="/settings">Paramètres</a>
+                        <a href="/logout">Se déconnecter</a>
+                    </div>
+                </div>
                 {{else}}
                 <a href="/login"><button>Log in</button></a>
                 {{end}}
@@ -41,10 +48,11 @@
                 <ul>
                     <p id="topics">Menu</p>
                     <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="/"> Accueil</a></li>
-                    <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="#"> Actus</a></li>
-                    <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="/createtopic"> Crée un
+                    {{if .LoggedIn}}
+                    <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="/createtopic"> Créer un
                             Topic</a> </li>
                     <br>
+                    {{end}}
                     <p id="topics">Topics</p>
                     <div class="topics-scrollable">
                         <li><img src="./assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=1">
@@ -66,12 +74,15 @@
                 </div>
             </nav>
             <main>
-
                 <div class="subforum">
                     <div class="subforum-row">
                         {{range .Topics}}
                         <div class="subforum-icon subforum-column center">
-                            <i class="fa-solid fa-comment"></i>
+                            {{if .Avatar.Valid}}
+                            <img class="avatar" src="{{.Avatar.String}}" alt="Avatar">
+                            {{else}}
+                            <img class="avatar" src="./web/assets/img/default-avatar.webp" alt="Default Avatar">
+                            {{end}}
                         </div>
                         <div class="subforum-description subforum-column">
                             <h4><a href="/showpost?postid={{.ID}}"> {{.Title}}</a></h4>
@@ -85,17 +96,10 @@
                         <div class="subforum-info subforum-column">
                             Créer par <a href=""> {{.Owner}}</a>
                             <br>le <small>{{.CreateAt}}</small>
-                            {{if .Avatar.Valid}}
-                            <img class="avatar" src="{{.Avatar.String}}" alt="Avatar">
-                            {{else}}
-                            <img class="avatar" src="./web/assets/img/default-avatar.webp" alt="Default Avatar">
-                            {{end}}
                         </div>
                         {{end}}
                     </div>
                 </div>
-
-
             </main>
         </div>
         <footer>
@@ -103,6 +107,7 @@
             <p><a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Cookies</a></p>
         </footer>
     </div>
+    <script src="../assets/static/home.js"></script>
 </body>
 
 </html>

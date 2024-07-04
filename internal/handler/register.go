@@ -2,11 +2,10 @@ package handler
 
 import (
 	"log"
-
-	"main/internal/sql"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
+	"main/internal/sql"
 )
 
 func HashPassword(password string) (string, error) {
@@ -18,6 +17,10 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	email := r.FormValue("email")
 	password := r.FormValue("password")
+	if sql.UsernameIsExists(username) {
+		http.Error(w, "Username already exists", http.StatusBadRequest)
+		return
+	}
 
 	hashedPassword, err := HashPassword(password)
 	if err != nil {
@@ -26,26 +29,34 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db, err := sql.ConnectDB()
-	if err != nil {
+	db, err1 := sql.ConnectDB()
+	if err1 != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err)
+		log.Println("Could not connect to the database:", err1)
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err2 := db.Close(); err2 != nil {
+			log.Println("Error closing database:", err2)
+		}
+	}()
 
-	stmt, err := db.Prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)")
-	if err != nil {
+	stmt, err3 := db.Prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)")
+	if err3 != nil {
 		http.Error(w, "Database query preparation error", http.StatusInternalServerError)
-		log.Println("Could not prepare query:", err)
+		log.Println("Could not prepare query:", err3)
 		return
 	}
-	defer stmt.Close()
+	defer func() {
+		if err4 := stmt.Close(); err4 != nil {
+			log.Println("Error closing statement:", err4)
+		}
+	}()
 
-	_, err = stmt.Exec(username, email, hashedPassword)
-	if err != nil {
+	_, err5 := stmt.Exec(username, email, hashedPassword)
+	if err5 != nil {
 		http.Error(w, "Database query execution error", http.StatusInternalServerError)
-		log.Println("Could not execute query:", err)
+		log.Println("Could not execute query:", err5)
 		return
 	}
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
