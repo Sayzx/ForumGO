@@ -19,18 +19,14 @@
             </div>
       
               <div class="search-login">
-                {{if .LoggedIn}}
                 <div class="user-info">
-                    <img src="{{.User.Avatar}}" alt="Profile Picture" class="avatar-img"
+                    <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img"
                         onerror="this.src='/assets/img/default-avatar.webp';" onclick="toggleMenu()">
                     <div id="popupMenu" class="popup-menu" style="display:none;">
                         <a href="/profile">Votre Profile</a>
                         <a href="/logout">Se déconnecter</a>
                     </div>
                 </div>
-                {{else}}
-                <a href="/login"><button>Log in</button></a>
-                {{end}}
             </div>
         </header>
         <div class="main-content">
@@ -39,11 +35,9 @@
                     <p id="topics">Menu</p>
                     <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="/"> Accueil</a></li>
 
-                    {{if .LoggedIn}}
                     <li><img src="./assets/img/home.png" alt="Home" width="20px"><a href="/createtopic"> Créer un
                             Topic</a> </li>
                     <br>
-                    {{end}}
                     <p id="topics">Topics</p>
                     <div class="topics-scrollable">
                         <li><img src="/assets/img/topic.png" alt="Home" width="20px"><a href="/showtopics?id=1">
@@ -66,43 +60,25 @@
             </nav>
             <main>
                 <section class="whats-new">
-                    <h2>L'actualités</h2>
+                    <h2>Votre Profil</h2>
                     <div class="cards">
                         <div class="card">
                             <img src="/assets/img/patern.png" alt="Jira integration">
-                            <h3>Jira integration</h3>
-                            <p>Released on 17 July 2023 Jira integration makes it a hassle-free experience...</p>
+                            <h3>Vos Informations</h3>
+                            <p>Username: {{.Username}}</p>
+                            <p>Email: {{.Email}}</p>
+                            <p>Avatar: <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img"
+                                onerror="this.src='/assets/img/default-avatar.webp';"></p>  
+                            <p>Plateform : {{.Platform}}</p>
                         </div>
                         <div class="card">
                             <img src="/assets/img/patern.png" alt="Post Bulk Actions">
-                            <h3>Post Bulk Actions</h3>
-                            <p>Released on 26 May 2023 We noticed many community admins are spending time
-                                individually...</p>
+                            <h3>Grade & Privileges</h3>
+                            <p>Vous avez actuellement le grade {{.Rank}} sur notre super forumsssss</p>
                         </div>
-                        <div class="card">
-                            <img src="/assets/img/patern.png" alt="Salesforce integration">
-                            <h3>Salesforce integration</h3>
-                            <p>Released on 03 May 2023 now your Bettermode community is integrated...</p>
-                        </div>
+                       
                     </div>
-                </section>
-                <section class="discussions">
-                    <h2>Discussions</h2>
-                    <div id="discussion-cards" class="discussion-cards">
-                        {{range .Topics}}
-                        <div class="discussion-card">
-                            <h3>{{.Title}}</h3>
-                            <p>{{.Content}}</p>
-                            {{if .Avatar.Valid}}
-                            <img class="avatar" src="{{.Avatar.String}}" alt="Avatar"
-                                onerror="this.src='/assets/img/default-avatar.webp';">
-                            {{else}}
-                            <img class="avatar" src="/assets/img/default-avatar.webp" alt="Avatar">
-                            {{end}}
-                            <span class="owner-name">{{.Owner}}</span>
-                        </div>
-                        {{end}}
-                    </div>
+                   
                 </section>
             </main>
         </div>

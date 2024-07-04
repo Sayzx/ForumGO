@@ -33,6 +33,7 @@ func Run() {
 	http.HandleFunc("/like", handler.LikePostHandler)
 	http.HandleFunc("/dislike", handler.DislikePostHandler)
 	http.HandleFunc("/logs", handler.LogsHandler)
+	http.HandleFunc("/profile", handler.ProfileHandler)
 
 	// GitHub Authentication
 	http.HandleFunc("/auth/github", handler.HandleGitHubLogin)
