@@ -86,11 +86,13 @@
                     {{end}}
                     <p>Par <a href="#">{{.Post.Owner}}</a> le <small>{{.Post.CreateAt}}</small></p>
                     <p id="postcontent">{{.Post.Content}}</p>
-                    {{if .Post.Images}}
+
                     <p>Images : </p>
-                    <img src="..{{.Post.Images}}" alt="Image" class="post-img">
-                    <img src="..\uploads\dev3.png" alt="Image" class="post-img">
-                    {{end}}
+                    <div class="images">
+                        {{if .Post.Images}}
+                        <img src="{{.Post.Images}}" alt="Image" class="post-img">
+                        {{end}}
+                    </div>
                     <div class="comments">
                         <h3>Actions</h3>
                         <form id="comment-report-form" method="POST">

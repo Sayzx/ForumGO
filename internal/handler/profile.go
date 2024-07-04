@@ -1,67 +1,68 @@
 package handler
 
-import (
-	"html/template"
-	"log"
-	"main/internal/api"
-	"main/internal/sql"
-	"net/http"
-	"time"
-)
-
-type UserP struct {
-	ID        int
-	Username  string
-	Email     string
-	Password  string
-	CreatedAt time.Time
-}
-
-func ProfileHandler(w http.ResponseWriter, r *http.Request) {
-	username := api.GetUsernameByCookie(r)
-	if username == "" {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-	log.Println("Username:", username)
-
-	// get all information on db
-	db, err := sql.ConnectDB()
-	if err != nil {
-		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err)
-		return
-	}
-	defer db.Close()
-
-	stmt, err := db.Prepare("SELECT * FROM users WHERE username = ?")
-	if err != nil {
-		http.Error(w, "Database query preparation error", http.StatusInternalServerError)
-		log.Println("Could not prepare query:", err)
-		return
-	}
-	defer stmt.Close()
-
-	// var user UserP
-	// err = stmt.QueryRow(username).Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.CreatedAt)
-	// if err != nil {
-	// 	http.Error(w, "Database query execution error", http.StatusInternalServerError)
-	// 	log.Println("Could not execute query:", err)
-	// 	return
-	// }
-
-	// Parse and execute the template
-	tmpl, err := template.ParseFiles("./web/templates/profile.html")
-	if err != nil {
-		http.Error(w, "Template parsing error", http.StatusInternalServerError)
-		log.Println("Could not parse template:", err)
-		return
-	}
-
-	err = tmpl.Execute(w, user)
-	if err != nil {
-		http.Error(w, "Template execution error", http.StatusInternalServerError)
-		log.Println("Could not execute template:", err)
-		return
-	}
-}
+//
+//import (
+//	"html/template"
+//	"log"
+//	"main/internal/api"
+//	"main/internal/sql"
+//	"net/http"
+//	"time"
+//)
+//
+//type UserP struct {
+//	ID        int
+//	Username  string
+//	Email     string
+//	Password  string
+//	CreatedAt time.Time
+//}
+//
+//func ProfileHandler(w http.ResponseWriter, r *http.Request) {
+//	username := api.GetUsernameByCookie(r)
+//	if username == "" {
+//		http.Redirect(w, r, "/login", http.StatusSeeOther)
+//		return
+//	}
+//	log.Println("Username:", username)
+//
+//	// get all information on db
+//	db, err := sql.ConnectDB()
+//	if err != nil {
+//		http.Error(w, "Database connection error", http.StatusInternalServerError)
+//		log.Println("Could not connect to the database:", err)
+//		return
+//	}
+//	defer db.Close()
+//
+//	stmt, err := db.Prepare("SELECT * FROM users WHERE username = ?")
+//	if err != nil {
+//		http.Error(w, "Database query preparation error", http.StatusInternalServerError)
+//		log.Println("Could not prepare query:", err)
+//		return
+//	}
+//	defer stmt.Close()
+//
+//	// var user UserP
+//	// err = stmt.QueryRow(username).Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.CreatedAt)
+//	// if err != nil {
+//	// 	http.Error(w, "Database query execution error", http.StatusInternalServerError)
+//	// 	log.Println("Could not execute query:", err)
+//	// 	return
+//	// }
+//
+//	// Parse and execute the template
+//	tmpl, err := template.ParseFiles("./web/templates/profile.html")
+//	if err != nil {
+//		http.Error(w, "Template parsing error", http.StatusInternalServerError)
+//		log.Println("Could not parse template:", err)
+//		return
+//	}
+//
+//	err = tmpl.Execute(w, user)
+//	if err != nil {
+//		http.Error(w, "Template execution error", http.StatusInternalServerError)
+//		log.Println("Could not execute template:", err)
+//		return
+//	}
+//}

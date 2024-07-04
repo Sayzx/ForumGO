@@ -7,8 +7,11 @@ import (
 )
 
 func Run() {
-	fs := http.FileServer(http.Dir("web/assets"))
-	http.Handle("/assets/", http.StripPrefix("/assets/", fs))
+	assetsServ := http.FileServer(http.Dir("web/assets"))
+	http.Handle("/assets/", http.StripPrefix("/assets/", assetsServ))
+
+	uploadsServ := http.FileServer(http.Dir("web/uploads"))
+	http.Handle("/uploads/", http.StripPrefix("/uploads/", uploadsServ))
 
 	http.HandleFunc("/", handler.HomeHandler)
 
@@ -31,7 +34,7 @@ func Run() {
 	http.HandleFunc("/like", handler.LikePostHandler)
 	http.HandleFunc("/dislike", handler.DislikePostHandler)
 	http.HandleFunc("/logs", handler.LogsHandler)
-	http.HandleFunc("/profile", handler.ProfileHandler)
+	//http.HandleFunc("/profile", handler.ProfileHandler)
 
 	// GitHub Authentication
 	http.HandleFunc("/auth/github", handler.HandleGitHubLogin)

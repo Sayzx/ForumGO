@@ -324,6 +324,14 @@ input:hover {
     font-family: 'Satoshi-Bold';
 }
 
+.images {
+    display: flex;
+    height: 300px;
+    flex-direction: row;
+    align-content: center;
+    justify-content: space-evenly;
+}
+
 #postcontent {
     display: flex;
     align-items: flex-start;

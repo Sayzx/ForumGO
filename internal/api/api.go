@@ -170,7 +170,7 @@ func GetAvatarByCookie(r *http.Request) string {
 func GetDateAndTime() string {
 	// get today date and time
 	now := time.Now()
-	return now.Format("2006-01-02 15:04:05")
+	return now.Format("02-01-2006 15:04")
 }
 
 func GetActiveUsers() []Author {

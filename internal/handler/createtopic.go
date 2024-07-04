@@ -15,8 +15,8 @@ import (
 	"strings"
 )
 
-const MaxUploadSize = 20 * 1024 * 1024 // 20 MB
-const UploadPath = "./web/uploads"
+const MaxUploadSize = 200000 // 20 MB
+const UploadPath = ".web/uploads"
 
 type CreateTopicData struct {
 	LoggedIn bool
@@ -129,9 +129,12 @@ func AddTopicHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		fileName := filepath.Base(fileHeader.Filename)
-		filePath := filepath.Join(UploadPath, fileName)
+		filePath := "uploads/" + fileName
+		filePath = filepath.ToSlash(filePath)
 
-		dst, err := os.Create(filePath)
+		temp := "web" + filePath
+		fmt.Println("Temp:", temp)
+		dst, err := os.Create("web/" + filePath)
 		if err != nil {
 			http.Error(w, "Unable to save the file", http.StatusInternalServerError)
 			log.Println("Unable to save the file:", err)
@@ -140,7 +143,7 @@ func AddTopicHandler(w http.ResponseWriter, r *http.Request) {
 		defer dst.Close()
 
 		if _, err := io.Copy(dst, file); err != nil {
-			http.Error(w, "Unable to save the file", http.StatusInternalServerError)
+			http.Error(w, "Unable to save the file222", http.StatusInternalServerError)
 			log.Println("Unable to save the file:", err)
 			return
 		}
@@ -149,7 +152,7 @@ func AddTopicHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("File uploaded successfully:", filePath)
 	}
 
-	images := strings.Join(imagePaths, ";")
+	images := strings.Join(imagePaths, "\n")
 	log.Println("Final image paths:", images)
 
 	db, err := dbsql.ConnectDB()
