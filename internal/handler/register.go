@@ -2,10 +2,11 @@ package handler
 
 import (
 	"log"
+
+	"main/internal/sql"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
-	"main/internal/sql"
 )
 
 func HashPassword(password string) (string, error) {
@@ -29,34 +30,26 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db, err1 := sql.ConnectDB()
-	if err1 != nil {
+	db, err := sql.ConnectDB()
+	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err1)
+		log.Println("Could not connect to the database:", err)
 		return
 	}
-	defer func() {
-		if err2 := db.Close(); err2 != nil {
-			log.Println("Error closing database:", err2)
-		}
-	}()
+	defer db.Close()
 
-	stmt, err3 := db.Prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)")
-	if err3 != nil {
+	stmt, err := db.Prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)")
+	if err != nil {
 		http.Error(w, "Database query preparation error", http.StatusInternalServerError)
-		log.Println("Could not prepare query:", err3)
+		log.Println("Could not prepare query:", err)
 		return
 	}
-	defer func() {
-		if err4 := stmt.Close(); err4 != nil {
-			log.Println("Error closing statement:", err4)
-		}
-	}()
+	defer stmt.Close()
 
-	_, err5 := stmt.Exec(username, email, hashedPassword)
-	if err5 != nil {
+	_, err = stmt.Exec(username, email, hashedPassword)
+	if err != nil {
 		http.Error(w, "Database query execution error", http.StatusInternalServerError)
-		log.Println("Could not execute query:", err5)
+		log.Println("Could not execute query:", err)
 		return
 	}
 	http.Redirect(w, r, "/login", http.StatusSeeOther)

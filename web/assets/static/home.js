@@ -1,19 +1,21 @@
 document.addEventListener('DOMContentLoaded', function () {
-    let menu = document.getElementById('popupMenu');
-    let avatarImg = document.querySelector('.avatar-img');
+    var menu = document.getElementById('popupMenu');
+    var avatarImg = document.querySelector('.avatar-img');
 
     document.addEventListener('click', function (event) {
-        let isClickInsideAvatar = avatarImg.contains(event.target);
-        let isClickInsideMenu = menu.contains(event.target);
+        // Vérifier si le clic n'est pas sur l'avatar et pas sur le menu
+        var isClickInsideAvatar = avatarImg.contains(event.target);
+        var isClickInsideMenu = menu.contains(event.target);
 
         if (!isClickInsideAvatar && !isClickInsideMenu && menu.style.display === 'block') {
             menu.style.display = 'none';
         }
     });
 
+    // Fonction pour basculer la visibilité du menu
     avatarImg.addEventListener('click', function (event) {
         toggleMenu();
-        event.stopPropagation();
+        event.stopPropagation(); // Empêcher l'événement de se propager plus loin
     });
 
     function toggleMenu() {

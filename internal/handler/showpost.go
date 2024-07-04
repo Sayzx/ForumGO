@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"database/sql"
 	"html/template"
 	"log"
+	"main/internal/api"
 	dbsql "main/internal/sql"
 	"net/http"
 	"net/url"
@@ -12,11 +12,12 @@ import (
 )
 
 type ShowPostData struct {
-	LoggedIn bool
-	Avatar   string
-	Username string
-	Post     Post
-	Comments []Comment
+	LoggedIn    bool
+	Avatar      string
+	Username    string
+	Post        Post
+	Comments    []Comment
+	IsModerator bool
 }
 
 type Post struct {
@@ -62,14 +63,19 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !data.LoggedIn {
-		data.Avatar = "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png"
+		data.Avatar = "./web/assets/img/default-avatar.webp"
+	}
+
+	// Get user role
+	if data.LoggedIn {
+		data.IsModerator = api.GetGroupByUsername(data.Username) == "moderator"
 	}
 
 	// Retrieve post ID from URL
 	postIDStr := r.URL.Query().Get("postid")
 	if postIDStr == "" {
-		http.Error(w, "Missing post ID", http.StatusBadRequest)
-		log.Println("Missing post ID")
+		http.Error(w, "Missing post ID 2", http.StatusBadRequest)
+		log.Println("Missing post ID 2")
 		return
 	}
 
@@ -80,6 +86,8 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println("Fetching post with ID:", postID)
+
 	// Fetch post details from database
 	db, err := dbsql.ConnectDB()
 	if err != nil {
@@ -87,21 +95,19 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Database connection error:", err)
 		return
 	}
-	defer func(db *sql.DB) {
-		err := db.Close()
-		if err != nil {
+	defer db.Close()
 
-		}
-	}(db)
+	log.Println("Database connection established")
 
 	post := Post{}
-	err = db.QueryRow("SELECT id, title, content, images, owner, `like`, dislike, createat FROM topics WHERE id = ?", postID).Scan(&post.ID, &post.Title, &post.Content, &post.Images, &post.Owner, &post.Like, &post.Dislike, &post.CreateAt)
+	err = db.QueryRow("SELECT id, title, content, images, owner, like, dislike, createat FROM topics WHERE id = ?", postID).Scan(&post.ID, &post.Title, &post.Content, &post.Images, &post.Owner, &post.Like, &post.Dislike, &post.CreateAt)
 	if err != nil {
 		http.Error(w, "Post not found", http.StatusNotFound)
 		log.Println("Post not found with ID:", postID)
 		log.Println("Error details:", err)
 		return
 	}
+	log.Println("Post found:", post)
 
 	data.Post = post
 
@@ -112,12 +118,7 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Database query error:", err)
 		return
 	}
-	defer func(rows *sql.Rows) {
-		err := rows.Close()
-		if err != nil {
-
-		}
-	}(rows)
+	defer rows.Close()
 
 	for rows.Next() {
 		var comment Comment
@@ -134,6 +135,7 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println("Comments found:", len(data.Comments))
 	HaveLike := GetIfUserLikedPost(postID, data.Username)
 	HaveDisLike := GetIfUserHaveDisLike(postID, data.Username)
 	if HaveDisLike {
@@ -142,6 +144,7 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 	if HaveLike {
 		data.Post.UserHaveLike = true
 	}
+
 	// Load and execute the template
 	tmpl, err := template.ParseFiles("./web/templates/showpost.html")
 	if err != nil {

@@ -88,45 +88,58 @@
                     <p id="postcontent">{{.Post.Content}}</p>
                     {{if .Post.Images}}
                     <p>Images : </p>
-                    <img src="{{.Post.Images}}" alt="Image" class="post-img">
-                    <img src="../uploads/dev3.png" alt="Image" class="post-img">
-                    <img src="../uploads/elle.png" alt="Image" class="post-img">
+                    <img src="..{{.Post.Images}}" alt="Image" class="post-img">
+                    <img src="..\uploads\dev3.png" alt="Image" class="post-img">
                     {{end}}
                     <div class="comments">
                         <h3>Actions</h3>
-                        <form action="/addcomment?id={{.Post.ID}}" method="POST">
+                        <form id="comment-report-form" method="POST">
                             <input type="hidden" name="postid" value="{{.Post.ID}}">
                             <input type="hidden" name="avatar" value="{{.Avatar}}">
                             <textarea name="content" placeholder="Commentez ce post" class="comment-input"></textarea>
-                            <button type="submit" class="comment-button">Commenter</button>
+                            <div class="button-container">
+                                <button type="submit" name="comment_action" value="comment" class="comment-button">Commenter</button>
+                            </div>
                         </form>
                         <br>
-                            {{if .Post.UserHaveLike}}
-                            {{else}}
-                            <form action="/like?id={{.Post.ID}}" method="POST">
-                                <input type="hidden" name="postid" value="{{.Post.ID}}">
-                                <input type="hidden" name="username" value="{{.Username}}">
-                                <button type="submit" class="comment-button"><i class="fa-regular fa-thumbs-up"></i></button>
-                                <br>
-                            </form>
-                            {{end}}
-                        
-                            {{if .Post.UserHaveLike}}
-                            {{else}}
-                            {{if .Post.UserHaveDislike}}
-                            {{else}}
-                            <form action="/dislike?id={{.Post.ID}}" method="POST">
-                                <input type="hidden" name="postid" value="{{.Post.ID}}">
-                                <input type="hidden" name="username" value="{{.Username}}">
-                                <button type="submit" class="comment-button"><i class="fa-regular fa-thumbs-down"></i></button>
-                            </form>
-                            {{end}}
-                            {{end}}
+                        {{if .IsModerator}}
+                        <form action="/reportpost?id={{.Post.ID}}" method="POST">
+                            <input type="hidden" name="postid" value="{{.Post.ID}}">
+                            <input type="hidden" name="username" value="{{.Username}}">
+                            <input type="hidden" name="avatar" value="{{.Avatar}}">
+                            <input type="hidden" name="content" value="{{.Post.Content}}">
+                            <input type="hidden" name="title" value="{{.Post.Title}}">
+                            <input type="hidden" name="owner" value="{{.Post.Owner}}">
+                            <input type="hidden" name="createat" value="{{.Post.CreateAt}}">
+                            <input type="hidden" name="images" value="{{.Post.Images}}">
+                            <button type="submit" name="report_action" value="report" class="report-button">Signaler</button>
+                        </form> 
+                        <br>
+                        {{end}}
+                        {{if .Post.UserHaveLike}}
+                        {{else}}
+                        <form action="/like?id={{.Post.ID}}" method="POST">
+                            <input type="hidden" name="postid" value="{{.Post.ID}}">
+                            <input type="hidden" name="username" value="{{.Username}}">
+                            <button type="submit" class="comment-button"><i class="fa-regular fa-thumbs-up"></i></button>
+                        </form>
+                        {{end}}
+                        <br>
+                        {{if .Post.UserHaveLike}}
+                        {{else}}
+                        {{if .Post.UserHaveDislike}}
+                        {{else}}
+                        <form action="/dislike?id={{.Post.ID}}" method="POST">
+                            <input type="hidden" name="postid" value="{{.Post.ID}}">
+                            <input type="hidden" name="username" value="{{.Username}}">
+                            <button type="submit" class="comment-button"><i class="fa-regular fa-thumbs-down"></i></button>
+                        </form>
+                        {{end}}
+                        {{end}}
                         <h3>Commentaires</h3>
                         {{range .Comments}}
                         <div class="comment">
-                            <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img-comment"
-                                onerror="this.src='/assets/img/default-avatar.webp';">
+                            <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img-comment" onerror="this.src='/assets/img/default-avatar.webp';">
                             <div class="comment-content">
                                 <p>{{.Content}}</p>
                                 <p>Par <a href="#">{{.Owner}}</a> le <small>{{.CreateAt}}</small></p>
@@ -136,6 +149,7 @@
                     </div>
                 </div>
             </main>
+            
         </div>
         <footer>
             <p>&copy; 2024 Better <span color="red">Forum</span></p>

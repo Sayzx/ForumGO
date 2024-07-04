@@ -9,21 +9,26 @@ import (
 )
 
 func ConnectDB() (*sql.DB, error) {
-	db, err := sql.Open("sqlite", "forum.db")
+
+	db, err := sql.Open("sqlite", "internal/sql/forum.db?_busy_timeout=15000&_journal_mode=WAL")
 	if err != nil {
 		return nil, fmt.Errorf("failed to open the database: %v", err)
 	}
 
-	if err = db.Ping(); err != nil {
-		err := db.Close()
-		if err != nil {
-			return nil, err
+	err = db.Ping()
+	if err != nil {
+		err1 := db.Close()
+		if err1 != nil {
+			return nil, err1
 		}
 		return nil, fmt.Errorf("failed to connect to the database: %v", err)
 	}
 
+	fmt.Println("Database connection successfully established")
+
 	createUsersTableQuery := `
 	CREATE TABLE IF NOT EXISTS users (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		username TEXT NOT NULL,
 		email TEXT NOT NULL,
 		password TEXT NOT NULL,
@@ -43,12 +48,7 @@ func UsernameIsExists(username string) bool {
 	if err != nil {
 		return false
 	}
-	defer func(db *sql.DB) {
-		err := db.Close()
-		if err != nil {
-
-		}
-	}(db)
+	defer db.Close()
 
 	var exists bool
 	query := "SELECT COUNT(*) > 0 FROM users WHERE username = ?"

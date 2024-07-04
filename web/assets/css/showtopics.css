@@ -334,6 +334,19 @@ input:hover {
     border: 1px solid #444;
 }
 
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.report-button,
+.comment-button {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
 button {
     font-family: 'Satoshi-Bold';
     font-weight: bold;
@@ -349,6 +362,32 @@ button {
     justify-content: center;
     align-items: center;
     text-decoration: none;
+}
+
+button:hover {
+    background-color: #2940c2;
+}
+
+.report-button {
+    font-family: 'Satoshi-Bold';
+    font-weight: bold;
+    font-size: 0.8em;
+    color: white;
+    border-radius: 3rem;
+    cursor: pointer;
+    width: 130px;
+    height: 36px;
+    border: none;
+    background-color: #db0404;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    padding: 10px 20px;
+}
+
+.report-button:hover {
+    background-color: #c00404;
 }
 
 textarea {
@@ -387,37 +426,37 @@ textarea {
     width: 50px;
     height: 50px;
     transition: .3s;
-  }
-  
-  .heart-container .checkbox {
+}
+
+.heart-container .checkbox {
     position: absolute;
     width: 100%;
     height: 100%;
     opacity: 0;
     z-index: 20;
     cursor: pointer;
-  }
-  
-  .heart-container .svg-container {
+}
+
+.heart-container .svg-container {
     width: 50%;
     height: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-  
-  .heart-container .svg-outline,
-          .heart-container .svg-filled {
+}
+
+.heart-container .svg-outline,
+.heart-container .svg-filled {
     fill: var(--heart-color);
     position: absolute;
-  }
-  
-  .heart-container .svg-filled {
+}
+
+.heart-container .svg-filled {
     animation: keyframes-svg-filled 1s;
     display: none;
-  }
-  
-  .heart-container .svg-celebrate {
+}
+
+.heart-container .svg-celebrate {
     position: absolute;
     animation: keyframes-svg-celebrate .5s;
     animation-fill-mode: forwards;
@@ -425,44 +464,44 @@ textarea {
     stroke: var(--heart-color);
     fill: var(--heart-color);
     stroke-width: 2px;
-  }
-  
-  .heart-container .checkbox:checked~.svg-container .svg-filled {
+}
+
+.heart-container .checkbox:checked~.svg-container .svg-filled {
     display: block
-  }
-  
-  .heart-container .checkbox:checked~.svg-container .svg-celebrate {
+}
+
+.heart-container .checkbox:checked~.svg-container .svg-celebrate {
     display: block
-  }
-  
-  @keyframes keyframes-svg-filled {
+}
+
+@keyframes keyframes-svg-filled {
     0% {
-      transform: scale(0);
+        transform: scale(0);
     }
-  
+
     25% {
-      transform: scale(1.2);
+        transform: scale(1.2);
     }
-  
+
     50% {
-      transform: scale(1);
-      filter: brightness(1.5);
+        transform: scale(1);
+        filter: brightness(1.5);
     }
-  }
-  
-  @keyframes keyframes-svg-celebrate {
+}
+
+@keyframes keyframes-svg-celebrate {
     0% {
-      transform: scale(0);
+        transform: scale(0);
     }
-  
+
     50% {
-      opacity: 1;
-      filter: brightness(1.5);
+        opacity: 1;
+        filter: brightness(1.5);
     }
-  
+
     100% {
-      transform: scale(1.4);
-      opacity: 0;
-      display: none;
+        transform: scale(1.4);
+        opacity: 0;
+        display: none;
     }
-  }
+}
