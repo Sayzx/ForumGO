@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"html/template"
 	"log"
 	dbsql "main/internal/sql"
@@ -79,8 +80,6 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("Fetching post with ID:", postID)
-
 	// Fetch post details from database
 	db, err := dbsql.ConnectDB()
 	if err != nil {
@@ -88,19 +87,21 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Database connection error:", err)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
 
-	log.Println("Database connection established")
+		}
+	}(db)
 
 	post := Post{}
-	err = db.QueryRow("SELECT id, title, content, images, owner, like, dislike, createat FROM topics WHERE id = ?", postID).Scan(&post.ID, &post.Title, &post.Content, &post.Images, &post.Owner, &post.Like, &post.Dislike, &post.CreateAt)
+	err = db.QueryRow("SELECT id, title, content, images, owner, `like`, dislike, createat FROM topics WHERE id = ?", postID).Scan(&post.ID, &post.Title, &post.Content, &post.Images, &post.Owner, &post.Like, &post.Dislike, &post.CreateAt)
 	if err != nil {
 		http.Error(w, "Post not found", http.StatusNotFound)
 		log.Println("Post not found with ID:", postID)
 		log.Println("Error details:", err)
 		return
 	}
-	log.Println("Post found:", post)
 
 	data.Post = post
 
@@ -111,7 +112,12 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Database query error:", err)
 		return
 	}
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+
+		}
+	}(rows)
 
 	for rows.Next() {
 		var comment Comment
@@ -128,7 +134,6 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("Comments found:", len(data.Comments))
 	HaveLike := GetIfUserLikedPost(postID, data.Username)
 	HaveDisLike := GetIfUserHaveDisLike(postID, data.Username)
 	if HaveDisLike {

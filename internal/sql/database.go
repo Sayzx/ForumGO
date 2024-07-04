@@ -23,8 +23,6 @@ func ConnectDB() (*sql.DB, error) {
 		return nil, fmt.Errorf("failed to connect to the database: %v", err)
 	}
 
-	fmt.Println("Database connection successfully established")
-
 	createUsersTableQuery := `
 	CREATE TABLE IF NOT EXISTS users (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -23,7 +23,7 @@ func Run() {
 	http.HandleFunc("/addtopic", handler.AddTopicHandler)
 	http.HandleFunc("/showtopics", handler.ShowTopicsHandler)
 	http.HandleFunc("/showpost", handler.ShowPostHandler)
-	http.HandleFunc("/upload", handler.UploadHandler)
+	http.HandleFunc("/uploads", handler.UploadsHandler)
 	http.HandleFunc("/addcomment", handler.AddCommentHandler)
 	http.HandleFunc("/deletepost", handler.DeletePostHandler)
 	http.HandleFunc("/like", handler.LikePostHandler)

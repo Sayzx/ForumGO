@@ -9,7 +9,9 @@ import (
 	"strings"
 )
 
-func UploadHandler(w http.ResponseWriter, r *http.Request) {
+func UploadsHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+
 	if r.Method != "POST" {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
