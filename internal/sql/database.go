@@ -15,13 +15,15 @@ func ConnectDB() (*sql.DB, error) {
 	}
 
 	if err = db.Ping(); err != nil {
-		db.Close()
+		err := db.Close()
+		if err != nil {
+			return nil, err
+		}
 		return nil, fmt.Errorf("failed to connect to the database: %v", err)
 	}
 
 	createUsersTableQuery := `
 	CREATE TABLE IF NOT EXISTS users (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		username TEXT NOT NULL,
 		email TEXT NOT NULL,
 		password TEXT NOT NULL,
@@ -41,7 +43,12 @@ func UsernameIsExists(username string) bool {
 	if err != nil {
 		return false
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+
+		}
+	}(db)
 
 	var exists bool
 	query := "SELECT COUNT(*) > 0 FROM users WHERE username = ?"
