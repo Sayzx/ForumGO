@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"main/internal/api"
@@ -101,6 +102,7 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 
 	post := Post{}
 	err = db.QueryRow("SELECT id, title, content, images, owner, like, dislike, createat FROM topics WHERE id = ?", postID).Scan(&post.ID, &post.Title, &post.Content, &post.Images, &post.Owner, &post.Like, &post.Dislike, &post.CreateAt)
+	fmt.Println(post)
 	if err != nil {
 		http.Error(w, "Post not found", http.StatusNotFound)
 		log.Println("Post not found with ID:", postID)
@@ -146,7 +148,7 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Load and execute the template
-	tmpl, err := template.ParseFiles("./web/templates/showpost.html")
+	tmpl, err := template.ParseFiles("web/templates/showpost.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
 		http.Error(w, "Error parsing template", http.StatusInternalServerError)

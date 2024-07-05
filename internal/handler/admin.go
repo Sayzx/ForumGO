@@ -40,16 +40,12 @@ func AdminHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println("Cookie value:", value)
 		parts := strings.SplitN(value, ";", 3)
 		if len(parts) == 3 {
 			data.LoggedIn = true
 			data.Avatar = utils.CleanAvatarURL(parts[1])
 			data.User = User{Avatar: data.Avatar}
-			log.Println("Avatar URL after cleaning:", data.Avatar)
 		}
-	} else {
-		log.Println("No valid user cookie found, user not logged in.")
 	}
 
 	if !data.LoggedIn {
