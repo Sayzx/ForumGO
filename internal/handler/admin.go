@@ -18,6 +18,7 @@ type AdminData struct {
 	User          User
 	Topics        []api.Topic
 	ReportedPosts []api.ReportedPost
+	Users         []api.User
 }
 
 func AdminHandler(w http.ResponseWriter, r *http.Request) {
@@ -60,6 +61,14 @@ func AdminHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	data.ReportedPosts = reportedPosts
 
+	users, err := api.GetAllUsers()
+	if err != nil {
+		log.Println("Error getting users:", err)
+		http.Error(w, "Error getting users", http.StatusInternalServerError)
+		return
+	}
+	data.Users = users
+
 	tmpl, err := template.ParseFiles("web/templates/admin.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
@@ -90,6 +99,30 @@ func AcceptPostHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Error accepting post:", err)
 		http.Error(w, "Error accepting post", http.StatusInternalServerError)
+		return
+	}
+
+	// Redirect to the admin page
+	http.Redirect(w, r, "/admin", http.StatusSeeOther)
+}
+
+func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil {
+		log.Println("Error parsing user ID:", err)
+		http.Error(w, "Error parsing user ID", http.StatusBadRequest)
+		return
+	}
+
+	err = api.DeleteUser(id)
+	if err != nil {
+		log.Println("Error deleting user:", err)
+		http.Error(w, "Error deleting user", http.StatusInternalServerError)
 		return
 	}
 
