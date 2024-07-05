@@ -26,7 +26,7 @@ type Topic struct {
 	CheckDislike sql.NullInt64
 	Dislike      int
 	ContentShort string
-	CreateAt     *string // Utilisation d'un pointeur pour gérer les valeurs NULL
+	CreateAt     time.Time
 	Username     string
 }
 
@@ -64,33 +64,21 @@ func GetAllTopics() []Topic {
 		log.Println("Could not connect to the database:", err)
 		return nil
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			log.Println("Could not close the database connection:", err)
-		}
-	}()
+	defer db.Close()
 
 	stmt, err := db.Prepare("SELECT id, title, content, owner, avatar, createat FROM topics")
 	if err != nil {
 		log.Println("Could not prepare query:", err)
 		return nil
 	}
-	defer func() {
-		if err := stmt.Close(); err != nil {
-			log.Println("Could not close the statement:", err)
-		}
-	}()
+	defer stmt.Close()
 
 	rows, err := stmt.Query()
 	if err != nil {
 		log.Println("Could not execute query:", err)
 		return nil
 	}
-	defer func() {
-		if err := rows.Close(); err != nil {
-			log.Println("Could not close the rows:", err)
-		}
-	}()
+	defer rows.Close()
 
 	var topics []Topic
 	for rows.Next() {
@@ -123,7 +111,7 @@ func GetAllTopicsById(id string) []Topic {
 		}
 	}()
 
-	stmt, err := db.Prepare("SELECT id, title, content, owner, avatar, like, dislike FROM topics where categoryid = ?")
+	stmt, err := db.Prepare("SELECT id, title, content, owner, avatar, like, dislike, createat FROM topics WHERE categoryid = ?")
 	if err != nil {
 		log.Println("Could not prepare query:", err)
 		return nil
@@ -148,7 +136,7 @@ func GetAllTopicsById(id string) []Topic {
 	var topics []Topic
 	for rows.Next() {
 		var topic Topic
-		err := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar, &topic.Like, &topic.Dislike)
+		err := rows.Scan(&topic.ID, &topic.Title, &topic.Content, &topic.Owner, &topic.Avatar, &topic.Like, &topic.Dislike, &topic.CreateAt)
 		if err != nil {
 			log.Println("Could not scan row:", err)
 			return nil

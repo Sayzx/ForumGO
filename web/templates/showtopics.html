@@ -82,8 +82,11 @@
                             <span>{{.Like}} Like | {{.Dislike}} Dislike</span>
                         </div>
                         <div class="subforum-info subforum-column">
-                            Créer par <a href=""> {{.Owner}}</a>
-                            <br>le <small>{{.CreateAt}}</small>
+                            Créer par <a href="">{{.Owner}}</a><br>
+                            le
+                            <small>
+                                {{.CreateAt.Format "2006-01-02 15:04:05"}}
+                            </small>
                         </div>
                         {{end}}
                     </div>
