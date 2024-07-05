@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"fmt"
 	"html/template"
 	"log"
+	"main/internal/api"
 	dbsql "main/internal/sql"
 	"net/http"
 	"net/url"
@@ -11,11 +13,12 @@ import (
 )
 
 type ShowPostData struct {
-	LoggedIn bool
-	Avatar   string
-	Username string
-	Post     Post
-	Comments []Comment
+	LoggedIn    bool
+	Avatar      string
+	Username    string
+	Post        Post
+	Comments    []Comment
+	IsModerator bool
 }
 
 type Post struct {
@@ -61,14 +64,19 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !data.LoggedIn {
-		data.Avatar = "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png"
+		data.Avatar = "./web/assets/img/default-avatar.webp"
+	}
+
+	// Get user role
+	if data.LoggedIn {
+		data.IsModerator = api.GetGroupByUsername(data.Username) == "moderator"
 	}
 
 	// Retrieve post ID from URL
 	postIDStr := r.URL.Query().Get("postid")
 	if postIDStr == "" {
-		http.Error(w, "Missing post ID", http.StatusBadRequest)
-		log.Println("Missing post ID")
+		http.Error(w, "Missing post ID 2", http.StatusBadRequest)
+		log.Println("Missing post ID 2")
 		return
 	}
 
@@ -94,6 +102,7 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 
 	post := Post{}
 	err = db.QueryRow("SELECT id, title, content, images, owner, like, dislike, createat FROM topics WHERE id = ?", postID).Scan(&post.ID, &post.Title, &post.Content, &post.Images, &post.Owner, &post.Like, &post.Dislike, &post.CreateAt)
+	fmt.Println(post)
 	if err != nil {
 		http.Error(w, "Post not found", http.StatusNotFound)
 		log.Println("Post not found with ID:", postID)
@@ -137,8 +146,9 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 	if HaveLike {
 		data.Post.UserHaveLike = true
 	}
+
 	// Load and execute the template
-	tmpl, err := template.ParseFiles("./web/templates/showpost.html")
+	tmpl, err := template.ParseFiles("web/templates/showpost.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
 		http.Error(w, "Error parsing template", http.StatusInternalServerError)
