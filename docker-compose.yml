@@ -1,0 +1,17 @@
+version: '3'
+#lauch the app with docker-compose up
+
+# Définition des services
+services:
+  node_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/root/data  # Assurez-vous que votre application s'attend à trouver la base de données ici
+
+networks:
+  my_network:
+    driver: bridge
