@@ -7,6 +7,7 @@
     <title>BetterForum | Administration</title>
     <link rel="icon" href="/assets/img/logo.png" type="image/png">
     <link rel="stylesheet" href="../assets/css/showtopics.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
     <script src="https://kit.fontawesome.com/459ca3d53b.js" crossorigin="anonymous"></script>
 </head>
 
@@ -86,6 +87,22 @@
                                         class="fa fa-check accept-icon"></i></button>
                             </form>
                             <form action="/deletepostfromadmin?id={{.ID}}" method="post">
+                                <button type="submit" class="delete-button"><i
+                                        class="fa fa-times reject-icon"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+                <h2>Liste d'utilisateurs</h2>
+                <div class="subforum">
+                    {{range .Users}}
+                    <div class="subforum-row">
+                        <div class="subforum-users subforum-users-column">
+                            <h4>{{.Username}}</h4>
+                        </div>
+                        <div class="subforum-actions subforum-users-column center-users">
+                            <form action="/deleteuser?id={{.ID}}" method="post">
                                 <button type="submit" class="delete-button"><i
                                         class="fa fa-times reject-icon"></i></button>
                             </form>
