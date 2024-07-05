@@ -35,6 +35,8 @@ func Run() {
 	http.HandleFunc("/dislike", handler.DislikePostHandler)
 	http.HandleFunc("/logs", handler.LogsHandler)
 	http.HandleFunc("/profile", handler.ProfileHandler)
+	http.HandleFunc("/deleteuser", handler.DeleteUserHandler)
+	http.HandleFunc("/becomemod", handler.BecomeModeratorHandler)
 
 	// GitHub Authentication
 	http.HandleFunc("/auth/github", handler.HandleGitHubLogin)

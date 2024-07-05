@@ -44,8 +44,6 @@ func AddLikeToPost(postid string) {
 func LikePostHandler(w http.ResponseWriter, r *http.Request) {
 	postid := r.FormValue("id")
 	username := r.FormValue("username")
-	fmt.Println(postid)
-	fmt.Println(username)
 
 	db, err := dbsql.ConnectDB()
 	if err != nil {

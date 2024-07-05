@@ -13,6 +13,7 @@ import (
 type Author struct {
 	Name   string
 	Avatar string
+	UserId string
 }
 
 type Topic struct {
@@ -36,6 +37,12 @@ type ReportedPost struct {
 	Content string
 	Owner   string
 	Avatar  sql.NullString
+}
+
+type User struct {
+	ID       int
+	Username string
+	UserId   string
 }
 
 func GetUsernameByCookie(r *http.Request) string {
@@ -193,7 +200,8 @@ func GetActiveUsers() []Author {
 		}
 	}()
 
-	rows, err := db.Query("SELECT username, avatar FROM users WHERE active = 1")
+	// Sélectionner uniquement les colonnes nécessaires
+	rows, err := db.Query("SELECT username, userid FROM users")
 	if err != nil {
 		log.Println("Could not query users:", err)
 		return nil
@@ -207,7 +215,7 @@ func GetActiveUsers() []Author {
 	var authors []Author
 	for rows.Next() {
 		var author Author
-		err := rows.Scan(&author.Name, &author.Avatar)
+		err := rows.Scan(&author.Name, &author.UserId)
 		if err != nil {
 			log.Println("Could not scan row:", err)
 			return nil
@@ -382,6 +390,82 @@ func AcceptPost(id int) error {
 
 	// Supprimer le post de la table "reportspost"
 	stmt, err := db.Prepare("DELETE FROM reportspost WHERE postid = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GetAllUsers() ([]User, error) {
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		log.Println("Could not connect to the database:", err)
+		return nil, err
+	}
+	defer db.Close()
+
+	rows, err := db.Query("SELECT id, username FROM users")
+	if err != nil {
+		log.Println("Could not query users:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []User
+	for rows.Next() {
+		var user User
+		err := rows.Scan(&user.ID, &user.Username)
+		if err != nil {
+			log.Println("Could not scan row:", err)
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	if err = rows.Err(); err != nil {
+		log.Println("Error encountered during row iteration:", err)
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func DeleteUser(id int) error {
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	stmt, err := db.Prepare("DELETE FROM users WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func BecomeModerator(id string) error {
+	db, err := dbsql.ConnectDB()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	stmt, err := db.Prepare("INSERT INTO moderator_wait (id) VALUES (?, ?)")
 	if err != nil {
 		return err
 	}

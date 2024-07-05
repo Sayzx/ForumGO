@@ -9,7 +9,7 @@ import (
 )
 
 type UserP struct {
-	ID       int
+	ID       string
 	Username string
 	Email    string
 	Password string
@@ -34,10 +34,10 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	stmt, err := db.Prepare("SELECT id, username, email, password, rank, platform, avatar FROM users WHERE username = ?")
+	stmt, err := db.Prepare("SELECT userid, username, email, password, rank, platform, avatar FROM users WHERE username = ?")
 	if err != nil {
 		http.Error(w, "Database query preparation error", http.StatusInternalServerError)
-		log.Println("Could not prepare query:", err)
+		log.Println("Could not prepare query2:", err)
 		return
 	}
 	defer stmt.Close()
@@ -46,7 +46,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	err = stmt.QueryRow(username).Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.Rank, &user.Platform, &user.Avatar)
 	if err != nil {
 		http.Error(w, "Database query execution error", http.StatusInternalServerError)
-		log.Println("Could not execute query:", err)
+		log.Println("Could not execute query3:", err)
 		return
 	}
 
