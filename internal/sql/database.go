@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"log"
 
-	_ "modernc.org/sqlite"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func ConnectDB() (*sql.DB, error) {
 
-	db, err := sql.Open("sqlite", "internal/sql/forum.db?_busy_timeout=15000&_journal_mode=WAL")
+	db, err := sql.Open("sqlite3", "internal/sql/forum.db?_busy_timeout=15000&_journal_mode=WAL")
 	if err != nil {
 		return nil, fmt.Errorf("failed to open the database: %v", err)
 	}
