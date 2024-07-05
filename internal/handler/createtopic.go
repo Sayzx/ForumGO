@@ -24,6 +24,13 @@ type CreateTopicData struct {
 }
 
 func CreateTopicHandler(w http.ResponseWriter, r *http.Request) {
+	// Vérifier si l'utilisateur est connecté
+	username := api.GetUsernameByCookie(r)
+	fmt.Println("username:", username)
+	if username == "" {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
 	var data CreateTopicData
 
 	// Tentative de récupération du cookie utilisateur
@@ -72,7 +79,6 @@ func AddTopicHandler(w http.ResponseWriter, r *http.Request) {
 	username := api.GetUsernameByCookie(r)
 	avatar := api.GetAvatarByCookie(r)
 	owner := username
-	fmt.Println("Owner:", owner)
 	title := r.FormValue("title")
 	category := r.FormValue("category")
 	tags := r.FormValue("tags")

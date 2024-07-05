@@ -87,7 +87,6 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cleanAvatar := utils.CleanAvatarURL(userInfo.Picture)
-	log.Println("Cleaned Avatar URL: ", cleanAvatar)
 	userUID := uuid.New().String()
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
@@ -374,9 +373,6 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 
 	email := r.FormValue("email")
 	password := r.FormValue("password")
-	fmt.Println("Email:", email)
-	fmt.Println("Password:", password)
-
 	if email == "" || password == "" {
 		http.Error(w, "Missing email or password", http.StatusBadRequest)
 		return
@@ -404,19 +400,26 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 
 	if CheckPasswordHash(password, storedPasswordHash) {
 		userUIID := uuid.New().String()
+		cookieValue := url.QueryEscape(storedEmail + ";" + userUIID)
 		http.SetCookie(w, &http.Cookie{
 			Name:    "user",
-			Value:   url.QueryEscape(storedEmail+";./web/assets/img/default-avatar.webp") + ";" + userUIID,
+			Value:   cookieValue,
 			Expires: time.Now().Add(1 * time.Hour),
 			Path:    "/",
 		})
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		_, err = db.Exec("INSERT INTO loginlogs (id, username, platform, datetime) VALUES (?, ?, ?, ?)", userUIID, storedEmail, "Local", time.Now())
+
+		_, err = db.Exec("UPDATE users SET userid = ? WHERE username = ? OR email = ?", userUIID, storedEmail, storedEmail)
 		if err != nil {
-			http.Error(w, "Database query error", http.StatusInternalServerError)
 			log.Println("Could not execute query:", err)
 			return
 		}
+
+		_, err = db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", storedEmail, "Local", time.Now())
+		if err != nil {
+			log.Println("Could not execute query:", err)
+			return
+		}
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
 		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 	}
