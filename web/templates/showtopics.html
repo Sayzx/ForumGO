@@ -34,7 +34,7 @@
                     <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img"
                         onerror="this.src='/assets/img/default-avatar.webp';" onclick="toggleMenu()">
                     <div id="popupMenu" class="popup-menu" style="display:none;">
-                        <a href="/settings">Paramètres</a>
+                        <a href="/profile">Votre Profile</a>
                         <a href="/logout">Se déconnecter</a>
                     </div>
                 </div>
@@ -81,7 +81,7 @@
                             {{if .Avatar.Valid}}
                             <img class="avatar" src="{{.Avatar.String}}" alt="Avatar">
                             {{else}}
-                            <img class="avatar" src="./web/assets/img/default-avatar.webp" alt="Default Avatar">
+                            <img class="avatar" src="../assets/img/default-avatar.webp" alt="Default Avatar">
                             {{end}}
                         </div>
                         <div class="subforum-description subforum-column">
