@@ -81,7 +81,7 @@
                             <h4><a href="/showpost?postid={{.ID}}"> {{.Title}}</a></h4>
                             <p>Brève Description {{.Content}}</p>
                         </div>
-                        <div class="subforum-actions subforum-column center">
+                        <div class="subforum-column">
                             <form action="/acceptpost?id={{.ID}}" method="post">
                                 <button type="submit" class="accept-button"><i
                                         class="fa fa-check accept-icon"></i></button>
@@ -94,6 +94,10 @@
                     </div>
                     {{end}}
                 </div>
+
+                <!-- if {{.Rank}} est pas admin alors ils voient pas -->
+                 
+                {{if eq .Rank "admin"}}
                 <h2>Liste d'utilisateurs</h2>
                 <div class="subforum">
                     {{range .Users}}
@@ -101,15 +105,16 @@
                         <div class="subforum-users subforum-users-column">
                             <h4>{{.Username}}</h4>
                         </div>
-                        <div class="subforum-actions subforum-users-column center-users">
+                        <div class="left-actions">
                             <form action="/deleteuser?id={{.ID}}" method="post">
-                                <button type="submit" class="delete-button"><i
-                                        class="fa fa-times reject-icon"></i></button>
+                                <button type="submit" class="delete-button"><i class="fa-solid fa-delete-left"></i></button>
                             </form>
                         </div>
+                        
                     </div>
                     {{end}}
                 </div>
+                {{end}} 
             </main>
         </div>
         <footer>

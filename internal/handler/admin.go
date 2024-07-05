@@ -19,16 +19,24 @@ type AdminData struct {
 	Topics        []api.Topic
 	ReportedPosts []api.ReportedPost
 	Users         []api.User
+	Rank          string
 }
 
 func AdminHandler(w http.ResponseWriter, r *http.Request) {
-	api.GetUsernameByCookie(r)
+	username := api.GetUsernameByCookie(r)
+	rank := api.GetGroupByUsername(username)
+	Rank := strings.ToLower(rank)
+	if Rank == "user" {
+		http.Error(w, "You are not an admin", http.StatusForbidden)
+		return
+	}
 
 	// Get the number of active users
 	activeUsers := api.GetActiveUsers()
 	data := AdminData{
 		LoggedIn:    true,
 		ActiveUsers: strconv.Itoa(len(activeUsers)),
+		Rank:        rank,
 	}
 
 	cookie, err := r.Cookie("user")

@@ -13,6 +13,7 @@ import (
 type Author struct {
 	Name   string
 	Avatar string
+	UserId string
 }
 
 type Topic struct {
@@ -41,6 +42,7 @@ type ReportedPost struct {
 type User struct {
 	ID       int
 	Username string
+	UserId   string
 }
 
 func GetUsernameByCookie(r *http.Request) string {
@@ -198,7 +200,8 @@ func GetActiveUsers() []Author {
 		}
 	}()
 
-	rows, err := db.Query("SELECT username, avatar FROM users WHERE active = 1")
+	// Sélectionner uniquement les colonnes nécessaires
+	rows, err := db.Query("SELECT username, userid FROM users")
 	if err != nil {
 		log.Println("Could not query users:", err)
 		return nil
@@ -212,7 +215,7 @@ func GetActiveUsers() []Author {
 	var authors []Author
 	for rows.Next() {
 		var author Author
-		err := rows.Scan(&author.Name, &author.Avatar)
+		err := rows.Scan(&author.Name, &author.UserId)
 		if err != nil {
 			log.Println("Could not scan row:", err)
 			return nil

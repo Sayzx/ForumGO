@@ -295,3 +295,11 @@ input:hover {
 form {
     margin-right: 30px;
 }
+
+.left-actions {
+    padding: 10px;
+    display: flex;
+    justify-content: safe;
+    padding-left: 200px;
+
+}

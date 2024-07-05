@@ -69,7 +69,7 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Get user role
 	if data.LoggedIn {
-		data.IsModerator = api.GetGroupByUsername(data.Username) == "moderator"
+		data.IsModerator = api.GetGroupByUsername(data.Username) != "user"
 	}
 
 	// Retrieve post ID from URL
