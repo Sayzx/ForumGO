@@ -1,26 +1,59 @@
-# Étape de build
-FROM golang:1.21-alpine AS build
+# Utiliser l'image officielle de Golang 1.21.3 comme image de base pour la construction
+FROM golang:1.21.3 AS builder
 
+# Définir le répertoire de travail à l'intérieur du conteneur
 WORKDIR /app
 
-COPY go.mod .
-COPY go.sum .
+# Copier les fichiers go.mod et go.sum dans le répertoire de travail
+COPY go.mod go.sum ./
 
+# Télécharger les dépendances
 RUN go mod download
 
+# Copier le reste des fichiers du projet dans le répertoire de travail
 COPY . .
 
-RUN go build -o main ./cmd/main.go
+# Compiler l'application
+RUN go build -o myapp ./cmd
 
-# Étape finale
-FROM alpine:latest
+# Utiliser une image Ubuntu 22.04 pour l'exécution
+FROM ubuntu:22.04
 
-WORKDIR /root/
+# Installer les dépendances nécessaires (sqlite3), Nginx et les certificats CA
+RUN apt-get update && apt-get install -y \
+    sqlite3 \
+    nginx \
+    ca-certificates \
+    gettext-base \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY --from=build /app/main .
-COPY --from=build /app/web ./web
-COPY --from=build /app/internal/sql/forum.db /root/data/forum.db
+# Définir le répertoire de travail à l'intérieur du conteneur
+WORKDIR /app
 
-EXPOSE 8080
+# Copier l'exécutable depuis l'étape de construction
+COPY --from=builder /app/myapp .
 
-CMD ["./main"]
+# Copier le reste des fichiers du projet, y compris les templates et la base de données
+COPY . .
+
+# Copier les certificats dans l'image
+COPY certs/localhost.crt /etc/nginx/certs/localhost.crt
+COPY certs/localhost.key /etc/nginx/certs/localhost.key
+
+# Copier la configuration Nginx template
+COPY nginx/nginx.conf.template /etc/nginx/nginx.conf.template
+
+# Copier le script d'entrée
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Définir les variables d'environnement pour Nginx
+ENV SSL_CERT_PATH=/etc/nginx/certs/localhost.crt
+ENV SSL_KEY_PATH=/etc/nginx/certs/localhost.key
+ENV PROXY_PASS_URL=http://localhost:8080
+
+# Exposer les ports utilisés par l'application et Nginx
+EXPOSE 8080 80 443
+
+# Utiliser le script d'entrée pour démarrer les services
+CMD ["/entrypoint.sh"]
