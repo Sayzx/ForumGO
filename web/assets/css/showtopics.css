@@ -324,14 +324,6 @@ input:hover {
     font-family: 'Satoshi-Bold';
 }
 
-.images {
-    display: flex;
-    height: 300px;
-    flex-direction: row;
-    align-content: center;
-    justify-content: space-evenly;
-}
-
 #postcontent {
     display: flex;
     align-items: flex-start;
@@ -395,6 +387,73 @@ button:hover {
 }
 
 .report-button:hover {
+    background-color: #c00404;
+}
+
+.accept-button {
+    font-family: 'Satoshi-Bold';
+    font-weight: bold;
+    font-size: 0.8em;
+    color: white;
+    border-radius: 3rem;
+    cursor: pointer;
+    width: 13px;
+    height: 36px;
+    border: none;
+    background-color: #0f9d58;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    padding: 10px 20px;
+}
+
+.accept-button:hover {
+    background-color: #0e7e48;
+}
+
+.delete-your-post-button {
+    font-family: 'Satoshi-Bold';
+    font-weight: bold;
+    font-size: 0.8em;
+    color: white;
+    border-radius: 3rem;
+    cursor: pointer;
+    width: 130px;
+    height: 36px;
+    border: none;
+    background-color: #db0404;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    padding: 10px 20px;
+}
+
+.delete-your-post-button:hover {
+    background-color: #c00404;
+}
+
+.delete-button {
+    font-family: 'Satoshi-Bold';
+    font-weight: bold;
+    font-size: 0.8em;
+    color: white;
+    border-radius: 3rem;
+    cursor: pointer;
+    width: 13px;
+    height: 36px;
+    border: none;
+    background-color: #db0404;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    padding: 10px 20px;
+    margin-left: 30px;
+}
+
+.delete-button:hover {
     background-color: #c00404;
 }
 

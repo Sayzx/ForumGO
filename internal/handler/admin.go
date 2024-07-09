@@ -12,11 +12,12 @@ import (
 )
 
 type AdminData struct {
-	LoggedIn    bool
-	ActiveUsers string
-	Avatar      string
-	User        User
-	Topics      []api.Topic
+	LoggedIn      bool
+	ActiveUsers   string
+	Avatar        string
+	User          User
+	Topics        []api.Topic
+	ReportedPosts []api.ReportedPost
 }
 
 func AdminHandler(w http.ResponseWriter, r *http.Request) {
@@ -55,6 +56,14 @@ func AdminHandler(w http.ResponseWriter, r *http.Request) {
 		data.User = User{Avatar: data.Avatar}
 	}
 
+	reportedPosts, err := api.GetReportedPosts()
+	if err != nil {
+		log.Println("Error getting reported posts:", err)
+		http.Error(w, "Error getting reported posts", http.StatusInternalServerError)
+		return
+	}
+	data.ReportedPosts = reportedPosts
+
 	tmpl, err := template.ParseFiles("web/templates/admin.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
@@ -66,4 +75,28 @@ func AdminHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error executing template:", err)
 		http.Error(w, "Error executing template", http.StatusInternalServerError)
 	}
+}
+
+func AcceptPostHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil {
+		log.Println("Error parsing post ID:", err)
+		http.Error(w, "Error parsing post ID", http.StatusBadRequest)
+		return
+	}
+
+	err = api.AcceptPost(id)
+	if err != nil {
+		log.Println("Error accepting post:", err)
+		http.Error(w, "Error accepting post", http.StatusInternalServerError)
+		return
+	}
+
+	// Redirect to the admin page
+	http.Redirect(w, r, "/admin", http.StatusSeeOther)
 }

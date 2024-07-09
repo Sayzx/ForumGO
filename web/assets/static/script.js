@@ -1,10 +1,15 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var menu = document.getElementById('popupMenu');
-    var avatarImg = document.querySelector('.avatar-img');
+    let menu = document.getElementById('popupMenu');
+    let avatarImg = document.querySelector('.avatar-img');
 
     document.addEventListener('click', function (event) {
+<<<<<<< HEAD:web/assets/static/script.js
+        let isClickInsideAvatar = avatarImg.contains(event.target);
+        let isClickInsideMenu = menu.contains(event.target);
+=======
         var isClickInsideAvatar = avatarImg.contains(event.target);
         var isClickInsideMenu = menu.contains(event.target);
+>>>>>>> Aylan:web/assets/static/home.js
 
         if (!isClickInsideAvatar && !isClickInsideMenu && menu.style.display === 'block') {
             menu.style.display = 'none';
