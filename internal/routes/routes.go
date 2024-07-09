@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"main/internal/handler"
 	"net/http"
-	"os"
 )
 
 func Run() {
@@ -57,24 +56,8 @@ func Run() {
 	// Logout
 	http.HandleFunc("/logout", handler.LogoutHandler)
 
-	// Déterminer les chemins des fichiers de certificats
-	certFile := "certs/localhost.crt"
-	keyFile := "certs/localhost.key"
-	if os.Getenv("DOCKER_ENV") == "true" {
-		certFile = "/etc/nginx/certs/localhost.crt"
-		keyFile = "/etc/nginx/certs/localhost.key"
-	}
-
-	// Utiliser HTTPS si les fichiers de certificats existent
-	if _, err := os.Stat(certFile); err == nil {
-		fmt.Println("Server started at https://localhost:8080")
-		if err := http.ListenAndServeTLS(":8080", certFile, keyFile, nil); err != nil {
-			fmt.Printf("Erreur lors du démarrage du serveur HTTPS: %v\n", err)
-		}
-	} else {
-		fmt.Println("Server started at http://localhost:8080")
-		if err := http.ListenAndServe(":8080", nil); err != nil {
-			fmt.Printf("Erreur lors du démarrage du serveur HTTP: %v\n", err)
-		}
+	fmt.Println("Server started at http://localhost:8080")
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		fmt.Printf("Erreur lors du démarrage du serveur: %v\n", err)
 	}
 }

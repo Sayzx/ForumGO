@@ -1,8 +1,8 @@
 -- --------------------------------------------------------
--- Hôte:                         C:\Users\aylan\Desktop\Ynov\ForumGO\internal\sql\forum.db
--- Version du serveur:           3.44.0
+-- Hôte:                         C:\Users\boucl\Desktop\Ynov\ForumGO\internal\sql\forum.db
+-- Version du serveur:           3.45.3
 -- SE du serveur:                
--- HeidiSQL Version:             12.6.0.6765
+-- HeidiSQL Version:             12.7.0.6850
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -18,73 +18,121 @@
 CREATE DATABASE IF NOT EXISTS "forum";
 ;
 
--- Listage de la structure de la table forum. comments
+-- Listage de la structure de table forum. comments
 CREATE TABLE IF NOT EXISTS comments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     postid INTEGER,
     content TEXT,
     owner TEXT,
-    createat DATETIME,
+    createat DATETIME, "avatar" VARCHAR(252) NULL DEFAULT 'https://media.discordapp.net/attachments/1254153761211945093/1255220022301954181/image.png?ex=667cfefe&is=667bad7e&hm=45c2c4da5b337bd23b10497100f849013f968bacccd9b84d8155f13ece4f34bd&=&format=webp&quality=lossless&width=643&height=437',
     FOREIGN KEY (postid) REFERENCES topics(id)
 );
 
 -- Listage des données de la table forum.comments : -1 rows
 /*!40000 ALTER TABLE "comments" DISABLE KEYS */;
+INSERT INTO "comments" ("id", "postid", "content", "owner", "createat", "avatar") VALUES
+	(45, 36, 'COUCOU TROP BIEN', 'sayzx', '2024-06-27 15:22:37', 'https://cdn.discordapp.com/avatars/826826070899949601/d0ee2f29d053e069b0cbd0fc3bdb62fb.png?rand=NRt4ENPCH0'),
+	(46, 36, 'cc', 'sayzx', '2024-06-27 15:59:22', 'https://cdn.discordapp.com/avatars/826826070899949601/d0ee2f29d053e069b0cbd0fc3bdb62fb.png?rand=NRt4ENPCH0'),
+	(47, 39, 'cc
+', 'Sayzx', '2024-06-28 16:53:51', 'https://avatars.githubusercontent.com/u/74567624?v=4?rand=Y63kEj6NVk'),
+	(48, 38, 'Viole
+', 'sayzx', '2024-07-03 14:52:18', 'https://cdn.discordapp.com/avatars/826826070899949601/d0ee2f29d053e069b0cbd0fc3bdb62fb.png?rand=gPKqlKTqyH'),
+	(49, 37, 'cc
+', 'bouclierbleu39@gmail.com', '2024-07-05 13:38:43', 'https://lh3.googleusercontent.com/a-/ALV-UjXqImBEvEDp8FlbA_leJr40mstCQ2RQ9rFvWMKxxbuOWn6_ZNoQ=s96-c?rand=GcckKVEC7L');
 /*!40000 ALTER TABLE "comments" ENABLE KEYS */;
 
--- Listage de la structure de la table forum. loginlogs
-CREATE TABLE IF NOT EXISTS "loginlogs" (
+-- Listage de la structure de table forum. dislike
+CREATE TABLE IF NOT EXISTS "dislike" (
+	"id" INTEGER NULL,
 	"username" VARCHAR(50) NULL DEFAULT NULL,
-	"plateform" VARCHAR(50) NULL DEFAULT NULL,
-	"datetime" DATETIME NULL DEFAULT NULL
+	"postid" VARCHAR(50) NULL DEFAULT NULL
+);
+
+-- Listage des données de la table forum.dislike : -1 rows
+/*!40000 ALTER TABLE "dislike" DISABLE KEYS */;
+INSERT INTO "dislike" ("id", "username", "postid") VALUES
+	(NULL, 'sayzx', '38');
+/*!40000 ALTER TABLE "dislike" ENABLE KEYS */;
+
+-- Listage de la structure de table forum. likes
+CREATE TABLE IF NOT EXISTS "likes" (
+	"id" INTEGER NULL,
+	"username" VARCHAR(50) NULL DEFAULT NULL,
+	"postid" INTEGER NULL
+);
+
+-- Listage des données de la table forum.likes : -1 rows
+/*!40000 ALTER TABLE "likes" DISABLE KEYS */;
+INSERT INTO "likes" ("id", "username", "postid") VALUES
+	(NULL, 'sayzx', 36),
+	(NULL, 'Sayzx', 37),
+	(NULL, 'bouclierbleu39@gmail.com', 37);
+/*!40000 ALTER TABLE "likes" ENABLE KEYS */;
+
+-- Listage de la structure de table forum. loginlogs
+CREATE TABLE IF NOT EXISTS loginlogs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    platform TEXT NOT NULL,
+    datetime DATETIME NOT NULL
 );
 
 -- Listage des données de la table forum.loginlogs : -1 rows
 /*!40000 ALTER TABLE "loginlogs" DISABLE KEYS */;
-INSERT INTO "loginlogs" ("username", "plateform", "datetime") VALUES
-	('flyx_0_', 'Discord', '2024-06-19 16:43:39.9723829 +0200 CEST m=+10.850621901'),
-	('hashedPassword@hashedPassword.fr', 'Local', '2024-06-19 16:48:21.8774814 +0200 CEST m=+78.164406001'),
-	('aylann.pro@gmail.com', 'Google', '2024-06-20 15:22:10.1283441 +0200 CEST m=+24.794650101'),
-	('bouclierbleu39@gmail.com', 'Google', '2024-06-20 15:25:17.8957831 +0200 CEST m=+47.795562101'),
-	('flyx_0_', 'Discord', '2024-06-20 15:25:49.4949094 +0200 CEST m=+79.394688401'),
-	('topwin.gamerzz@gmail.com', 'Google', '2024-06-24 13:16:02.3991999 +0200 CEST m=+13.362820201'),
-	('topwin.gamerzz@gmail.com', 'Google', '2024-06-24 13:48:54.7658288 +0200 CEST m=+23.553901301'),
-	('topwin.gamerzz@gmail.com', 'Google', '2024-06-24 13:49:44.8288546 +0200 CEST m=+8.051433201'),
-	('topwin.gamerzz@gmail.com', 'Google', '2024-06-24 13:54:44.2155936 +0200 CEST m=+18.791916501'),
-	('topwin.gamerzz@gmail.com', 'Google', '2024-06-24 16:14:11.0597231 +0200 CEST m=+11.971507601'),
-	('topwin', 'Discord', '2024-06-24 16:14:20.5276411 +0200 CEST m=+21.439425601'),
-	('sayzx', 'Discord', '2024-06-25 14:26:57.0459318 +0200 CEST m=+45.441777501'),
-	('sayzx', 'Discord', '2024-06-25 14:36:22.2906386 +0200 CEST m=+269.753795401'),
-	('sayzx', 'Discord', '2024-06-25 14:44:56.554615 +0200 CEST m=+10.771681101'),
-	('sayzx', 'Discord', '2024-06-25 15:38:40.4996069 +0200 CEST m=+1411.298332601'),
-	('bouclierbleu39@gmail.com', 'Google', '2024-06-25 15:40:14.0768672 +0200 CEST m=+1504.875592901');
+INSERT INTO "loginlogs" ("id", "username", "platform", "datetime") VALUES
+	(12, 'admin@admin.fr', 'Local', '2024-06-27 17:05:35.8983875 +0200 CEST m=+7.039989301'),
+	(13, 'sayzx', 'Discord', '2024-06-27 17:14:36.662418 +0200 CEST m=+13.050469401'),
+	(14, 'sayzx', 'Discord', '2024-06-27 17:15:57.6665648 +0200 CEST m=+12.019904101'),
+	(15, 'sayzx', 'Discord', '2024-06-28 13:41:50.7102953 +0200 CEST m=+14.944832901'),
+	(16, 'sayzx', 'Discord', '2024-06-28 13:43:24.8417484 +0200 CEST m=+26.968019301'),
+	(17, 'sayzx', 'Discord', '2024-06-28 13:43:55.0577096 +0200 CEST m=+57.183980501'),
+	(18, 'Sayzx', 'GitHub', '2024-06-28 13:46:16.224319 +0200 CEST m=+9.646353001'),
+	(19, 'bouclierbleu39@gmail.com', 'Google', '2024-06-28 14:16:06.5102372 +0200 CEST m=+14.055313601'),
+	(20, 'bouclierbleu39@gmail.com', 'Google', '2024-06-28 14:17:21.4218168 +0200 CEST m=+35.810487501'),
+	(21, 'bouclierbleu39@gmail.com', 'Google', '2024-06-28 14:20:23.7335549 +0200 CEST m=+17.525309801'),
+	(22, 'bouclierbleu39@gmail.com', 'Google', '2024-06-28 14:22:27.2608171 +0200 CEST m=+8.644252301'),
+	(23, 'sayzx', 'Discord', '2024-06-28 16:51:58.3925781 +0200 CEST m=+16.562217701'),
+	(24, 'Sayzx', 'GitHub', '2024-06-28 16:52:18.0778849 +0200 CEST m=+36.247524501'),
+	(25, 'Sayzx', 'GitHub', '2024-06-28 16:52:26.2390783 +0200 CEST m=+44.408717901'),
+	(26, 'sayzx', 'Discord', '2024-07-03 13:43:16.283478 +0200 CEST m=+11.333576901'),
+	(27, 'sayzx', 'Discord', '2024-07-04 13:58:09.8980032 +0200 CEST m=+12.728993501'),
+	(28, 'Sayzx', 'GitHub', '2024-07-04 14:33:37.9937985 +0200 CEST m=+875.129679801'),
+	(29, 'klife@gmail.com', 'Local', '2024-07-04 14:34:07.5912272 +0200 CEST m=+904.727108501'),
+	(30, 'sayzx', 'Discord', '2024-07-04 16:18:50.1942868 +0200 CEST m=+20.142587101'),
+	(31, 'sayzx', 'Discord', '2024-07-04 16:23:37.6424822 +0200 CEST m=+8.508770201'),
+	(32, 'bouclierbleu39@gmail.com', 'Google', '2024-07-04 16:24:03.541959 +0200 CEST m=+34.408247001'),
+	(33, 'sayzx', 'Discord', '2024-07-05 13:51:13.9853337+02:00'),
+	(34, 'aa@aa.fr', 'Local', '2024-07-05 14:32:51.0058231+02:00'),
+	(35, 'aa@aa.fr', 'Local', '2024-07-05 14:33:03.7605766+02:00'),
+	(36, 'aa@aa.fr', 'Local', '2024-07-05 14:35:13.0219367+02:00'),
+	(37, 'aa@aa.fr', 'Local', '2024-07-05 14:48:27.1000335+02:00'),
+	(38, 'sayzx', 'Discord', '2024-07-05 14:50:30.7664555+02:00'),
+	(39, 'aa@aa.fr', 'Local', '2024-07-05 14:50:43.1069996+02:00'),
+	(40, 'sayzx', 'Discord', '2024-07-05 15:26:37.5801335+02:00'),
+	(41, 'Sayzx', 'GitHub', '2024-07-05 15:45:22.5050773+02:00'),
+	(42, 'sayzx', 'Discord', '2024-07-05 15:45:46.163174+02:00'),
+	(43, 'sayzx', 'Discord', '2024-07-05 15:53:34.9468944+02:00');
 /*!40000 ALTER TABLE "loginlogs" ENABLE KEYS */;
 
--- Listage de la structure de la table forum. mail
-CREATE TABLE IF NOT EXISTS mail (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		user_id INTEGER NOT NULL,
-		email TEXT NOT NULL,
-		FOREIGN KEY(user_id) REFERENCES users(id)
-	);
+-- Listage de la structure de table forum. moderator_wait
+CREATE TABLE IF NOT EXISTS "moderator_wait" (
+	"id" VARCHAR(50) NULL DEFAULT NULL);
 
--- Listage des données de la table forum.mail : -1 rows
-/*!40000 ALTER TABLE "mail" DISABLE KEYS */;
-/*!40000 ALTER TABLE "mail" ENABLE KEYS */;
+-- Listage des données de la table forum.moderator_wait : -1 rows
+/*!40000 ALTER TABLE "moderator_wait" DISABLE KEYS */;
+/*!40000 ALTER TABLE "moderator_wait" ENABLE KEYS */;
 
--- Listage de la structure de la table forum. password
-CREATE TABLE IF NOT EXISTS password (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		user_id INTEGER NOT NULL,
-		password TEXT NOT NULL,
-		FOREIGN KEY(user_id) REFERENCES users(id)
-	);
+-- Listage de la structure de table forum. reportspost
+CREATE TABLE IF NOT EXISTS "reportspost" (
+	"postid" INTEGER NULL, "content" VARCHAR(255) NULL DEFAULT NULL, "title" VARCHAR(255) NULL DEFAULT NULL, "avatar" VARCHAR(255) NULL DEFAULT NULL, "owner" VARCHAR(255) NULL DEFAULT NULL);
 
--- Listage des données de la table forum.password : -1 rows
-/*!40000 ALTER TABLE "password" DISABLE KEYS */;
-/*!40000 ALTER TABLE "password" ENABLE KEYS */;
+-- Listage des données de la table forum.reportspost : -1 rows
+/*!40000 ALTER TABLE "reportspost" DISABLE KEYS */;
+INSERT INTO "reportspost" ("postid", "content", "title", "avatar", "owner") VALUES
+	(38, 'dEV', 'Dev', 'https://cdn.discordapp.com/avatars/826826070899949601/d0ee2f29d053e069b0cbd0fc3bdb62fb.png?rand=ThTf53hyFv', 'sayzx');
+/*!40000 ALTER TABLE "reportspost" ENABLE KEYS */;
 
--- Listage de la structure de la table forum. topics
+-- Listage de la structure de table forum. topics
 CREATE TABLE IF NOT EXISTS "topics" (
     "id" INTEGER PRIMARY KEY AUTOINCREMENT,
     "content" VARCHAR(255) NULL DEFAULT NULL,
@@ -101,223 +149,28 @@ CREATE TABLE IF NOT EXISTS "topics" (
 -- Listage des données de la table forum.topics : -1 rows
 /*!40000 ALTER TABLE "topics" DISABLE KEYS */;
 INSERT INTO "topics" ("id", "content", "title", "avatar", "categoryid", "tags", "images", "like", "dislike", "createat", "owner") VALUES
-	(1, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent et nibh ac tortor tempus dictum. Fusce pellentesque augue ut purus iaculis, nec porttitor ipsum varius. Sed a velit a tellus consectetur gravida. In ut enim eleifend tellus porta aliquet. Mauris porta orci id velit ultrices, sed dapibus libero interdum. Sed vel finibus libero, sit amet lobortis neque. Sed quis magna at est mattis mattis non sed erat. Fusce facilisis nibh nec mi tristique elementum id in augue. Pellentesque mollis in ex at posuere. Donec tincidunt quam urna, non eleifend nulla tristique quis. Donec vulputate et velit eu aliquam. Donec scelerisque felis dolor, nec consequat mi tempus a. Mauris ut lobortis velit. Vestibulum non turpis lectus.', 'Le Nouveu leak tu turfu wlh', 'https://lh3.googleusercontent.com/a-/ALV-UjXAkIwmWMlij9ywLjGSwTFySqlH56oAE8-KlBm1RzjeYTrouUE=s96-c', 3, 'info', '', 0, 0, NULL, 'topwin.gamerzz@gmail.com'),
-	(2, '@xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight ', 'Les noir tah l''epoque', 'https://lh3.googleusercontent.com/a-/ALV-UjXAkIwmWMlij9ywLjGSwTFySqlH56oAE8-KlBm1RzjeYTrouUE=s96-c', 1, 'general', '', 0, 0, NULL, 'topwin.gamerzz@gmail.com'),
-	(3, '@xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight ', '@xplknight ', 'https://lh3.googleusercontent.com/a-/ALV-UjXAkIwmWMlij9ywLjGSwTFySqlH56oAE8-KlBm1RzjeYTrouUE=s96-c', 2, 'news', '', 0, 0, NULL, 'topwin.gamerzz@gmail.com'),
-	(4, '@xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight ', '@xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight ', 'https://lh3.googleusercontent.com/a-/ALV-UjXAkIwmWMlij9ywLjGSwTFySqlH56oAE8-KlBm1RzjeYTrouUE=s96-c', 4, 'info', '', 0, 0, NULL, 'topwin.gamerzz@gmail.com'),
-	(5, '@xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight @xplknight ', 'La canne a sucre des noirs', 'https://lh3.googleusercontent.com/a-/ALV-UjXAkIwmWMlij9ywLjGSwTFySqlH56oAE8-KlBm1RzjeYTrouUE=s96-c', 5, 'general', '', 0, 0, NULL, 'topwin.gamerzz@gmail.com'),
-	(20, 'ses mort', 'Manger', 'https://cdn.discordapp.com/avatars/1233487531388047414/6354f8938fdfd057fd830dddd7513182.png', 1, 'general', '', 0, 0, '2024-06-24 16:32:35', 'flyx_0_'),
-	(21, 'dev', 'Dev', 'https://cdn.discordapp.com/avatars/826826070899949601/d0ee2f29d053e069b0cbd0fc3bdb62fb.pnga7b3f3c5-009d-48b6-9eed-6d76b718c64d', 2, 'general', '', 0, 0, '2024-06-25 14:27:25', 'sayzx'),
-	(22, 'atype CreateTopicData struct {
-	LoggedIn bool
-	Avatar   string
-}type CreateTopicData struct {
-	LoggedIn bool
-	Avatar   string
-}type CreateTopicData struct {
-	LoggedIn bool
-	Avatar   string
-}type CreateTopicData struct {
-	LoggedIn bool
-	Avatar   string
-}', 'aaa', 'https://cdn.discordapp.com/avatars/826826070899949601/d0ee2f29d053e069b0cbd0fc3bdb62fb.pnga7b3f3c5-009d-48b6-9eed-6d76b718c64d', 2, 'bug', '', 0, 0, '2024-06-25 14:27:59', 'sayzx'),
-	(23, 'package handler
-
-import (
-	"fmt"
-	"html/template"
-	"io"
-	"log"
-	"main/internal/api"
-	dbsql "main/internal/sql"
-	"net/http"
-	"net/url"
-	"os"
-	"path/filepath"
-	"strings"
-)
-
-const MaxUploadSize = 20 * 1024 * 1024 // 20 MB
-const UploadPath = "./web/uploads"
-
-type CreateTopicData struct {
-	LoggedIn bool
-	Avatar   string
-}
-
-func CreateTopicHandler(w http.ResponseWriter, r *http.Request) {
-	var data CreateTopicData
-
-	// Tentative de récupération du cookie utilisateur
-	cookie, err := r.Cookie("user")
-	if err == nil && cookie != nil {
-		value, err := url.QueryUnescape(cookie.Value)
-		if err != nil {
-			log.Println("Error unescaping cookie value:", err)
-			http.Error(w, "Error processing cookie", http.StatusBadRequest)
-			return
-		}
-
-		parts := strings.SplitN(value, ";", 2)
-		if len(parts) == 2 {
-			data.LoggedIn = true
-			data.Avatar = parts[1]
-		}
-	}
-
-	if !data.LoggedIn {
-		// Définir l''avatar par défaut si l''utilisateur n''est pas connecté
-		data.Avatar = "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png"
-	}
-
-	// Chargement et exécution du template
-	tmpl, err := template.ParseFiles("./web/templates/createtopic.html")
-	if err != nil {
-		log.Println("Error parsing template:", err)
-		http.Error(w, "Error parsing template", http.StatusInternalServerError)
-		return
-	}
-
-	if err := tmpl.Execute(w, data); err != nil {
-		log.Println("Error executing template:", err)
-		http.Error(w, "Error executing template", http.StatusInternalServerError)
-	}
-}
-
-func AddTopicHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		return
-	}
-
-	// owner = username by cookie
-	username := api.GetUsernameByCookie(r)
-	avatar := api.GetAvatarByCookie(r)
-	owner := username
-	fmt.Println(owner)
-	title := r.FormValue("title")
-	category := r.FormValue("category")
-	tags := r.FormValue("tags")
-	content := r.FormValue("content")
-	like := 0
-	dislike := 0
-	createat := api.GetDateAndTime()
-	if avatar == "" {
-		avatar = "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png"
-	}
-	if title == "" || category == "" || tags == "" || content == "" || owner == "" {
-		http.Error(w, "Missing required fields", http.StatusBadRequest)
-		return
-	}
-
-	// Handle image uploads
-	err := r.ParseMultipartForm(MaxUploadSize)
-	if err != nil {
-		http.Error(w, "File too big", http.StatusBadRequest)
-		return
-	}
-
-	var imagePaths []string
-	files := r.MultipartForm.File["images"]
-	for _, fileHeader := range files {
-		file, err := fileHeader.Open()
-		if err != nil {
-			http.Error(w, "Error opening file", http.StatusInternalServerError)
-			log.Println("Error opening file:", err)
-			return
-		}
-		defer file.Close()
-
-		fileType := fileHeader.Header.Get("Content-Type")
-		if !strings.HasPrefix(fileType, "image/") {
-			http.Error(w, "Invalid file type", http.StatusBadRequest)
-			log.Println("Invalid file type:", fileType)
-			return
-		}
-
-		if fileHeader.Size > MaxUploadSize {
-			http.Error(w, "File is too big", http.StatusBadRequest)
-			log.Println("File is too big:", fileHeader.Size)
-			return
-		}
-
-		fileName := filepath.Base(fileHeader.Filename)
-		filePath := filepath.Join(UploadPath, fileName)
-
-		dst, err := os.Create(filePath)
-		if err != nil {
-			http.Error(w, "Unable to save the file", http.StatusInternalServerError)
-			log.Println("Unable to save the file:", err)
-			return
-		}
-		defer dst.Close()
-
-		if _, err := io.Copy(dst, file); err != nil {
-			http.Error(w, "Unable to save the file", http.StatusInternalServerError)
-			log.Println("Unable to save the file:", err)
-			return
-		}
-
-		imagePaths = append(imagePaths, filePath)
-		log.Println("File uploaded successfully:", filePath)
-	}
-
-	images := strings.Join(imagePaths, ";")
-	log.Println("Image paths:", images)
-
-	db, err := dbsql.ConnectDB()
-	if err != nil {
-		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Database connection error:", err)
-		return
-	}
-	defer db.Close()
-
-	stmt, err := db.Prepare("INSERT INTO topics (title, categoryid, tags, content, images, owner, like, dislike, avatar, createat) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
-	if err != nil {
-		http.Error(w, "Database query preparation error", http.StatusInternalServerError)
-		log.Println("Database query preparation error:", err)
-		return
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec(title, category, tags, content, images, owner, like, dislike, avatar, createat)
-	if err != nil {
-		http.Error(w, "Database query execution error", http.StatusInternalServerError)
-		log.Println("Database query execution error:", err)
-		return
-	}
-
-	log.Println("Topic created successfully")
-	http.Redirect(w, r, "/showtopics?id="+category, http.StatusSeeOther)
-}
-', 'AZAZA
-', 'https://cdn.discordapp.com/avatars/826826070899949601/d0ee2f29d053e069b0cbd0fc3bdb62fb.pnga7b3f3c5-009d-48b6-9eed-6d76b718c64d', 4, 'news', '', 0, 0, '2024-06-25 14:32:06', 'sayzx'),
-	(24, 'a', 'a', 'https://cdn.discordapp.com/avatars/826826070899949601/d0ee2f29d053e069b0cbd0fc3bdb62fb.pnga7b3f3c5-009d-48b6-9eed-6d76b718c64d', 4, 'info', '', 0, 0, '2024-06-25 14:32:29', 'sayzx'),
-	(25, 'aa', 'aa', 'https://cdn.discordapp.com/avatars/826826070899949601/d0ee2f29d053e069b0cbd0fc3bdb62fb.pnga7b3f3c5-009d-48b6-9eed-6d76b718c64d', 1, 'bug', '', 0, 0, '2024-06-25 14:33:28', 'sayzx'),
-	(26, 'aa', 'aaa', 'https://cdn.discordapp.com/avatars/826826070899949601/d0ee2f29d053e069b0cbd0fc3bdb62fb.pnge69073e4-1eba-47de-8aeb-14e32dd2d8f8', 2, 'news', '', 0, 0, '2024-06-25 14:36:36', 'sayzx'),
-	(27, 'dev', 'Dev', 'https://cdn.discordapp.com/avatars/826826070899949601/d0ee2f29d053e069b0cbd0fc3bdb62fb.png157c17cb-92b0-46cf-8b5b-20904c93615d', 5, 'general', '', 0, 0, '2024-06-25 14:45:33', 'sayzx'),
-	(28, 'a', 'a', 'https://cdn.discordapp.com/avatars/826826070899949601/d0ee2f29d053e069b0cbd0fc3bdb62fb.png157c17cb-92b0-46cf-8b5b-20904c93615d', 1, 'general', '', 0, 0, '2024-06-25 14:48:27', 'sayzx'),
-	(29, 'a', 'a', 'https://cdn.discordapp.com/avatars/826826070899949601/d0ee2f29d053e069b0cbd0fc3bdb62fb.png157c17cb-92b0-46cf-8b5b-20904c93615d', 3, 'general', 'web\uploads\Capture d''écran 2024-05-24 160817.png', 0, 0, '2024-06-25 14:51:02', 'sayzx'),
-	(30, 'de jeuxPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not foundPost not found', 'Leak', 'https://cdn.discordapp.com/avatars/826826070899949601/d0ee2f29d053e069b0cbd0fc3bdb62fb.png38833408-d263-4dd1-95b4-19a48e1999f0', 5, 'info', 'web\uploads\Capture d''écran 2024-06-03 144323.png', 0, 0, '2024-06-25 15:39:00', 'sayzx');
+	(37, 'DEV', 'Dev', 'https://lh3.googleusercontent.com/a-/ALV-UjXqImBEvEDp8FlbA_leJr40mstCQ2RQ9rFvWMKxxbuOWn6_ZNoQ=s96-c', 1, 'news', 'web\uploads\Capture d''écran 2024-06-03 144323.png', 2, 0, '2024-06-27 13:56:32', 'bouclierbleu39@gmail.com'),
+	(38, 'dEV', 'Dev', 'https://cdn.discordapp.com/avatars/826826070899949601/d0ee2f29d053e069b0cbd0fc3bdb62fb.png?rand=NRt4ENPCH0?rand=a0acHin8n5', 1, 'general', 'web\uploads\Capture d''écran 2024-06-03 144323.png', 0, 1, '2024-06-27 14:56:18', 'sayzx'),
+	(40, 'devreznfp
+eznznf', 'd', 'https://lh3.googleusercontent.com/a-/ALV-UjXqImBEvEDp8FlbA_leJr40mstCQ2RQ9rFvWMKxxbuOWn6_ZNoQ=s96-c?rand=GcckKVEC7L?rand=KC0j3VKxqZ', 1, 'general', '', 0, 0, '2024-07-05 13:41:46', 'bouclierbleu39@gmail.com'),
+	(41, 'reportedPosts', 'reportedPosts', 'https://avatars.githubusercontent.com/u/74567624?v=4?rand=KuF94lhiY0?rand=YmBXdhhNgo', 1, 'general', '', 0, 0, '2024-07-05 15:45:32', 'Sayzx');
 /*!40000 ALTER TABLE "topics" ENABLE KEYS */;
 
--- Listage de la structure de la table forum. users
+-- Listage de la structure de table forum. users
 CREATE TABLE IF NOT EXISTS users (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		username TEXT NOT NULL,
 		email TEXT NOT NULL,
 		password TEXT NOT NULL
-	, "rank" VARCHAR(50) NULL DEFAULT NULL, "avatar" VARCHAR(256) NULL DEFAULT NULL);
+	, "rank" VARCHAR(50) NULL DEFAULT NULL, "avatar" VARCHAR(256) NULL DEFAULT NULL, "platform" VARCHAR(50) NULL DEFAULT NULL, "userid" VARCHAR(255) NOT NULL DEFAULT '');
 
 -- Listage des données de la table forum.users : -1 rows
 /*!40000 ALTER TABLE "users" DISABLE KEYS */;
-INSERT INTO "users" ("id", "username", "email", "password", "rank", "avatar") VALUES
-	(1, 'xplit', 'xplit@gmail.com', '$2a$10$k6E99wgEOPgJ.KNJagFPBufnlvoba9AKYL1v9vTXEd.P2jWaUeEne', 'admio,', 'https://media.discordapp.net/attachments/1224092616426258432/1252734375104086137/klife.com.png?ex=66734b4d&is=6671f9cd&hm=1514c7d6cb6e53adb6ab43cfde2ff0dca0cbf22c936663659a3bc89c0b60916e&=&format=webp&quality=lossless&width=749&height=749'),
-	(2, 'xplit', 'xplit@gmail.com', '$2a$10$R/Jf3bnQnQ1z4FUMRnOlMeMdLOVL.qiHDTQmhnKDipvitpj89dPwe', NULL, 'https://media.discordapp.net/attachments/1224092616426258432/1252734375104086137/klife.com.png?ex=66734b4d&is=6671f9cd&hm=1514c7d6cb6e53adb6ab43cfde2ff0dca0cbf22c936663659a3bc89c0b60916e&=&format=webp&quality=lossless&width=749&height=749'),
-	(3, 'Sayzx', 'sayzx@zdevpro.fr', '$2a$10$sF2wCAS1Cm79rrf9sRJUc.9G9ghRfiFfnbrfFCOQ6GfUyZd.fQTSu', NULL, 'https://media.discordapp.net/attachments/1224092616426258432/1252734375104086137/klife.com.png?ex=66734b4d&is=6671f9cd&hm=1514c7d6cb6e53adb6ab43cfde2ff0dca0cbf22c936663659a3bc89c0b60916e&=&format=webp&quality=lossless&width=749&height=749'),
-	(4, 'nicolas', 'nicolas.gouy@epitech.eu', '$2a$10$6aS937YteVGxANDvAGFjIO9mIf1beILLLJA2SIH6fhdd4jy13T.fm', NULL, NULL),
-	(10, 'hashedPassword', 'hashedPassword@hashedPassword.fr', '$2a$10$S4kzImqShmYxgMblGOYjpeKf6zr6LZhQC5P2cUoVL.rp9f7qPfNye', NULL, NULL);
+INSERT INTO "users" ("id", "username", "email", "password", "rank", "avatar", "platform", "userid") VALUES
+	(23, 'bouclierbleu39@gmail.com', 'bouclierbleu39@gmail.com', '$2a$10$b2JYPIbhPn3FnFzhs3Y0Y.7fUA1WxsCJ9.rMeHRArcA4xILl5oC3G', 'user', 'https://lh3.googleusercontent.com/a-/ALV-UjXqImBEvEDp8FlbA_leJr40mstCQ2RQ9rFvWMKxxbuOWn6_ZNoQ=s96-c?rand=GcckKVEC7L?rand=RYmDZH14mD?rand=1jBhH75sc2?rand=kUkHUOSlBj?rand=y4kwnL0NW1?rand=vxDnm1hrp8?rand=61na9S0sak?rand=Z4krVVbRaY?rand=4iwdyVUzGQ?rand=eE1JSrrfsQ?rand=kDixCEVZWZ?rand=KrLm9d1Fqx?rand=Fxbn2NLFKe?rand=FgbUQGM5hy?rand=g2m668avBf?rand=pjFAKk7qhe?rand=jxQe8tmlCv?rand=y32XcgKJb4?rand=aBH5rdXWjg?rand=3RNovHkHKf?rand=4tD7xF757V?rand=kNpqR3YVEc?rand=bKaRlP4TOf?rand=yY2UUCTlPK?rand=uSdQQEpTs4?rand=DA8GhPCRu8?rand=y3fdYf7Q0Z?rand=90CsHo4bcE?rand=UcHe63ilkJ?rand=bDyw0eDYcD?rand=TUnROLdffM?rand=Ql3Z2qpI5l?rand=xY2ez61KmT?rand=RxHGsM2gXP?rand=bduMLWdnpG?rand=vkPQ83Ffmi', 'Google', 'e0c906f2-ae13-4044-b8f2-06159855ac16'),
+	(27, 'aa', 'aa@aa.fr', '$2a$10$dLvnBaGRFI5XMbaTVLsqjeG94m/mhctX5fZvDcrQ5z5/c/JPKga1C', 'user', 'https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=668913a1&is=6687c221&hm=895af00c0facede320bc213425295dbeae26a1652ae0a217e40a8e80bb418dfe&=&format=webp&quality=lossless&width=640&height=640?rand=aTq2G38oiI?rand=eE1JSrrfsQ?rand=kDixCEVZWZ?rand=KrLm9d1Fqx?rand=Fxbn2NLFKe?rand=FgbUQGM5hy?rand=g2m668avBf?rand=pjFAKk7qhe?rand=jxQe8tmlCv?rand=y32XcgKJb4?rand=NTRFRaPNPh?rand=x34ijBlWLy?rand=iQRT4EdTqR?rand=TjNY85AO24?rand=Hp1TMMIOcE?rand=C52kNnrW01?rand=1nhNVe97Ds?rand=7SuNPPZFPT?rand=RHYg984leC?rand=0wZpuf04Ir?rand=0hu23NxOcr?rand=4yURrXUcLF?rand=x0Oh4m3icm?rand=eXurEpM1BA?rand=6k4e5QwJAv?rand=giFBqtqoKi?rand=6qo5ZSjtX6?rand=SEJaq8v9m7', 'Local', 'a9fe6051-994f-4a23-a8a0-0328a8ba6c7e'),
+	(28, 'Sayzx', 'Sayzx', '$2a$10$dBcPEdMJHhwSY7cXeX5k3OdZGUjTH3C.Stst/npRrolJUNr5CGL.2', 'user', 'https://avatars.githubusercontent.com/u/74567624?v=4?rand=KuF94lhiY0?rand=y32XcgKJb4?rand=NTRFRaPNPh?rand=x34ijBlWLy?rand=GPjwurSUhJ?rand=TjNY85AO24?rand=Hp1TMMIOcE?rand=C52kNnrW01?rand=1nhNVe97Ds?rand=7SuNPPZFPT?rand=RHYg984leC?rand=0wZpuf04Ir?rand=0hu23NxOcr?rand=4yURrXUcLF?rand=x0Oh4m3icm?rand=eXurEpM1BA?rand=t57n7XU3Pw?rand=BYsIc4Jxah?rand=6qo5ZSjtX6?rand=SEJaq8v9m7', 'GitHub', '2ccf9462-5677-470c-88b4-f46abc5f7cb8'),
+	(29, 'sayzx', 'sayzx', '$2a$10$CyQn035m.bymrPyY.l8fC.DTDa9iBz8X3UutffAcLV6yKxrJpqfC.', 'user', 'https://cdn.discordapp.com/avatars/826826070899949601/d0ee2f29d053e069b0cbd0fc3bdb62fb.png?rand=o0yCAF4yMq?rand=x34ijBlWLy?rand=GPjwurSUhJ?rand=TjNY85AO24?rand=Hp1TMMIOcE?rand=C52kNnrW01?rand=1nhNVe97Ds?rand=7SuNPPZFPT?rand=RHYg984leC?rand=pcaAqbwduj?rand=0hu23NxOcr?rand=4yURrXUcLF?rand=x0Oh4m3icm?rand=eXurEpM1BA?rand=t57n7XU3Pw?rand=BYsIc4Jxah?rand=5B9w1Uuj2T?rand=SEJaq8v9m7', 'Discord', '03cb4d24-36ba-4a75-b5a7-3faa20eb48f8');
 /*!40000 ALTER TABLE "users" ENABLE KEYS */;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
