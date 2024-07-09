@@ -9,12 +9,9 @@ import (
 )
 
 func ConnectDB() (*sql.DB, error) {
-<<<<<<< HEAD
-	db, err := sql.Open("sqlite", "forum.db")
-=======
 
 	db, err := sql.Open("sqlite3", "internal/sql/forum.db?_busy_timeout=15000&_journal_mode=WAL")
->>>>>>> Aylan
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to open the database: %v", err)
 	}

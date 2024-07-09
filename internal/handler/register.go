@@ -41,15 +41,10 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-<<<<<<< HEAD
-	stmt, err3 := db.Prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)")
-	if err3 != nil {
-=======
 	stmt, err := db.Prepare("INSERT INTO users (username, email, password, avatar, platform, rank) VALUES (?, ?, ?, ?, ?, ?)")
 	if err != nil {
->>>>>>> Aylan
 		http.Error(w, "Database query preparation error", http.StatusInternalServerError)
-		log.Println("Could not prepare query:", err3)
+		log.Println("Could not prepare query:", err)
 		return
 	}
 	defer func() {
@@ -58,15 +53,10 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-<<<<<<< HEAD
-	_, err5 := stmt.Exec(username, email, hashedPassword)
-	if err5 != nil {
-=======
 	_, err = stmt.Exec(username, email, hashedPassword, "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=668913a1&is=6687c221&hm=895af00c0facede320bc213425295dbeae26a1652ae0a217e40a8e80bb418dfe&=&format=webp&quality=lossless&width=640&height=640", "Local", "user")
 	if err != nil {
->>>>>>> Aylan
 		http.Error(w, "Database query execution error", http.StatusInternalServerError)
-		log.Println("Could not execute query:", err5)
+		log.Println("Could not execute query:", err)
 		return
 	}
 	http.Redirect(w, r, "/login", http.StatusSeeOther)

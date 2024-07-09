@@ -1,11 +1,8 @@
 package handler
 
 import (
-<<<<<<< HEAD
 	"database/sql"
-=======
 	"fmt"
->>>>>>> Aylan
 	"html/template"
 	"log"
 	"main/internal/api"
@@ -106,12 +103,9 @@ func ShowPostHandler(w http.ResponseWriter, r *http.Request) {
 	}(db)
 
 	post := Post{}
-<<<<<<< HEAD
-	err = db.QueryRow("SELECT id, title, content, images, owner, `like`, dislike, createat FROM topics WHERE id = ?", postID).Scan(&post.ID, &post.Title, &post.Content, &post.Images, &post.Owner, &post.Like, &post.Dislike, &post.CreateAt)
-=======
+
 	err = db.QueryRow("SELECT id, title, content, images, owner, like, dislike, createat FROM topics WHERE id = ?", postID).Scan(&post.ID, &post.Title, &post.Content, &post.Images, &post.Owner, &post.Like, &post.Dislike, &post.CreateAt)
 	fmt.Println(post)
->>>>>>> Aylan
 	if err != nil {
 		http.Error(w, "Post not found", http.StatusNotFound)
 		log.Println("Post not found with ID:", postID)

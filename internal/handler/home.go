@@ -35,10 +35,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Error processing cookie", http.StatusBadRequest)
 			return
 		}
-<<<<<<< HEAD
 
-=======
->>>>>>> Aylan
 		parts := strings.SplitN(value, ";", 3)
 		if len(parts) == 3 {
 			data.LoggedIn = true
