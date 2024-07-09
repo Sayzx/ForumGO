@@ -2,7 +2,6 @@ package handler
 
 import (
 	"html/template"
-	"log"
 	"main/internal/api"
 	"main/internal/utils"
 	"net/http"
@@ -33,7 +32,6 @@ func ShowTopicsHandler(w http.ResponseWriter, r *http.Request) {
 	if err == nil && cookie != nil {
 		value, err := url.QueryUnescape(cookie.Value)
 		if err != nil {
-			log.Println("Error unescaping cookie value:", err)
 			http.Error(w, "Error processing cookie", http.StatusBadRequest)
 			return
 		}
@@ -59,13 +57,11 @@ func ShowTopicsHandler(w http.ResponseWriter, r *http.Request) {
 	// Charger et exécuter le template showtopics.html
 	tmpl, err := template.ParseFiles("web/templates/showtopics.html")
 	if err != nil {
-		log.Println("Error parsing template:", err)
 		http.Error(w, "Error parsing template", http.StatusInternalServerError)
 		return
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
-		log.Println("Error executing template:", err)
 		http.Error(w, "Error executing template", http.StatusInternalServerError)
 	}
 }

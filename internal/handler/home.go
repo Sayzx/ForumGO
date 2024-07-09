@@ -2,7 +2,6 @@ package handler
 
 import (
 	"html/template"
-	"log"
 	"main/internal/api"
 	"main/internal/utils"
 	"net/http"
@@ -31,21 +30,15 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	if err == nil && cookie != nil {
 		value, err := url.QueryUnescape(cookie.Value)
 		if err != nil {
-			log.Println("Error unescaping cookie value:", err)
 			http.Error(w, "Error processing cookie", http.StatusBadRequest)
 			return
 		}
-
-		log.Println("Cookie value:", value)
 		parts := strings.SplitN(value, ";", 3)
 		if len(parts) == 3 {
 			data.LoggedIn = true
 			data.Avatar = utils.CleanAvatarURL(parts[1])
 			data.User = User{Avatar: data.Avatar}
-			log.Println("Avatar URL after cleaning:", data.Avatar)
 		}
-	} else {
-		log.Println("No valid user cookie found, user not logged in.")
 	}
 
 	if !data.LoggedIn {
@@ -61,13 +54,11 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 
 	tmpl, err := template.ParseFiles("./web/templates/index.html")
 	if err != nil {
-		log.Println("Error parsing template:", err)
 		http.Error(w, "Error parsing template", http.StatusInternalServerError)
 		return
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
-		log.Println("Error executing template:", err)
 		http.Error(w, "Error executing template", http.StatusInternalServerError)
 	}
 }

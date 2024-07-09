@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"log"
 	"main/internal/config"
 	dbsql "main/internal/sql"
 	"main/internal/utils"
@@ -22,7 +21,6 @@ import (
 func UserAlreadyRegister(username, platform string) bool {
 	db, err := dbsql.ConnectDB()
 	if err != nil {
-		log.Println("Could not connect to the database:", err)
 		return false
 	}
 	defer db.Close()
@@ -30,7 +28,6 @@ func UserAlreadyRegister(username, platform string) bool {
 	var count int
 	err = db.QueryRow("SELECT COUNT(*) FROM users WHERE username = ? AND platform = ?", username, platform).Scan(&count)
 	if err != nil {
-		log.Println("Could not execute query:", err)
 		return false
 	}
 
@@ -87,7 +84,6 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cleanAvatar := utils.CleanAvatarURL(userInfo.Picture)
-	log.Println("Cleaned Avatar URL: ", cleanAvatar)
 	userUID := uuid.New().String()
 	http.SetCookie(w, &http.Cookie{
 		Name:    "user",
@@ -99,19 +95,13 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	db, err := dbsql.ConnectDB()
 	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err)
 		return
 	}
-	defer func(db *sql.DB) {
-		if err := db.Close(); err != nil {
-			log.Println("Could not close the database connection:", err)
-		}
-	}(db)
+	defer func(db *sql.DB) {}(db)
 
 	_, err = db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", userInfo.Email, "Google", time.Now())
 	if err != nil {
 		http.Error(w, "Database query error", http.StatusInternalServerError)
-		log.Println("Could not execute query:", err)
 		return
 	}
 
@@ -120,7 +110,6 @@ func HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 		_, err = db.Exec("INSERT INTO users (userid, username, platform, email, avatar, rank, password) VALUES (?, ?, ?, ?, ?, ?, ?)", userUID, userInfo.Email, "Google", userInfo.Email, cleanAvatar, "user", usernamehash)
 		if err != nil {
 			http.Error(w, "Database query error", http.StatusInternalServerError)
-			log.Println("Could not execute query:", err)
 			return
 		}
 	}
@@ -170,19 +159,16 @@ func HandleGitHubCallback(w http.ResponseWriter, r *http.Request) {
 	db, err := dbsql.ConnectDB()
 	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err)
 		return
 	}
 	defer func(db *sql.DB) {
 		if err := db.Close(); err != nil {
-			log.Println("Could not close the database connection:", err)
 		}
 	}(db)
 
 	_, err = db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", userInfo.Login, "GitHub", time.Now())
 	if err != nil {
 		http.Error(w, "Database query error", http.StatusInternalServerError)
-		log.Println("Could not execute query:", err)
 		return
 	}
 
@@ -191,7 +177,6 @@ func HandleGitHubCallback(w http.ResponseWriter, r *http.Request) {
 		_, err = db.Exec("INSERT INTO users (userid, username, platform, email, avatar, rank, password) VALUES (?, ?, ?, ?, ?, ?, ?)", userUID, userInfo.Login, "GitHub", userInfo.Login, cleanAvatar, "user", usernamehash)
 		if err != nil {
 			http.Error(w, "Database query error", http.StatusInternalServerError)
-			log.Println("Could not execute query:", err)
 			return
 		}
 	}
@@ -245,7 +230,6 @@ func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
 	db, err := dbsql.ConnectDB()
 	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err)
 		return
 	}
 	defer db.Close()
@@ -253,7 +237,6 @@ func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
 	_, err = db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", userInfo.Name, "Facebook", time.Now())
 	if err != nil {
 		http.Error(w, "Database query error", http.StatusInternalServerError)
-		log.Println("Could not execute query:", err)
 		return
 	}
 	if !UserAlreadyRegister(userInfo.Name, "Facebook") {
@@ -261,7 +244,6 @@ func HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
 		_, err = db.Exec("INSERT INTO users (userid, username, platform, email, avatar, rank, password) VALUES (?, ?, ?, ?, ?, ?, ?)", userUID, userInfo.Name, "Facebook", userInfo.Name, cleanAvatar, "user", usernamehash)
 		if err != nil {
 			http.Error(w, "Database query error", http.StatusInternalServerError)
-			log.Println("Could not execute query:", err)
 			return
 		}
 	}
@@ -319,7 +301,6 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 	db, err := dbsql.ConnectDB()
 	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err)
 		return
 	}
 	defer db.Close()
@@ -327,7 +308,6 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 	_, err = db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", userInfo.Username, "Discord", time.Now())
 	if err != nil {
 		http.Error(w, "Database query error", http.StatusInternalServerError)
-		log.Println("Could not execute query:", err)
 		return
 	}
 
@@ -337,7 +317,6 @@ func HandleDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		_, err = db.Exec("INSERT INTO users (userid, username, platform, email, avatar, rank, password) VALUES (?, ?, ?, ?, ?, ?, ?)", userUID, userInfo.Username, "Discord", userInfo.Username, cleanAvatar, "user", usernamehash)
 		if err != nil {
 			http.Error(w, "Database query error", http.StatusInternalServerError)
-			log.Println("Could not execute query:", err)
 			return
 		}
 	}
@@ -359,7 +338,6 @@ func CheckPasswordHash(password, hash string) bool {
 }
 
 func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Login form submitted")
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
@@ -368,15 +346,11 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(w, "Failed to parse form", http.StatusBadRequest)
-		log.Println("Failed to parse form:", err)
 		return
 	}
 
 	email := r.FormValue("email")
 	password := r.FormValue("password")
-	fmt.Println("Email:", email)
-	fmt.Println("Password:", password)
-
 	if email == "" || password == "" {
 		http.Error(w, "Missing email or password", http.StatusBadRequest)
 		return
@@ -385,7 +359,6 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 	db, err := dbsql.ConnectDB()
 	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err)
 		return
 	}
 	defer db.Close()
@@ -397,26 +370,30 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 		} else {
 			http.Error(w, "Database query error", http.StatusInternalServerError)
-			log.Println("Could not execute query:", err)
 		}
 		return
 	}
 
 	if CheckPasswordHash(password, storedPasswordHash) {
 		userUIID := uuid.New().String()
+		cookieValue := url.QueryEscape(storedEmail + ";" + userUIID)
 		http.SetCookie(w, &http.Cookie{
 			Name:    "user",
-			Value:   url.QueryEscape(storedEmail+";./web/assets/img/default-avatar.webp") + ";" + userUIID,
+			Value:   cookieValue,
 			Expires: time.Now().Add(1 * time.Hour),
 			Path:    "/",
 		})
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		_, err = db.Exec("INSERT INTO loginlogs (id, username, platform, datetime) VALUES (?, ?, ?, ?)", userUIID, storedEmail, "Local", time.Now())
+
+		_, err = db.Exec("UPDATE users SET userid = ? WHERE username = ? OR email = ?", userUIID, storedEmail, storedEmail)
 		if err != nil {
-			http.Error(w, "Database query error", http.StatusInternalServerError)
-			log.Println("Could not execute query:", err)
 			return
 		}
+
+		_, err = db.Exec("INSERT INTO loginlogs (username, platform, datetime) VALUES (?, ?, ?)", storedEmail, "Local", time.Now())
+		if err != nil {
+			return
+		}
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
 		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 	}

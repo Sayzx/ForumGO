@@ -66,6 +66,7 @@
                             <img src="/assets/img/patern.png" alt="Jira integration">
                             <h3>Vos Informations</h3>
                             <p>Username: {{.Username}}</p>
+                            <p>User ID : {{.ID}}</p>
                             <p>Email: {{.Email}}</p>
                             <p>Avatar: <img src="{{.Avatar}}" alt="Profile Picture" class="avatar-img"
                                 onerror="this.src='/assets/img/default-avatar.webp';"></p>  
@@ -74,7 +75,14 @@
                         <div class="card">
                             <img src="/assets/img/patern.png" alt="Post Bulk Actions">
                             <h3>Grade & Privileges</h3>
-                            <p>Vous avez actuellement le grade {{.Rank}} sur notre super forumsssss</p>
+                            <p>Vous avez actuellement le grade {{.Rank}} sur notre super FORUM</p>
+                            {{if eq .Rank "user"}}
+                            <div class="become_mod">
+                            <form action="/becomemod?id={{.ID}}" method="POST">
+                                <input type="hidden" name="id" value="{{.ID}}">
+                                <button>Devenir Modérateur</button>
+                            </div>
+                            {{end}}
                         </div>
                        
                     </div>

@@ -3,8 +3,6 @@ package sql
 import (
 	"database/sql"
 	"fmt"
-	"log"
-
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -23,8 +21,6 @@ func ConnectDB() (*sql.DB, error) {
 		}
 		return nil, fmt.Errorf("failed to connect to the database: %v", err)
 	}
-
-	fmt.Println("Database connection successfully established")
 
 	createUsersTableQuery := `
 	CREATE TABLE IF NOT EXISTS users (
@@ -54,7 +50,6 @@ func UsernameIsExists(username string) bool {
 	query := "SELECT COUNT(*) > 0 FROM users WHERE username = ?"
 	err = db.QueryRow(query, username).Scan(&exists)
 	if err != nil {
-		log.Println("Error checking username existence:", err)
 		return false
 	}
 	return exists

@@ -244,3 +244,19 @@ input:hover {
     top: -5px;
     margin-left: 4px;
 }
+
+.become_mod button {
+    font-weight: bold;
+    font-size: 0.8em;
+    color: white;
+    border-radius: 3rem;
+    cursor: pointer;
+    width: 150.02px;
+    height: 35.66px;
+    border: none;
+    background-color: #3653f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+}   

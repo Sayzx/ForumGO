@@ -2,7 +2,6 @@ package handler
 
 import (
 	"database/sql"
-	"fmt"
 	"main/internal/api"
 	dbsql "main/internal/sql"
 	"net/http"
@@ -41,7 +40,6 @@ func ReportPostHandler(w http.ResponseWriter, r *http.Request) {
 	db, err := dbsql.ConnectDB()
 	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		fmt.Println("Erreur de connexion à la base de données :", err)
 		return
 	}
 	defer db.Close()
@@ -49,7 +47,6 @@ func ReportPostHandler(w http.ResponseWriter, r *http.Request) {
 	_, err = db.Exec("INSERT INTO reportspost (postid, content, owner, title, avatar) VALUES (?, ?, ?, ?, ?)", postid, postcontent, postowner, posttitle, avatar)
 	if err != nil {
 		http.Error(w, "Database query error", http.StatusInternalServerError)
-		fmt.Println("Erreur d'exécution de la requête :", err)
 		return
 	}
 

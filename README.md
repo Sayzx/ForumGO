@@ -23,6 +23,9 @@ The Forum was a one-month project challenging us to exploit several features of 
 - **Images Upload**: Store images in SQL and be able to display them in the topics
 - **Admin Page**: An admin page which allows you to manage users, delete them for example or even change their roles but also see the posts reported by the moderators to be able to accept or delete them
 
+
+
+
 ## Additional Features
 
 - **Discord Login**: We added discord to the basic request options to add complexity
@@ -45,17 +48,10 @@ To get the project up and running, make sure you have a Go & Docker environment 
 1. **Clone the repository** with the following command:
 
    ```bash
-   git clone https://github.com/Sayzx/ForumGO/
-   cd ForumGO
-   go run cmd/main.go
-
-
-   with docker :
-   git clone https://github.com/Sayzx/ForumGO/
-   cd ForumGO
-   docker build -t Forum-go .
-   docker run -d -p 8080:8080 -p 80:80 --name forumgo-container forumgo-app
-   
+   git clone https://github.com/Sayzx/Challenge-JS/
+   cd Challenge-JS
+   npm install
+   node Server/server.js
    ```
 
 👏 Visit http://localhost:8080 to explore the project. Enjoy!
@@ -64,8 +60,6 @@ To get the project up and running, make sure you have a Go & Docker environment 
 
 - [@sayzx](https://www.github.com/sayzx) [![wakatime](https://wakatime.com/badge/user/018d13a0-dea5-424f-9eef-3afdc71ebf87/project/018dacdc-1ebd-4c10-a5d7-2c183e8952c0.svg)](https://wakatime.com/badge/user/018d13a0-dea5-424f-9eef-3afdc71ebf87/project/018dacdc-1ebd-4c10-a5d7-2c183e8952c0)
 - [@Xplit495](https://www.github.com/Xplit495)
-- Shems
-- NicolasGouy
 
 ## Demo
 

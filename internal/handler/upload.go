@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -53,6 +52,4 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to save the file", http.StatusInternalServerError)
 		return
 	}
-
-	fmt.Fprintf(w, "File uploaded successfully: %s", filePath)
 }

@@ -26,7 +26,7 @@ body {
 }
 
 .avatar {
-    width: 20px;
+    width: 50px;
     border-radius: 50%;
 }
 
@@ -262,4 +262,44 @@ input:hover {
     position: relative;
     top: -5px;
     margin-left: 4px;
+}
+
+.subforum {
+    margin-top: 20px;
+}
+
+.subforum-users-column {
+    width: 250px;
+    padding: 10px;
+    margin: 4px;
+    border-radius: 5px;
+    background-color: #d9e3e6;
+}
+
+.subforum-users * {
+    margin-block: 0;
+}
+
+.center-users {
+    width: 70px;
+    margin-left: 170px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.subforum-icon i {
+    font-size: 45px;
+}
+
+form {
+    margin-right: 30px;
+}
+
+.left-actions {
+    padding: 10px;
+    display: flex;
+    justify-content: safe;
+    padding-left: 200px;
+
 }

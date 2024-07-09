@@ -2,14 +2,13 @@ package handler
 
 import (
 	"html/template"
-	"log"
 	"main/internal/api"
 	"main/internal/sql"
 	"net/http"
 )
 
 type UserP struct {
-	ID       int
+	ID       string
 	Username string
 	Email    string
 	Password string
@@ -29,15 +28,13 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	db, err := sql.ConnectDB()
 	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err)
 		return
 	}
 	defer db.Close()
 
-	stmt, err := db.Prepare("SELECT id, username, email, password, rank, platform, avatar FROM users WHERE username = ?")
+	stmt, err := db.Prepare("SELECT userid, username, email, password, rank, platform, avatar FROM users WHERE username = ?")
 	if err != nil {
 		http.Error(w, "Database query preparation error", http.StatusInternalServerError)
-		log.Println("Could not prepare query:", err)
 		return
 	}
 	defer stmt.Close()
@@ -46,7 +43,6 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	err = stmt.QueryRow(username).Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.Rank, &user.Platform, &user.Avatar)
 	if err != nil {
 		http.Error(w, "Database query execution error", http.StatusInternalServerError)
-		log.Println("Could not execute query:", err)
 		return
 	}
 
@@ -54,14 +50,12 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("./web/templates/profile.html")
 	if err != nil {
 		http.Error(w, "Template parsing error", http.StatusInternalServerError)
-		log.Println("Could not parse template:", err)
 		return
 	}
 
 	err = tmpl.Execute(w, user)
 	if err != nil {
 		http.Error(w, "Template execution error", http.StatusInternalServerError)
-		log.Println("Could not execute template:", err)
 		return
 	}
 }

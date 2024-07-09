@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"fmt"
-	"log"
 	"main/internal/api"
 	"net/http"
 	"strconv"
@@ -16,7 +14,6 @@ func DeletePostHandler(w http.ResponseWriter, r *http.Request) {
 	// Récupération de l'ID du post à supprimer
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
-		log.Println("Error parsing post ID:", err)
 		http.Error(w, "Error parsing post ID", http.StatusBadRequest)
 		return
 	}
@@ -24,13 +21,11 @@ func DeletePostHandler(w http.ResponseWriter, r *http.Request) {
 	// Tentative de suppression
 	err = api.DeletePost(id)
 	if err != nil {
-		log.Println("Error deleting post:", err)
 		http.Error(w, "Error deleting post", http.StatusInternalServerError)
 		return
 	}
 
 	// Redirection vers la page d'accueil
-	fmt.Println("Post deleted")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -42,7 +37,6 @@ func DeletePostFromAdminHandler(w http.ResponseWriter, r *http.Request) {
 	// Récupération de l'ID du post à supprimer
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
-		log.Println("Error parsing post ID:", err)
 		http.Error(w, "Error parsing post ID", http.StatusBadRequest)
 		return
 	}
@@ -50,7 +44,6 @@ func DeletePostFromAdminHandler(w http.ResponseWriter, r *http.Request) {
 	// Tentative de suppression
 	err = api.DeletePostfromAdmin(id)
 	if err != nil {
-		log.Println("Error deleting post:", err)
 		http.Error(w, "Error deleting post", http.StatusInternalServerError)
 		return
 	}

@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"main/internal/api"
 	"net/http"
 )
@@ -16,8 +15,6 @@ func LogsHandler(w http.ResponseWriter, r *http.Request) {
 
 	username := api.GetUsernameByCookie(r)
 	rank := api.GetGroupByUsername(username)
-	fmt.Println(rank)
-	fmt.Println(username)
 	if rank != "admin" {
 		http.Error(w, "You are not an admin", http.StatusForbidden)
 		return

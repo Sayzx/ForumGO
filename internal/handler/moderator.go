@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"main/internal/api"
 	"net/http"
 )
@@ -15,7 +14,6 @@ func BecomeModeratorHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.FormValue("id")
 	if id == "" {
 		http.Error(w, "Missing user ID or username", http.StatusBadRequest)
-		log.Println("Missing user ID or username")
 		return
 	}
 

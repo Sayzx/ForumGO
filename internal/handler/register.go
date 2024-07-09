@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"log"
-
 	"main/internal/sql"
 	"net/http"
 
@@ -26,30 +24,26 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	hashedPassword, err := HashPassword(password)
 	if err != nil {
 		http.Error(w, "Error hashing password", http.StatusInternalServerError)
-		log.Println("Error hashing password:", err)
 		return
 	}
 
 	db, err := sql.ConnectDB()
 	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("Could not connect to the database:", err)
 		return
 	}
 	defer db.Close()
 
-	stmt, err := db.Prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO users (username, email, password, avatar, platform, rank) VALUES (?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		http.Error(w, "Database query preparation error", http.StatusInternalServerError)
-		log.Println("Could not prepare query:", err)
 		return
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(username, email, hashedPassword)
+	_, err = stmt.Exec(username, email, hashedPassword, "https://media.discordapp.net/attachments/1224092616426258432/1252742512209301544/1247.png?ex=668913a1&is=6687c221&hm=895af00c0facede320bc213425295dbeae26a1652ae0a217e40a8e80bb418dfe&=&format=webp&quality=lossless&width=640&height=640", "Local", "user")
 	if err != nil {
 		http.Error(w, "Database query execution error", http.StatusInternalServerError)
-		log.Println("Could not execute query:", err)
 		return
 	}
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
