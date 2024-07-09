@@ -3,10 +3,13 @@ module main
 go 1.21.3
 
 require (
-	golang.org/x/crypto v0.24.0
+	github.com/google/uuid v1.6.0
+	github.com/mattn/go-sqlite3 v1.14.22
+	golang.org/x/crypto v0.25.0
 	golang.org/x/oauth2 v0.21.0
 )
 
+<<<<<<< HEAD
 require (
 	github.com/google/uuid v1.6.0
 	modernc.org/sqlite v1.30.1
@@ -27,3 +30,6 @@ require (
 	modernc.org/strutil v1.2.0 // indirect
 	modernc.org/token v1.1.0 // indirect
 )
+=======
+require cloud.google.com/go/compute/metadata v0.4.0 // indirect
+>>>>>>> Aylan

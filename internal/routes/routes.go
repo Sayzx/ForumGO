@@ -12,9 +12,9 @@ func Run() {
 	http.HandleFunc("/", handler.HomeHandler)
 
 	// Admin Page
-	// http.HandleFunc("/admin", handler.AdminHandler)
+	http.HandleFunc("/admin", handler.AdminHandler)
 
-	// Login, Signup, Topic, Post, Comment
+	// Login, Signup, Topic, Post, Comment, Report, Delete, Accept, Like, Dislike, Logs
 	http.HandleFunc("/login", handler.LoginHandler)
 	http.HandleFunc("/login-form", handler.LoginFormHandler)
 	http.HandleFunc("/signup", handler.SignupHandler)
@@ -25,10 +25,16 @@ func Run() {
 	http.HandleFunc("/showpost", handler.ShowPostHandler)
 	http.HandleFunc("/uploads", handler.UploadsHandler)
 	http.HandleFunc("/addcomment", handler.AddCommentHandler)
+	http.HandleFunc("/reportpost", handler.ReportPostHandler)
 	http.HandleFunc("/deletepost", handler.DeletePostHandler)
+	http.HandleFunc("/deletepostfromadmin", handler.DeletePostFromAdminHandler)
+	http.HandleFunc("/acceptpost", handler.AcceptPostHandler)
 	http.HandleFunc("/like", handler.LikePostHandler)
 	http.HandleFunc("/dislike", handler.DislikePostHandler)
 	http.HandleFunc("/logs", handler.LogsHandler)
+	http.HandleFunc("/profile", handler.ProfileHandler)
+	http.HandleFunc("/deleteuser", handler.DeleteUserHandler)
+	http.HandleFunc("/becomemod", handler.BecomeModeratorHandler)
 
 	// GitHub Authentication
 	http.HandleFunc("/auth/github", handler.HandleGitHubLogin)
