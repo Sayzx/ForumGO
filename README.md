@@ -48,10 +48,9 @@ To get the project up and running, make sure you have a Go & Docker environment 
 1. **Clone the repository** with the following command:
 
    ```bash
-   git clone https://github.com/Sayzx/Challenge-JS/
-   cd Challenge-JS
-   npm install
-   node Server/server.js
+   git clone https://github.com/Sayzx/ForumGO/
+   cd in
+   go run cmd/main.go
    ```
 
 👏 Visit http://localhost:8080 to explore the project. Enjoy!
